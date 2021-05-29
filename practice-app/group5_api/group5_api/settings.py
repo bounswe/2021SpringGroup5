@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-
+from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-x$nhbr*pul4rjswyh8$1(t+!6!m4y@$yi6gqyy**w4bnh=lel%'
+SECRET_KEY = config('SECRET_KEY', default='')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'weatherCondition',
 ]
 
 MIDDLEWARE = [
@@ -74,12 +76,21 @@ WSGI_APPLICATION = 'group5_api.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+   
     'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'group5db',
+        'USER': 'root',
+        'PASSWORD':'****',
+        'HOST':'127.0.0.1',
+        'PORT':'3306',
+    }
+     
+}
+""" 'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
+}"""
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -123,3 +134,4 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+WEATHER_KEY = config('WEATHER_KEY', default='')

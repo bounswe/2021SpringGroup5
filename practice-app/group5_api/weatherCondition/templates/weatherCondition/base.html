@@ -1,0 +1,20 @@
+<!Doctype html5>
+<html>
+    <head>
+    <title>my website</title>
+    </head>
+
+    <body>
+    <center>
+        <p>
+            {% block content %}
+            <h1>Weather condition</h1>
+            <form id='weather' action="" method='post'>
+                <input type="text" placeholder="Town" name="Town" required>
+                <button type='search'>Search</button>
+            </form>
+            {% endblock %}
+        </p>
+    </center>
+    </body>
+</html>
