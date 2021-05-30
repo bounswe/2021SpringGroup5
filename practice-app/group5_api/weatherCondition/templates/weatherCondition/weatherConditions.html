@@ -3,6 +3,7 @@
 {% block content%}
 <center>
 <h1>Weather condition</h1>
+{% if new %}
 <p>Country: {{new.country}}</p>
 <p>Town: {{new.town}}</p>
 <p>Coordinations x:{{new.x}}, y:{{new.y}}</p>
@@ -28,6 +29,10 @@
 {% else %} 
 
 <p>No previous search</p>
+{% endif %} 
+
+{% else %} 
+<p>Not valid town name</p>
 {% endif %} 
 </center>
 {% endblock %}
