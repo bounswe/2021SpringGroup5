@@ -78,19 +78,16 @@ WSGI_APPLICATION = 'group5_api.wsgi.application'
 DATABASES = {
    
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'group5db',
-        'USER': 'root',
-        'PASSWORD':'****',
+        'USER': 'postgres',
+        'PASSWORD':'group5',
         'HOST':'127.0.0.1',
-        'PORT':'3306',
+        'PORT':'',
     }
      
 }
-""" 'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-}"""
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

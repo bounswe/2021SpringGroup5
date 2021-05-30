@@ -43,7 +43,6 @@ def index(request):
         humidity=dictionaryNew["humidity"],
         speed=dictionaryNew["speed"],
         degreeOfWind=dictionaryNew["degreeOfWind"])
-
         
         newWeather.save()
         try:
