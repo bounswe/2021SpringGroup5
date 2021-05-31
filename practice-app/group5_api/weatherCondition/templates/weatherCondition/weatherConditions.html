@@ -8,11 +8,11 @@
 <p>Town: {{new.town}}</p>
 <p>Coordinations x:{{new.x}}, y:{{new.y}}</p>
 <p>Description: {{new.description}}</p>
-<p>Temperature indegrees: {{new.degrees}}</p>
-<p>Pressure: {{new.pressure}}</p>
-<p>Humidity: {{new.humidity}}</p>
-<p>Wind speed: {{new.speed}}</p>
-<p>Wind degree: {{new.degreeOfWind}}</p>
+<p>Temperature: {{new.degrees}} Celsius</p>
+<p>Pressure: {{new.pressure}} hPa</p>
+<p>Humidity: %{{new.humidity}}</p>
+<p>Wind speed: {{new.speed}} m/s</p>
+<p>Wind degree: {{new.degreeOfWind}} degrees</p>
 
 {% if old %}
 <h2>Previous Search</h2>
@@ -20,11 +20,11 @@
 <p>Town: {{old.town}}</p>
 <p>Coordinations x:{{old.x}}, y:{{old.y}}</p>
 <p>Description: {{old.description}}</p>
-<p>Degrees: {{old.degrees}}</p>
-<p>Pressure: {{old.pressure}}</p>
-<p>Humidity: {{old.humidity}}</p>
-<p>Wind speed: {{old.speed}}</p>
-<p>Wind degree: {{old.degreeOfWind}}</p>
+<p>Temperature: {{old.degrees}} Celsius</p>
+<p>Pressure: {{old.pressure}} hPa</p>
+<p>Humidity: %{{old.humidity}}</p>
+<p>Wind speed: {{old.speed}} m/s</p>
+<p>Wind degree: {{old.degreeOfWind}} degrees</p>
 
 {% else %} 
 

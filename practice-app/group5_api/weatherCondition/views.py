@@ -12,16 +12,19 @@ def index(request):
     else:
         try:
             dictionaryOLD=WeatherConditionSerializer(WeatherCondition.objects.order_by('-id')[0])
-        except:
-            dictionaryOLD={}
-        try:
             oldData=dictionaryOLD.data
         except:
+            dictionaryOLD={}
             oldData=False
+
         town=request.POST.get('Town')
+
         api_key=settings.WEATHER_KEY
+
         api='http://api.openweathermap.org/data/2.5/weather?q={}&appid={}&units=metric'.format(town,api_key)
+
         weathercon= requests.get(api).json()
+        
         if weathercon["cod"]!="404":
             dictionaryNew={
                 "country":weathercon["sys"]["country"], 
