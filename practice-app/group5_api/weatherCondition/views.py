@@ -4,11 +4,14 @@ import requests
 from django.conf import settings
 from weatherCondition.models import WeatherCondition
 from weatherCondition.serializer import WeatherConditionSerializer
+from rest_framework.response import Response
 
-@api_view(['GET','POST'])
-def index(request):
-    if request.method=='GET':
-        return render(request,'weatherCondition/base.html',{})
+
+def weather(method,searchTown=None):
+    if method=='GET':
+        res=Response()
+        res.data={}
+        return res
     else:
         try:
             dictionaryOLD=WeatherConditionSerializer(WeatherCondition.objects.order_by('-id')[0])
@@ -17,14 +20,14 @@ def index(request):
             dictionaryOLD={}
             oldData=False
 
-        town=request.POST.get('Town')
-
+        #town=request.POST.get('Town')
+        town=searchTown
         api_key=settings.WEATHER_KEY
 
         api='http://api.openweathermap.org/data/2.5/weather?q={}&appid={}&units=metric'.format(town,api_key)
 
         weathercon= requests.get(api).json()
-        
+
         if weathercon["cod"]!="404":
             dictionaryNew={
                 "country":weathercon["sys"]["country"], 
@@ -59,5 +62,27 @@ def index(request):
             dictionaryNew={}
 
         dictionary={"new":dictionaryNew,"old":oldData}
-        
-        return render(request,'weatherCondition/weatherConditions.html',dictionary)
+        res=Response()
+        res.data=dictionary
+        print(dictionary)
+        return res
+
+@api_view(['GET','POST'])
+def showWeather(request):
+    
+    if request.method=='GET':
+        res=weather(request.method).data
+        return render(request,'weatherCondition/base.html',res)
+    else:
+        res=weather(request.method,request.POST.get("Town")).data
+        return render(request,'weatherCondition/weatherConditions.html',res)
+
+@api_view(['GET','POST'])
+def weather_api(request):
+    
+    if request.method=='GET':
+        res=weather(request.method)
+        return res
+    else:
+        res=weather(request.method,request.POST.get("Town"))
+        return res
