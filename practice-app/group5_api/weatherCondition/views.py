@@ -20,7 +20,6 @@ def weather(method,searchTown=None):
             dictionaryOLD={}
             oldData=False
 
-        #town=request.POST.get('Town')
         town=searchTown
         api_key=settings.WEATHER_KEY
 
@@ -80,5 +79,4 @@ def weather_api(request):
         return res
     else:
         res=weather(request.method,request.POST.get("Town"))
-        print(res.status_code,res.data)
         return res
