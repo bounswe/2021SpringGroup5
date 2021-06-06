@@ -1,0 +1,19 @@
+<style>
+body {
+    margin: 2% 20%;
+}
+.music-title {
+    text-align: center;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    padding: 20px;
+    font-size: 1.5em;
+}
+</style>
+
+
+{% for track in info.items %}
+
+<div class="music-title">{{track.track.name}}</div>
+<br>
+    
+{% endfor %}
