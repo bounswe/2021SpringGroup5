@@ -40,4 +40,26 @@ The functionality can be seen in the screenshots:
 
 <img width="700" src="https://user-images.githubusercontent.com/48058901/120921284-aa22cc00-c6cb-11eb-94a9-7c8123a7cee4.png">
 
+### How to run the app:
+
+- Clone the repository
+- Create and activate a virtual environment
+- Install the requirements
+- Set up a postgresql database named group5db
+- Run the following command to create the tables in the database:
+
+`python3 ./manage.py migrate`
+
+- Run the following command to start the app:
+
+`python3 ./manage.py sunserver`
+
+- Open the browser (http://127.0.0.1:8000/)
+- Enjoy the app
+- Quit the app using ctrl+c
+- You can test the app using the following command:
+
+`python3 ./manage.py test`
+
+
 For more info please contact [me](https://github.com/zudiay).
