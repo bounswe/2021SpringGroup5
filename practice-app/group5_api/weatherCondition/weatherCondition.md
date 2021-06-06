@@ -37,4 +37,4 @@ returned with the status code 201. If the data doesn't fit the limits of the mod
 
 
 ### API key
-It can be found in the .env file of the group5_db folder.<br>
+It can be found in the .env file of the group5_api folder.<br>
