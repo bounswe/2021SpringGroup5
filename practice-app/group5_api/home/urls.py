@@ -1,8 +1,9 @@
-from django.urls import path,include
+from django.urls import path, include
 
-from home import views
+from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('dailyQuote/', include('dailyQuote.urls')),
     path('weatherCondition/',include('weatherCondition.urls'))
 ]

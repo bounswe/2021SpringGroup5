@@ -1,0 +1,27 @@
+<!Doctype html5>
+<html>
+    <head>
+    <title>Group5</title>
+    </head>
+
+    <body>
+    <center>
+        <p>
+            <h1>Sports Quote of the Day</h1>
+
+            {% if response %}
+                <p> {{response.quote_text}}</p>
+                <p><i>{{response.author}}</i></p>
+                <p> Points: {{response.value}} (Rated by {{response.ratings}} people)</p>
+                <form id='rateQuote' action="" method='post'>
+                    <input type="number" name="Points" required min="0" max="5" step="1">
+                    <button type='Rate'>Rate</button>
+                </form>
+            {% else %}
+                <p>Quote not found</p>
+            {% endif %}
+
+        </p>
+    </center>
+    </body>
+</html>
