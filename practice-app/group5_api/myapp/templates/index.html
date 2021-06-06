@@ -1,0 +1,158 @@
+<!Doctype html5>
+<html>
+    <head>
+    <title>Group5 - Umut</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+    <body>
+        {% block content %}
+        <h1>Post Category</h1>
+        
+        <form id='add_category'>
+            <input type="text" placeholder="Category Name" name="category_name2" id="category_name2" required><br>
+            <input type="text" placeholder="Category Description" name="category_description" id="category_description"><br>
+            <input type="text" placeholder="Max Player" name="max_player" id="max_player"><br><br><br>
+            <input id="add_category_btn" value="Submit"></input>
+        </form>
+        <script>
+            $("#add_category_btn").click(function(e){
+                $.ajax({
+                    url: "umutAPI/add/category",
+                    type: "post",
+                    data: JSON.stringify({'category_name':$('#category_name2').val(), 'category_description':$('#category_description').val(), 'max_player':$('#max_player').val()}),
+                    dataType: "json",
+                    success: function(response) {
+                        alert("Category added succesfully");
+                    }
+                });
+            }); 
+        </script>
+
+        <br><br><br>
+
+        <h1>Get Category Description By Name</h1>
+        <form id='get_category' action="" method='GET'>
+            <input type="text" placeholder="Category Name" name="category_name" id="category_name" required>
+            <input type='submit' value="Submit"></input>
+        </form>
+        <script>
+            $('#get_category').submit(function(){
+                var category_name = $('#category_name').val();
+                $(this).attr('action', "umutAPI/category/" + category_name);
+            }); 
+        </script>
+
+        <br><br><br>
+
+        <h1>Get All Category</h1>
+        <a href="umutAPI/category">Click Here</a>
+
+        <br><br><br><br><hr><br>
+
+        <h1>Post Event Post</h1>
+        
+        <form id='add_event_post'>
+            <input type="text" placeholder="Event Post ID" name="event_post_id" id="event_post_id" required><br>
+            <input type="date" placeholder="Event Date" name="date_time" id="date_time" required><br>
+            <input type="text" placeholder="Participation Limit" name="participation_limit" id="participation_limit" required><br>
+            <input type="text" placeholder="Spectator Limit" name="spectator_limit" id="spectator_limit"><br>
+            <input type="text" placeholder="Rule" name="rule" id="rule"><br>
+            <input type="text" placeholder="Equipment Requirement" name="equipment_requirement" id="equipment_requirement"><br>
+            <input type="text" placeholder="Status" name="status" id="status"><br>
+            <input type="text" placeholder="Location" name="location" id="location"><br>
+            <input type="text" placeholder="Contact Info" name="contact_info" id="contact_info"><br>
+            <input type="text" placeholder="Skill Requirement" name="skill_requirement" id="skill_requirement"><br>
+            <input type="text" placeholder="Repeating Frequency" name="repeating_frequency" id="repeating_frequency"><br><br><br>
+
+            <input id="add_event_post_btn" value="Submit"></input>
+        </form>
+        <script>
+            $("#add_event_post_btn").click(function(e){
+                $.ajax({
+                    url: "umutAPI/add/eventPost",
+                    type: "post",
+                    data: JSON.stringify({'event_post_id':$('#event_post_id').val(), 
+                                        'category_description':$('#category_description').val(), 
+                                        'date_time':$('#date_time').val(),
+                                        'participation_limit':$('#participation_limit').val(),
+                                        'spectator_limit':$('#spectator_limit').val(),
+                                        'rule':$('#rule').val(),
+                                        'equipment_requirement':$('#equipment_requirement').val(),
+                                        'status':$('#status').val(),
+                                        'location':$('#location').val(),
+                                        'contact_info':$('#contact_info').val(),
+                                        'skill_requirement':$('#skill_requirement').val(),
+                                        'repeating_frequency':$('#repeating_frequency').val(),
+                                    }),
+                    dataType: "json",
+                    success: function(response) {
+                        alert("Event Post added succesfully");
+                    }
+                });
+            }); 
+        </script>
+
+        <br><br><br>
+
+        <h1>Get Event Post By Id</h1>
+        <form id='get_event_post' action="" method='GET'>
+            <input type="text" placeholder="Event Post ID" name="event_post_id2" id="event_post_id2" required>
+            <input type='submit' value="Submit"></input>
+        </form>
+        <script>
+            $('#get_event_post').submit(function(){
+                var event_post_id = $('#event_post_id2').val();
+                $(this).attr('action', "umutAPI/eventPost/" + event_post_id);
+            }); 
+        </script>
+
+        <br><br><br>
+
+        <h1>Get All Event Post</h1>
+        <a href="umutAPI/eventPost">Click Here</a>
+
+        <br><br><br><br><hr><br>
+
+        <h1>Get All Currency Rate with Another API</h1>
+        <a href="umutAPI/currency">Click Here</a></a>
+
+        <br><br><br>
+
+        <h1>Get A Currency Rate (Based on USD)</h1>
+        <form id='get_currency' action="" method='GET'>
+            <input type="text" placeholder="Currency Code" name="target_currency" id="target_currency" required> such as TRY, CNY, EUR, RUB
+            <input type='submit' value="Submit"></input>
+        </form>
+        <script>
+            $('#get_currency').submit(function(){
+                var target_currency = $('#target_currency').val();
+                $(this).attr('action', "umutAPI/currency/" + target_currency);
+            }); 
+        </script>
+
+        <br><br><br>
+
+        <h1>Calculator Exchange Rate (Based on USD) and Add it DB</h1>
+        <form id='add_current_currency'>
+            <input type="text" placeholder="Total Amount" name="base_total" id="base_total" required>USD<br>
+            convert to<br>
+            <input type="text" placeholder="Target Currency Code" name="target_currency2" id="target_currency2">such as TRY, CNY, EUR, RUB<br><br><br>
+            <input id="add_current_currency_btn" value="Submit"></input>
+        </form>
+        <script>
+            $("#add_current_currency_btn").click(function(e){
+                $.ajax({
+                    url: "umutAPI/add/currentCurrency",
+                    type: "post",
+                    data: JSON.stringify({'base_total':$('#base_total').val(), 'target_currency':$('#target_currency2').val() }),
+                    dataType: "json",
+                    success: function(response) {
+                        alert(response[0]['Result'] + "\nYour calculation added DB succesfully");
+                    }
+                });
+            }); 
+        </script>
+
+        {% endblock %}
+    </body>
+</html>

@@ -16,6 +16,26 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from myapp import views
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    #path('admin/', admin.site.urls),
+
+    path('umutAPI', views.index),
+    path('umutAPI/add/category', views.add_category),
+    path('umutAPI/category', views.get_all_category),
+    path('umutAPI/category/all', views.get_all_category),
+    path('umutAPI/category/<str:category_name>', views.get_category),
+
+    path('umutAPI/add/eventPost', views.add_event_post),
+    path('umutAPI/eventPost', views.get_all_event_post),
+    path('umutAPI/eventPost/all', views.get_all_event_post),
+    path('umutAPI/eventPost/<int:post_id>', views.get_event_post),
+
+    path('umutAPI/currency/', views.get_all_currency),
+    path('umutAPI/currency/all', views.get_all_currency),
+    path('umutAPI/currency/<str:target_currency>', views.get_currency),
+    path('umutAPI/add/currentCurrency', views.add_current_currency),
+
 ]
+
