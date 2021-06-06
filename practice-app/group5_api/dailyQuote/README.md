@@ -32,4 +32,12 @@ The HTML forms allows the API to get only valid inputs when taking a POST reques
 Unit tests are provided for the API.
 The details of the tests and functionality they test are explained in the comments.
 
+The functionality can be seen in the screenshots:
+
+<img width="700" src="https://user-images.githubusercontent.com/48058901/120921281-a68f4500-c6cb-11eb-88a9-6edaacf0690b.png">
+
+<img width="700" src="https://user-images.githubusercontent.com/48058901/120921283-a8f19f00-c6cb-11eb-816d-6ebeeaf1f442.png">
+
+<img width="700" src="https://user-images.githubusercontent.com/48058901/120921284-aa22cc00-c6cb-11eb-94a9-7c8123a7cee4.png">
+
 For more info please contact [me](https://github.com/zudiay).
