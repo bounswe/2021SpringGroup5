@@ -1,8 +1,8 @@
 from django.db import models
 
 class WeatherCondition(models.Model):
-    country = models.CharField(max_length=30)
-    town = models.CharField(max_length=30)
+    country = models.CharField(max_length=15)
+    town = models.CharField(max_length=15)
     x=models.FloatField()
     y=models.FloatField()
     description=models.CharField(max_length=50)

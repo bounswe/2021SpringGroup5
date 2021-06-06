@@ -8,11 +8,16 @@ from rest_framework.response import Response
 from rest_framework import status
 
 def weather(method,searchTown=None):
-    
+    """
+    returns a json response for get and post requests to the showWeather and weather_api functions
+    """
     if method=='GET':
         res={}
         return Response(res,status=status.HTTP_200_OK)
+
+    # If the request is POST
     else:
+        # Data of the previous search is retrieved. If there is no previous search, then the dictionaryOLD is an empty dictionary
         try:
             dictionaryOLD=WeatherConditionSerializer(WeatherCondition.objects.order_by('-id')[0])
             oldData=dictionaryOLD.data
@@ -20,14 +25,18 @@ def weather(method,searchTown=None):
             dictionaryOLD={}
             oldData=False
 
-        town=searchTown
         api_key=settings.WEATHER_KEY
 
-        api='http://api.openweathermap.org/data/2.5/weather?q={}&appid={}&units=metric'.format(town,api_key)
+        api='http://api.openweathermap.org/data/2.5/weather?q={}&appid={}&units=metric'.format(searchTown,api_key)
 
+        # Request is sent to the api
         weathercon= requests.get(api).json()
+
+        # If there is such a town then the data is retrieved
         if weathercon["cod"]==status.HTTP_200_OK:
+            
             dictionaryNew={
+                
                 "country":weathercon["sys"]["country"], 
                 "town":weathercon["name"], 
                 "x":weathercon["coord"]["lat"],
@@ -40,7 +49,12 @@ def weather(method,searchTown=None):
                 "degreeOfWind":weathercon["wind"]["deg"]
                 }
             
-            newWeather=WeatherCondition(country=dictionaryNew["country"],
+            ser=WeatherConditionSerializer(data=dictionaryNew)
+
+            # Checks if the returned data fits the limit of the fields in the model
+            if ser.is_valid():
+
+                newWeather=WeatherCondition(country=dictionaryNew["country"],
                 town=dictionaryNew["town"],
                 x=dictionaryNew["x"],
                 y=dictionaryNew["y"],
@@ -50,10 +64,17 @@ def weather(method,searchTown=None):
                 humidity=dictionaryNew["humidity"],
                 speed=dictionaryNew["speed"],
                 degreeOfWind=dictionaryNew["degreeOfWind"])
+
+                # New weather conditions are saved into the database
+                newWeather.save()
+                state=status.HTTP_201_CREATED
+            else:   
+                # Return values doesn't fit the limits of the model
+                state=status.HTTP_400_BAD_REQUEST
+                dictionaryNew={}
             
-            newWeather.save()
-            state=status.HTTP_201_CREATED
         else:
+            # There is no such town
             dictionaryNew={}
             state=status.HTTP_404_NOT_FOUND
 
@@ -63,7 +84,9 @@ def weather(method,searchTown=None):
 
 @api_view(['GET','POST'])
 def showWeather(request):
-    
+    """
+    renders the json response returned from the weather method with html
+    """
     if request.method=='GET':
         res=weather(request.method).data
         return render(request,'weatherCondition/base.html',res)
@@ -73,7 +96,9 @@ def showWeather(request):
 
 @api_view(['GET','POST'])
 def weather_api(request):
-    
+    """
+    returns the json response returned from the weather method
+    """
     if request.method=='GET':
         res=weather(request.method)
         return res

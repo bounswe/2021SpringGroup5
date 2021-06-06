@@ -13,8 +13,8 @@
 <p>Humidity: %{{new.humidity}}</p>
 <p>Wind speed: {{new.speed}} m/s</p>
 <p>Wind degree: {{new.degreeOfWind}} degrees</p>
-{% else %} 
-<p>Not valid town name</p>
+{% else %}
+<h3>Not valid town name</h3>
 {% endif %} 
 
 {% if old %}
@@ -30,7 +30,7 @@
 <p>Wind degree: {{old.degreeOfWind}} degrees</p>
 
 {% else %} 
-<p>No previous search</p>
+<h3>No previous search</h3>
 {% endif %} 
 
 
