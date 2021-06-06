@@ -37,5 +37,4 @@ returned with the status code 201. If the data doesn't fit the limits of the mod
 
 
 ### API key
-It can also be found in the .env file of the group5_db folder.<br>
-```WEATHER_KEY=f75b93199e38c3e944a3397b914225a5```
+It can be found in the .env file of the group5_db folder.<br>
