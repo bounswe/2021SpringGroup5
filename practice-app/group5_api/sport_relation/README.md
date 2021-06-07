@@ -6,7 +6,7 @@ There are three capabilities of API.
 
 1. You can fetch a detailed sport information with a sport `pk`
 2. You can learn top 5 similar sports to a sport by giving a sport `pk`
-3. You can get a suggestion from the API to learn which sport is the most relevant sport for you by giving three sports you interested in.
+3. You can get a suggestion from the API to learn which sport is the most relevant sport for you by giving three sport pks you interested in format `pk1-pk2-pk3`.
 
 API has a user interface which developed with help of html templates rendering by Django. You can interact with API with help of UI.
 
