@@ -1,4 +1,4 @@
-Sport Relation API is an API to learn similarities between different sports and get a suggestion from API. 
+Sport Relation API is an API to learn similarities between different sports and take a suggestion from API. 
 
 API is developed with Django Framework, and it uses PostgreSQL DBMS. Also, It uses [Decathlon API](https://developers.decathlon.com/products/sports/docs).
 
