@@ -1,6 +1,7 @@
 from django.test import TestCase
 from .models import Sport
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 
 def create_sport(id):
@@ -37,20 +38,46 @@ class SimilarSportViewTests(TestCase):
         """
         If id of sport which we wants to get similar sports is not in the database
         """
-        create_sport(1)
+        create_sport(83)
         id = 2
         url = reverse('sport_relation:api-similar', args=[id])
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 404)
 
-    def test_similar_less_than_5(self):
+    def test_retrieve_similar(self):
         """
-        Number of similart sports are less than 5
+        If retrieval of similar sport is correct
         """
-        create_sport(1)
-        id = 1
+        create_sport(83)
+        id = 83
         url = reverse('sport_relation:api-similar', args=[id])
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+
+
+class SuggestSportViewTests(TestCase):
+    def test_invalid_id(self):
+        """
+        If id of sports which we wants to get suggestion sports from them is not in the database
+        """
+        create_sport(83)
+        id = "2"
+        url = reverse('sport_relation:api-suggest',
+                      args=['-'.join([id, id, id])])
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_retrieve_similar(self):
+        """
+        If retrieval of suggestion is correct
+        """
+        create_sport(83)
+        id = "83"
+        url = reverse('sport_relation:api-suggest',
+                      args=['-'.join([id, id, id])])
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)

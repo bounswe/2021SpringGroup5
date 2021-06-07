@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions, mixins, generics
 import requests
 from .models import Sport
+from django.urls import reverse
 
 
 base_url = 'https://sports.api.decathlon.com/sports/'
@@ -59,7 +60,7 @@ class SuggestSport(APIView):
 
             related_sports = get_related_sports(pk)
 
-            if not related_sports:
+            if related_sports == False:
                 return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
             for sport in related_sports:
@@ -73,7 +74,9 @@ class SuggestSport(APIView):
                 else:  # if it is the first time we are encountering with that sport
                     suggestions[sport['id']] = sport
 
-        suggestion = max(suggestions.values(), key=lambda x: x['weight'])
+        suggestion = {}
+        if suggestions:
+            suggestion = max(suggestions.values(), key=lambda x: x['weight'])
 
         return Response(suggestion)
 
