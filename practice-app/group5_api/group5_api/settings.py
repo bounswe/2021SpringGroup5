@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'weatherCondition',
     'dailyQuote',
+    'musicapi'
     'home',
 ]
 
