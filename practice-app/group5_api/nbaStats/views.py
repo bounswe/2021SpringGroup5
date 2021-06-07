@@ -1,6 +1,6 @@
 '''
     Author: Salih Bedirhan Eker
-    Date
+    Date: 07.06.2021
 '''
 
 from django.shortcuts import render
@@ -14,7 +14,6 @@ from .models import Player
 
 
 
-
 @api_view(['GET','POST'])
 def stats_api(request):
 
@@ -22,15 +21,27 @@ def stats_api(request):
         return render(request, 'base.html')
 
     if request.method == 'POST':            # post method renders player page
+        if not request.data['player_name']:
+            return HttpResponse(status=400)
         url = 'https://www.balldontlie.io/api/v1/players?search='+request.data['player_name']
-        data = requests.get(url).json()     # gets the data and convert it into json
+
+
+        # gets the data and convert it into json
+        try:
+            data = requests.get(url).json()
+        except requests.ConnectionError:
+            return HttpResponse(status=503)
+
+
+
 
         match = True                        # is there any player with this name
-                                            # true by default
+        status=200                                    # true by default
 
 
         if len(data['data']) == 0:          # if there is no player
             match = False
+            status = 404
 
 
         players=[]                          # player list that will be send
@@ -44,4 +55,4 @@ def stats_api(request):
             player.weight = data['data'][i]['weight_pounds']
             players.append(player)
 
-        return render(request, 'player.html', {'players':players, 'match':match})   # send the infomation and match flag
+        return render(request, 'player.html', {'players':players, 'match':match}, status=status)   # send the infomation and match flag
