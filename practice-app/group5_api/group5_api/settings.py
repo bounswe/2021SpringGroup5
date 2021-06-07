@@ -55,6 +55,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'group5_api.urls'
+#musicapi token and id
+TOKEN = {'Authorization': 'Bearer BQC7qSviMiyApobzz7vxKbiAIkUQtnVUBdMmvDHJ9K7oGE4SSExlW25-kcfOKahnEIJLnpbVmlfR6Z419e3AuTWluN-IXVfCfezXZMs5Nkv3Sf-SFgS9WvhpBj4UTCZqKPoZlDJJJCPY81EBf2Q4hrWkiqsHXOdDEjJaBPhBSXh8rA0GYsuMEkICeH01DHAZU4BaSZbv_fmIz5Ad9RloPZI26kl3RR-gQVmbp-Ls72iLnYQZFTKHVgoLpm_f0p4dSlDksAJBGNq2qG1zF-Jr7L7rm2YOoIRghRhxcxVB'}
+PLAYLIST_ID= "4JhDvULKIy5CXyzJRufHLt"
 
 TEMPLATES = [
     {
