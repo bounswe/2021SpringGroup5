@@ -58,7 +58,7 @@ ROOT_URLCONF = 'group5_api.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR/"nbaStats/templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
