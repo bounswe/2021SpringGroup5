@@ -5,4 +5,5 @@ urlpatterns = [
     path('', musicapi, name="musicapi"),
     path('musicAPI', GetMusicView.as_view(), name="musicAPI"),
     path('music', get_music, name="music"),
+    path('api/',GetMusicView.as_view()),
 ]
