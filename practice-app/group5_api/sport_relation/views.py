@@ -84,7 +84,7 @@ class SuggestSport(APIView):
         return Response(suggestion)
 
 
-# It is a script for only one time run. It can only be runned by Superadmin to avoid possible security bug
+# It is a script for only one time run. It can only be run by Superadmin to avoid possible security bug
 # It will fill the database with sports which are fetched from Decathlon API, with necessary fields.
 class SaveSportListScript(APIView):
     permission_classes = [permissions.IsAdminUser]
