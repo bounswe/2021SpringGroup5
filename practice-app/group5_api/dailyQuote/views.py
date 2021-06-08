@@ -12,14 +12,14 @@ def quote():
     today = str(datetime.utcnow().date())
     points, ratings, value = 0, 0 , 0
 
-    # get the quote with the nearest date from the database, if exists
+    # get the quote with todays date from the database, if exists
     try:
-        quote_in_db = DailyQuoteSerializer(DailyQuote.objects.order_by('-date')[0]).data
+        quote_in_db = DailyQuoteSerializer(DailyQuote.objects.filter(date=today)[0]).data
     except:
         quote_in_db = None
 
     # if the quote of today has been saved before, take the points and ratings
-    if quote_in_db is not None and quote_in_db['date'] == today:
+    if quote_in_db is not None:
         points = quote_in_db["points"]
         ratings = quote_in_db["ratings"]
 
@@ -42,10 +42,8 @@ def quote():
         quote_text = res["quote_text"]
         author = res["author"]
         date = res["date"]
-
         # if there is not a row in the database for today, create a new object and save it to the database
-        if (quote_in_db is not None and not quote_in_db['date'] == today) \
-                or quote_in_db is None:
+        if quote_in_db is None:
             new_quote = DailyQuote(quote_text=quote_text, author=author, date=date,
                                    points=0, ratings=0)
             new_quote.save()
@@ -77,9 +75,10 @@ def rate(points):
         status = s.HTTP_400_BAD_REQUEST
         return Response({"response": dictionary}, status=status)
 
+    today = str(datetime.utcnow().date())
     # if somebody has rated, the quote they liked is today's quote, which is in the database
     try:
-        quote_in_db = DailyQuoteSerializer(DailyQuote.objects.order_by('-date')[0]).data
+        quote_in_db = DailyQuoteSerializer(DailyQuote.objects.filter(date=today)[0]).data
     except:
         quote_in_db = None
 
