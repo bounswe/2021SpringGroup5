@@ -1,19 +1,19 @@
 # weatherCondition API description
 
 ## For the API service functionality
-## GET functionality
+### GET functionality
 It returns an empty json with status code 200.
 
-## POST functionality
+### POST functionality
 When the user gives a json in this format:
 ```{ Town : town_name }```
 it returns the weather condition of the town with the data of the previous search.
 
 ## For the UI of the API
-## GET functionality
+### GET functionality
 It returns a form to write a town name to get its weather condition.
 
-## POST functionality
+### POST functionality
 When the user has typed a town name, it returns the weather condition of the town with the data of the previous search as two lists.
 If the current search is not appropriate, it says "Not valid town name" and if there is no previous search it says "No previous search"
 
@@ -39,7 +39,7 @@ Weather condition of a town is returned from openweathermap API via this URI:<br
 
 Return value:
 Data of the previous search is also provided. If openweathermap API returns with status code 200, the validity of the data is
-checked. If the data fits the limits of the model then the data is saved in the database, old and new weather conditions are
+checked. If the data fits the limits of the model (If the length of the town and country names are less than or equal to 15 and the length of description is less than or equal to 50) then the data is saved in the database, the previous one and new weather conditions are
 returned with the status code 201. If the data doesn't fit the limits of the model, then only the previous data ise sent with the status code 400. <br>
 
 ### def showWeather(request)
@@ -48,3 +48,95 @@ It renders the data in the response returned by the ```weather(method,searchTown
 
 ### API key
 It can be found in the .env file of the group5_api folder.<br>
+
+## Example API requests and responses
+
+Get Request:<br>
+```None``` given<br>
+
+Response:<br>
+```{}```<br>
+
+Status code: 200<br>
+
+Post Request 1: <br>
+```{“Town” : “London”}```<br>
+Response:<br>
+```{
+    "new": {
+        "country": "GB",
+        "town": "London",
+        "x": 51.5085,
+        "y": -0.1257,
+        "description": "broken clouds",
+        "degrees": 24.12,
+        "pressure": 1023,
+        "humidity": 49,
+        "speed": 3.02,
+        "degreeOfWind": 248
+    },
+    "old": {
+        "id": 1,
+        "country": "TR",
+        "town": "Istanbul",
+        "x": 41.0351,
+        "y": 28.9833,
+        "description": "clear sky",
+        "degrees": 22.28,
+        "pressure": 1016.0,
+        "humidity": 53.0,
+        "speed": 1.71,
+        "degreeOfWind": 162.0
+    }
+}
+```
+Status code: 201<br>
+
+Post Request 2: <br>
+```{"Town" : "shoe" }```<br>
+Response:<br>
+```{
+    "new": {},
+    "old": {
+        "id": 1,
+        "country": "TR",
+        "town": "Istanbul",
+        "x": 41.0351,
+        "y": 28.9833,
+        "description": "clear sky",
+        "degrees": 22.28,
+        "pressure": 1016.0,
+        "humidity": 53.0,
+        "speed": 1.71,
+        "degreeOfWind": 162.0
+    }
+}
+```
+Status Code: 404<br>
+
+Post Request 3:<br>
+```{"Town" : "llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch"}```
+Response:<br>
+```{
+    "new": {},
+    "old": {
+        "id": 1,
+        "country": "TR",
+        "town": "Istanbul",
+        "x": 41.0351,
+        "y": 28.9833,
+        "description": "clear sky",
+        "degrees": 22.28,
+        "pressure": 1016.0,
+        "humidity": 53.0,
+        "speed": 1.71,
+        "degreeOfWind": 162.0
+    }
+}
+```
+Status Code: 400
+## Example UI images of the API
+1. Type a town name
+![res](https://user-images.githubusercontent.com/56361766/121249127-e82b1600-c8ac-11eb-92f4-50042df7b641.jpg)
+2. The result of the current search and the previous search(if there is) is provided.
+![tmp](https://user-images.githubusercontent.com/56361766/121251277-5cff4f80-c8af-11eb-9863-156ddace5b9f.jpg)
