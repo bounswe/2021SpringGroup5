@@ -28,9 +28,12 @@ class SportDetailViewTests(TestCase):
         id = 1
         url = reverse('sport_relation:api-sports', args=[id])
         response = self.client.get(url)
+        fetched_sport = response.json()
 
+        self.assertEqual(fetched_sport['id'], sport.id)
+        self.assertEqual(fetched_sport['name'], sport.name)
+        self.assertEqual(fetched_sport['description'], sport.description)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(sport.name, response.json()['name'])
 
 
 class SimilarSportViewTests(TestCase):
@@ -53,7 +56,9 @@ class SimilarSportViewTests(TestCase):
         id = 83
         url = reverse('sport_relation:api-similar', args=[id])
         response = self.client.get(url)
+        similar_sports = response.json()
 
+        self.assertTrue(isinstance(similar_sports, list))
         self.assertEqual(response.status_code, 200)
 
 
@@ -79,5 +84,7 @@ class SuggestSportViewTests(TestCase):
         url = reverse('sport_relation:api-suggest',
                       args=['-'.join([id, id, id])])
         response = self.client.get(url)
+        suggestion = response.json()
 
+        self.assertTrue(isinstance(suggestion, dict))
         self.assertEqual(response.status_code, 200)
