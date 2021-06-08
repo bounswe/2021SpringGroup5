@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'dailyQuote',
     'musicapi',
     'home',
+    'exchangeRateAPI',
 ]
 
 MIDDLEWARE = [
