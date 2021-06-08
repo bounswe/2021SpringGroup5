@@ -1,5 +1,4 @@
 """group5_api URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
 Examples:
@@ -14,28 +13,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-
-from myapp import views
+from django.urls import path,include
 
 urlpatterns = [
-    #path('admin/', admin.site.urls),
-
-    path('umutAPI', views.index),
-    path('umutAPI/add/category', views.add_category),
-    path('umutAPI/category', views.get_all_category),
-    path('umutAPI/category/all', views.get_all_category),
-    path('umutAPI/category/<str:category_name>', views.get_category),
-
-    path('umutAPI/add/eventPost', views.add_event_post),
-    path('umutAPI/eventPost', views.get_all_event_post),
-    path('umutAPI/eventPost/all', views.get_all_event_post),
-    path('umutAPI/eventPost/<int:post_id>', views.get_event_post),
-
-    path('umutAPI/currency/', views.get_all_currency),
-    path('umutAPI/currency/all', views.get_all_currency),
-    path('umutAPI/currency/<str:target_currency>', views.get_currency),
-    path('umutAPI/add/currentCurrency', views.add_current_currency),
-
+    path('admin/', admin.site.urls),
+    path('',include('home.urls'))
 ]
-
