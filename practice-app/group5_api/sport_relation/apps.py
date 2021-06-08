@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class DailyQuoteConfig(AppConfig):
+class SportRelationConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'dailyQuote'
+    name = 'sport_relation'
