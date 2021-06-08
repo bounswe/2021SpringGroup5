@@ -75,9 +75,10 @@ def rate(points):
         status = s.HTTP_400_BAD_REQUEST
         return Response({"response": dictionary}, status=status)
 
+    today = str(datetime.utcnow().date())
     # if somebody has rated, the quote they liked is today's quote, which is in the database
     try:
-        quote_in_db = DailyQuoteSerializer(DailyQuote.objects.order_by('-date')[0]).data
+        quote_in_db = DailyQuoteSerializer(DailyQuote.objects.filter(date=today)[0]).data
     except:
         quote_in_db = None
 
