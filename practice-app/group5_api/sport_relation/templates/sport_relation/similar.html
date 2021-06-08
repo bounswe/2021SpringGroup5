@@ -5,10 +5,12 @@
 
     <!-- <div class="row justify-content-center"> -->
         <h3 class="text-center">Similar Sports with <i>{{root_sport.name}}</i></h3>
-
+        
         <ul class="list-group">
             {% for sport in similar_sports %}
                 <li class="list-group-item">{{sport.name}}</li>
+                {% empty %}
+                <li class="list-group-item">No similar sports found</li>
             {% endfor %}
         </ul>
 

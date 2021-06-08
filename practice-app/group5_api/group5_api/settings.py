@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'group5_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'group5db',
+        'NAME': 'sports_table',
         'USER': 'postgres',
         'PASSWORD': 'atasoy3',
         'HOST': 'localhost',
