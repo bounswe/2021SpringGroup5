@@ -1,0 +1,18 @@
+<!Doctype html5>
+<html>
+    <head>
+    <title>Group5-Random Activity</title>
+    </head>
+
+    <body>
+    <center>
+	<h1>Random activity generator for bored people</h1>
+        <p>
+            {% block content %}
+            Your random activity is a <b>{{ type }}</b> type of activity, 
+	it is <b>{{ activity}}</b>. It can be done with <b>{{ participants }}</b> participant(s).
+            {% endblock %}
+        </p>
+    </center>
+    </body>
+</html>

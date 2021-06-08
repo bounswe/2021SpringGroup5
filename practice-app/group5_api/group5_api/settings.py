@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'sport_relation.apps.SportRelationConfig',
+    'randomActivity.apps.RandomactivityConfig',
     'rest_framework',
     'weatherCondition',
     'dailyQuote',
