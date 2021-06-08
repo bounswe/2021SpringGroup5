@@ -52,7 +52,7 @@ The functionality can be seen in the screenshots:
 
 - Run the following command to start the app:
 
-`python3 ./manage.py sunserver`
+`python3 ./manage.py runserver`
 
 - Open the browser (http://127.0.0.1:8000/)
 - Enjoy the app
