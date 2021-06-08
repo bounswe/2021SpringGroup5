@@ -22,10 +22,13 @@ class AirQualityTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_get_location(self):
-        data = {'user_id': '5'}
         client = APIClient()
+        data = {'user_id': '5', 'latitude': '39.7667', 'longitude': '30.5256'}
+        client.post('/api/locations/', data)
+        data = {'user_id': '5'}
         response = client.get('/api/locations/', data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(list(response.data[0].keys()), ['created', 'user_id', 'latitude', 'longitude'])
 
     def test_get_latest_pollution_of_user_location(self):
         client = APIClient()
@@ -34,3 +37,4 @@ class AirQualityTests(APITestCase):
         data = {'user_id': '5'}
         response = client.get('/api/pollution/', data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(list(response.data.keys()), ['aqi', 'name', 'color', 'description', 'polluiton_ts', 'city', 'state', 'country', 'coordinates'])

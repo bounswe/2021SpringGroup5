@@ -4,6 +4,7 @@ from .serializers import LocationSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
+from django.shortcuts import render
 import requests
 
 
@@ -74,12 +75,20 @@ def location_list(request):
 
     if request.method == 'GET':
         if 'user_id' in request.GET:
-            locations = Location.objects.filter(user_id=request.GET['user_id'])
+            user_id = request.GET['user_id']
+            try:
+                user_id = int(user_id)
+            except:
+                return Response("Invalid user_id: {}".format(user_id), status=status.HTTP_400_BAD_REQUEST)
+
+            locations = Location.objects.filter(user_id=user_id)
+            if not locations.exists():
+                return Response("User with id {} has no location history.".format(user_id), status=status.HTTP_404_NOT_FOUND)
         else:
             locations = Location.objects.all()
 
         serializer = LocationSerializer(locations, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
         serializer = LocationSerializer(data=request.data)
@@ -87,3 +96,12 @@ def location_list(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+def view_page(request):
+    response = get_pollution(request).data
+    print(response)
+    if isinstance(response, str):
+        return render(request, 'airqualityapi/base.html')
+
+    return render(request, 'airqualityapi/base.html', response)
