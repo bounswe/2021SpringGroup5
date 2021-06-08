@@ -9,5 +9,6 @@ urlpatterns = [
     path('weatherCondition/',include('weatherCondition.urls')),
     path('nbaStats/', include('nbaStats.urls')),
     path('musicapi/',include('musicapi.urls')),
-    path('exchangeRateAPI/', include('exchangeRateAPI.urls'))
+    path('exchangeRateAPI/', include('exchangeRateAPI.urls')),
+    path('airQuality/', include('airqulityapi.urls'))
 ]

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'sport_relation.apps.SportRelationConfig',
     'randomActivity.apps.RandomactivityConfig',
+    'airqualityapi.apps.AirqualityapiConfig'
     'rest_framework',
     'weatherCondition',
     'dailyQuote',
@@ -137,3 +138,4 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 WEATHER_KEY = decouple.config('WEATHER_KEY', default='')
+POLLUTION_KEY = decouple.config('POLLUTION_KEY', default='')
