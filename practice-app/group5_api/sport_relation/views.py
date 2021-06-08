@@ -25,6 +25,7 @@ class SportDetail(mixins.RetrieveModelMixin, generics.GenericAPIView):
 def get_related_sports(pk):
     url = base_url + str(pk)
     try:
+        print(url)
         sports = requests.get(url).json()
         # if there is not any related sport (in this case decathlon api will not return a list for related field)
         if not isinstance(sports['data']['relationships']['related'], list):
