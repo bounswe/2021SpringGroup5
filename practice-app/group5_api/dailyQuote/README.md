@@ -467,4 +467,5 @@ Above part checks a successful response of POST request.  First, a GET request i
 Above part checks if the invalid responses are handled during POST requests. First, a GET request is made and then 5 different illegal POST requests are made. The request should contain the key “Points”. The values allowed for “Points” are integer values 0,1,2,3,4 and 5. Any other value is responsed with 400, Bad Request.
 <br><br>
 
+This document can be found in pdf form [here](https://github.com/bounswe/2021SpringGroup5/blob/master/practice-app/group5_api/dailyQuote/DAILY%20SPORTS%20QUOTE%20APP.pdf).
 For more info please contact [me](https://github.com/zudiay).
