@@ -1,5 +1,6 @@
 # weatherCondition API description
 
+## For the API service functionality
 ## GET functionality
 It returns an empty json with status code 200.
 
@@ -7,6 +8,14 @@ It returns an empty json with status code 200.
 When the user gives a json in this format:
 ```{ Town : town_name }```
 it returns the weather condition of the town with the data of the previous search.
+
+## For the UI of the API
+## GET functionality
+It returns a form to write a town name to get its weather condition.
+
+## POST functionality
+When the user has typed a town name, it returns the weather condition of the town with the data of the previous search as two lists.
+If the current search is not appropriate, it says "Not valid town name" and if there is no previous search it says "No previous search"
 
 ## Functions
 ### def weather_api(request)
