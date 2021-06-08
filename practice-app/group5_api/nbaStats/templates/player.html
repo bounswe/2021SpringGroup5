@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deneme</title>
+</head>
+<body style="text-align:center" bgcolor="#ff7f50">
+
+
+{% if match %}
+<center>
+<form >
+    <table>
+
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Position</th>
+            <th>Team</th>
+            <th>Height(pounds)</th>
+            <th>Weight(feet)</th>
+        </tr>
+        {% for player in players %}
+            <tr>
+                <td>{{player.first_name}}</td>
+                <td>{{player.last_name}}</td>
+                <td>{{player.position}}</td>
+                <td>{{player.team}}</td>
+                <td>{{player.height}}</td>
+                <td>{{player.weight}}</td>
+
+            </tr>
+        {% endfor %}
+
+
+    </table>
+</form>
+</center>
+
+{% else %}
+    <h2>There are no players in this name!</h2>
+    Please go back:<br>
+    <a href=""> Click here </a>
+{% endif %}
+
+</body>
+</html>
