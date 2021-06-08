@@ -30,6 +30,7 @@ class AirQualityTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(list(response.data[0].keys()), ['created', 'user_id', 'latitude', 'longitude'])
 
+    # Creates a location and tests pollution for that location
     def test_get_latest_pollution_of_user_location(self):
         client = APIClient()
         data = {'user_id': '5', 'latitude': '39.7667', 'longitude': '30.5256'}
