@@ -13,21 +13,21 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 
+import decouple
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ornm0-+sderfy+_2lj$gfc9tyjit@+lidfruvn(((t&%^$9!ph'
+SECRET_KEY = decouple.config('SECRET_KEY', default='')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -40,6 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'sport_relation.apps.SportRelationConfig',
     'rest_framework',
+    'weatherCondition',
+    'dailyQuote',
+    'musicapi'
+    'home',
 ]
 
 MIDDLEWARE = [
@@ -53,11 +57,14 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'group5_api.urls'
+#musicapi token and id
+TOKEN = {'Authorization': 'Bearer BQC7qSviMiyApobzz7vxKbiAIkUQtnVUBdMmvDHJ9K7oGE4SSExlW25-kcfOKahnEIJLnpbVmlfR6Z419e3AuTWluN-IXVfCfezXZMs5Nkv3Sf-SFgS9WvhpBj4UTCZqKPoZlDJJJCPY81EBf2Q4hrWkiqsHXOdDEjJaBPhBSXh8rA0GYsuMEkICeH01DHAZU4BaSZbv_fmIz5Ad9RloPZI26kl3RR-gQVmbp-Ls72iLnYQZFTKHVgoLpm_f0p4dSlDksAJBGNq2qG1zF-Jr7L7rm2YOoIRghRhxcxVB'}
+PLAYLIST_ID= "4JhDvULKIy5CXyzJRufHLt"
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR/"nbaStats/templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -72,21 +79,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'group5_api.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'sports_table',
+        'NAME': 'group5db',
         'USER': 'postgres',
-        'PASSWORD': 'atasoy3',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'PASSWORD': 'group5',
+        'HOST': '127.0.0.1',
+        'PORT': '',
     }
-}
 
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -106,7 +112,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -120,7 +125,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
@@ -130,3 +134,4 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+WEATHER_KEY = decouple.config('WEATHER_KEY', default='')
