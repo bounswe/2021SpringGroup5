@@ -99,7 +99,7 @@ This is a successful response with status code 200.
     "response": False
 }`
 
-This is an unsuccessful response with status code 400.
+This is an unsuccessful response with status code 400 as the value is greater than 5.
 
 ### Example Response (Points = bad_request)
 
@@ -108,7 +108,7 @@ This is an unsuccessful response with status code 400.
     "response": False
 }`
 
-This is an unsuccessful response with status code 400.
+This is an unsuccessful response with status code code 400 as the value is not an integer.
 
 # RUNNING THE APP
 
