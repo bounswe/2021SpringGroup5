@@ -1,20 +1,29 @@
 version: "3.9"
-   
+
 services:
   db:
     image: postgres
     volumes:
       - ./data/db:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=group5db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=group5
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    restart: always
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command:
+      - /bin/bash
+      - -c
+      - |
+        python manage.py makemigrations
+        python manage.py migrate
+        echo "from django.contrib.auth.models import User; User.objects.create_superuser('${ADMIN_USERNAME}', '${ADMIN_EMAIL}', '${ADMIN_PASSWORD}')" | python manage.py shell
+        python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
     ports:
       - "8000:8000"
     depends_on:
       - db
+    restart: always
