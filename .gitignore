@@ -3,3 +3,5 @@
 /venv/
 /practice-app/group5_api/package-lock.json
 **/.DS_Store
+__pycache__
+/practice-app/group5_api/data/
