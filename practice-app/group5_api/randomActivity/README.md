@@ -3,6 +3,15 @@
 <p>Random activity generator API is an application programming interface which shows different activities every time it asked. It generates different types of activities with different number of people.
 Target user of the API is bored people as it is written at the top of the html page. For generating random activities, as a third party API, boredAPI (https://www.boredapi.com/) is used.</p>
 
+<h2>How to Run</h2>
+<ul>
+	<li>Create a virtual environment</li>
+	<li>Install requirements of the API.(requirements.txt)</li>
+	<li>From python run the command: python3 ./manage.py migrate</li>
+	<li>From python run the command: python3 ./manage.py sunserver</li>
+	<li>From browser open the link: http://127.0.0.1:8000/</li>
+	</ul>
+	
 <h2>Request and response of boredAPI</h2>
 <p>It requests with get method via http://www.boredapi.com/api/activity/.</p>
 <p>Result of this request is in JSON format. An example output is like that:</p>
@@ -39,7 +48,7 @@ Target user of the API is bored people as it is written at the top of the html p
   
   
 <h2>User Interface of the API</h2>
-![randomActivity](https://user-images.githubusercontent.com/81261090/121298659-e8530200-c8fc-11eb-92d4-a0a95fcaf8da.png)
+<img src="https://user-images.githubusercontent.com/81261090/121298659-e8530200-c8fc-11eb-92d4-a0a95fcaf8da.png" class="img-responsive" alt=""> </div>
 
 
   
