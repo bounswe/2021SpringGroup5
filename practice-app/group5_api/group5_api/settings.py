@@ -38,9 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'sport_relation.apps.SportRelationConfig',
-    'randomActivity.apps.RandomactivityConfig',
-    'airqualityapi.apps.AirqualityapiConfig'
+    'sport_relation',
+    'randomActivity',
     'rest_framework',
     'weatherCondition',
     'dailyQuote',
@@ -48,6 +47,7 @@ INSTALLED_APPS = [
     'home',
     'exchangeRateAPI',
     'core',
+    'airqualityapi'
 ]
 
 MIDDLEWARE = [
