@@ -11,6 +11,6 @@ urlpatterns = [
     path('musicapi/',include('musicapi.urls')),
     path('exchangeRateAPI/', include('exchangeRateAPI.urls')),
     path('airQuality/', include('airqualityapi.urls')),
-    path('core/',include('core.urls')),
-    path('randomActivity/',include('randomActivity.urls'))
+    path('randomActivity/', include('randomActivity.urls')),
+    path('core/', include('core.urls')),
 ]

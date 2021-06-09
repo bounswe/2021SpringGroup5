@@ -27,7 +27,7 @@ SECRET_KEY = decouple.config('SECRET_KEY', default='')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -92,8 +92,8 @@ DATABASES = {
         'NAME': 'group5db',
         'USER': 'postgres',
         'PASSWORD': 'group5',
-        'HOST': '127.0.0.1',
-        'PORT': '',
+        'HOST': 'db',
+        'PORT': 5432,
     }
 
 }
