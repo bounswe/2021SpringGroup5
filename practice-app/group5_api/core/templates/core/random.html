@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+
+	<h2>Random Person Generator</h2>
+	<p>{% block content %}
+            Your random person's name is  <b>{{ name }} {{ surname }}</b>. This person is <b>{{ gender}}.</b> 
+			This person is  <b>{{ age }}</b> years old.
+            {% endblock %}
+        </p>
+
