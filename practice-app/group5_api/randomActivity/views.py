@@ -9,7 +9,8 @@ from .serializers import ActivitySerializer
 from .models import Activity
 import requests
 
-
+#Send get method to retrieve data from boredAPI
+#It returns data with JSON format
 class ActivityViewSet(viewsets.ModelViewSet):
     queryset = Activity.objects.all().order_by('activity')
     serializer_class = ActivitySerializer
