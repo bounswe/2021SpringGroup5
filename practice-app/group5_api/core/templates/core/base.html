@@ -7,13 +7,13 @@
 </head>
 <body>
 	<h1>Sports Application</h1>
-	<a href="{% url 'home' %}">Home</a>/
+	<a href="{% url 'core:home' %}">Home</a>/
 	{% if user.is_authenticated %}
-	<a href="{% url 'logout' %}">Log Out</a>
+	<a href="{% url 'core:logout' %}">Log Out</a>
 	{% else %}
-	<a href="{% url 'signup' %}">Sign Up</a>/
-	<a href="{% url 'login' %}">Log In</a>/
-	<a href="{% url 'random' %}">Random Person</a>
+	<a href="{% url 'core:signup' %}">Sign Up</a>/
+	<a href="{% url 'core:login' %}">Log In</a>/
+	<a href="{% url 'core:random' %}">Random Person</a>
 	{% endif %}
 	
 	<hr>
