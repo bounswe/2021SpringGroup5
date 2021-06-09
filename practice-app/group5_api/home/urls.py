@@ -10,5 +10,7 @@ urlpatterns = [
     path('nbaStats/', include('nbaStats.urls')),
     path('musicapi/',include('musicapi.urls')),
     path('exchangeRateAPI/', include('exchangeRateAPI.urls')),
-    path('airQuality/', include('airqulityapi.urls'))
+    path('airQuality/', include('airqulityapi.urls')),
+    path('randomActivity/', include('randomActivity.urls')),
+    path('core/', include('core.urls')),
 ]
