@@ -202,7 +202,7 @@ def rate(points):
 
     return Response({"response": dictionary}, status=status)
 ```
-Above, the rate() function is given. The quote function basically returns a response with a body and a status. It is the code that runs when a POST request is made. Rows are explained in detail in the comments. The general logical flow is as follows: First the input is validated to be 0,1,2,3,4 or 5. If not, HTTP 400 is returned. If the input is valid, the row with today’s date is read from the database. The points and ratings are updated and updated in the database. Then, a success response is returned with the quote, author, value and ratings. If due to some unlikely error, the data could not be read from the database, HTTP 404 is returned.
+Above, the rate() function is given. The rate function basically returns a response with a body and a status. It is the code that runs when a POST request is made. Rows are explained in detail in the comments. The general logical flow is as follows: First the input is validated to be 0,1,2,3,4 or 5. If not, HTTP 400 is returned. If the input is valid, the row with today’s date is read from the database. The points and ratings are updated and updated in the database. Then, a success response is returned with the quote, author, value and ratings. If due to some unlikely error, the data could not be read from the database, HTTP 404 is returned.
 <br><br>
 
 # 3. API DOCUMENTATION
