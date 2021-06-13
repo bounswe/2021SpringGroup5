@@ -10,6 +10,10 @@ import requests
 
 @api_view(['GET'])
 def get_pollution(request):
+    """
+    Base view of the API. Returns air quality, classification of air quality, description, city and country.
+    Uses given coordinates (lat, lon) or user_id, which uses user's last saved location.
+    """
     if request.method == 'GET':
 
         if 'lat' in request.GET and 'lon' in request.GET:
@@ -72,7 +76,11 @@ def get_pollution(request):
 
 @api_view(['GET', 'POST'])
 def location_list(request):
-
+    """
+    If the method is GET this view returns all recorded locations.
+    If the method is GET and user_id is provided, this view returns all recorded locations for that user.
+    If the method is POST this view saves the location if it is valid.
+    """
     if request.method == 'GET':
         if 'user_id' in request.GET:
             user_id = request.GET['user_id']
@@ -99,6 +107,9 @@ def location_list(request):
 
 
 def view_page(request):
+    """
+    Returns a response with page template.
+    """
     response = get_pollution(request).data
     print(response)
     if isinstance(response, str):
