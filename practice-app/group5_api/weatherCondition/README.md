@@ -1,5 +1,6 @@
 # weatherCondition API description
-
+It returns the weather condition of the searched town with the data of the previous search.
+Country, town, x and y coordinations, description of the weather, pressure, temperature, humidity, speed and angle of the wind is provided.
 ## For the API service functionality
 ### GET functionality
 It returns an empty json with status code 200.
