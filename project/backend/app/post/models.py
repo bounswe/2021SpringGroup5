@@ -12,9 +12,9 @@ class Sport(models.Model):
 
 
 class Post(models.Model):
-    name=models.CharField(null=False,blank=False,max_length=30)
+    post_name=models.CharField(null=False,blank=False,max_length=30)
     owner_id=models.ForeignKey(User,on_delete=models.CASCADE)
-    type_of_sport=models.ForeignKey(Sport,on_delete=models.CASCADE)
+    type_of_sport_id=models.ForeignKey(Sport,on_delete=models.CASCADE)
     created_date=models.DateTimeField(auto_now_add=True)
     description=models.CharField(max_length=200,null=False)
     location=models.CharField(null=True,blank=True,max_length=200)
@@ -23,10 +23,13 @@ class EquipmentPost(Post):
     
     link=models.CharField(null=True,blank=True)
     active=models.BooleanField(null=False)
+
+class EventPost(Post):
+    pass
     
-class EquipmentComments(models.Model):
+class Comment(models.Model):
     content=models.CharField(max_length=300)
     owner_id=models.ForeignKey(User,on_delete=models.CASCADE)
     created_date=models.DateTimeField(auto_now_add=True)
-    
+    post_id=models.ForeignKey(Post,on_delete=models.CASCADE)
 
