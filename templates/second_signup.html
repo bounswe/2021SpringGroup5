@@ -1,0 +1,16 @@
+<h1>Sign up </h1>
+
+<p> You activated your account, {{ user.name}}</p>
+<form method="POST" action="register_second" >
+    {% csrf_token %}
+  <p>Name</p>
+  <input type="text" name="username" value="{{data.username}}">
+  <p>Password</p>
+  <input type="password" name="password" value="{{data.password}}">
+  <p>Rewrite the password</p>
+  <input type="password" name="password2" value="{{data.password2}}">
+    <input type="hidden" name="name" value="{{ user.name }}">
+    <input type="hidden" name="surname" value="{{ user.surname }}">
+    <input type="hidden" name="mail" value="{{ user.mail }}">
+   <input type="submit" name="submit">
+</form>
