@@ -8,7 +8,7 @@ from django.db.models.fields.related import ForeignKey
 
 class Sport(models.Model):
     sport_name=models.CharField(max_length=30,null=False,unique=True)
-    equipments=models.TextField(max_length=300)
+    equipments=models.TextField(null=False,blank=False,max_length=300)
     max_players=models.IntegerField(null=True,blank=True)
     special_location=models.CharField(null=True,blank=True,max_length=30)
     general_rules=models.TextField(null=True,blank=True,max_length=300)
@@ -34,11 +34,11 @@ class EventPost(models.Model):
     date_time=models.DateTimeField(null=False,blank=False)
     participant_limit=models.IntegerField(null=False,blank=False)
     spectator_limit=models.IntegerField(null=False,blank=False)
-    rule=models.CharField(null=False,blank=False,max_length=250)
-    equipment_requirement=models.CharField(null=False,blank=False,max_length=250)
+    rule=models.TextField(null=False,blank=False,max_length=300)
+    equipment_requirement=models.TextField(null=False,blank=False,max_length=300)
     status=models.CharField(null=False,blank=False,max_length=10)
     capacity=models.CharField(null=False,blank=False,max_length=25)
-    location_requirement=models.CharField(null=True,blank=True,max_length=100)
+    location_requirement=models.CharField(null=True,blank=True,max_length=30)
     contact_info=models.CharField(null=True,blank=True,max_length=50)
     skill_requirement=models.CharField(null=False,blank=False,max_length=10)
     repeating_frequency=models.IntegerField(null=False,blank=False)
