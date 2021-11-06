@@ -8,7 +8,7 @@ from django.db.models.fields.related import ForeignKey
 
 class Sport(models.Model):
     sport_name=models.CharField(max_length=30,null=False,unique=True)
-    equipments=models.TextField(null=False,blank=False,max_length=300)
+    equipments=models.TextField(null=True,blank=True,max_length=300)
     max_players=models.IntegerField(null=True,blank=True)
     special_location=models.CharField(null=True,blank=True,max_length=30)
     general_rules=models.TextField(null=True,blank=True,max_length=300)
@@ -23,7 +23,8 @@ class EquipmentPost(models.Model):
     location=models.CharField(null=True,blank=True,max_length=200)
     link=models.URLField(null=True,blank=True)
     active=models.BooleanField(null=False,blank=False)
-
+    pathToEquipmentPostImage=models.URLField()
+    
 class EventPost(models.Model):
     post_name=models.CharField(null=False,blank=False,max_length=30)
     owner_id=models.ForeignKey(User,on_delete=models.CASCADE)
@@ -40,9 +41,19 @@ class EventPost(models.Model):
     capacity=models.CharField(null=False,blank=False,max_length=25)
     location_requirement=models.CharField(null=True,blank=True,max_length=30)
     contact_info=models.CharField(null=True,blank=True,max_length=50)
-    skill_requirement=models.CharField(null=False,blank=False,max_length=10)
     repeating_frequency=models.IntegerField(null=False,blank=False)
-    
+    pathToEventImage=models.URLField()
+
+class SkillLevel(models.Model):
+    level_name=models.CharField(null=False,blank=False,max_length=10, unique=True)
+
+class EventPostSkillRequirements(models.Model):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['event_post_id', 'level'], name='skill requirements for an event post')
+        ]
+    event_post_id=models.ForeignKey(EventPost,on_delete=CASCADE)
+    level=models.ForeignKey(SkillLevel,on_delete=CASCADE)
 
 class Application(models.Model):
     class Meta:
