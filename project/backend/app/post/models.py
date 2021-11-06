@@ -64,11 +64,8 @@ class Comment(models.Model):
 class Badge(models.Model):
     name=models.CharField(max_length=100,null=False,blank=False)
     description=models.TextField(max_length=300, null=True, blank=True)
-    owner_id=models.ForeignKey(User, on_delete=models.CASCADE)
-    date_time=models.DateTimeField(auto_now_add=True)
     pathToBadgeImage=models.URLField()
-    isGivenBySystem=models.BooleanField()
-    post_id=models.ForeignKey(EquipmentPost, on_delete=models.CASCADE)
+    
 
 class BadgeOfferedByEventPost(models.Model):
     class Meta:
@@ -77,3 +74,13 @@ class BadgeOfferedByEventPost(models.Model):
         ]
     post_id=ForeignKey(EventPost,on_delete=models.CASCADE)
     badge_id=ForeignKey(Badge,on_delete=models.CASCADE)
+
+class BadgeOwnedByUser(models.Model):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['owner_id', 'badge_id'], name='badge owned by a user')
+        ]
+    badge_id=models.ForeignKey(Badge,on_delete=CASCADE)
+    owner_id=models.ForeignKey(User, on_delete=models.CASCADE)
+    date_time=models.DateTimeField(auto_now_add=True)
+    isGivenBySystem=models.BooleanField()
