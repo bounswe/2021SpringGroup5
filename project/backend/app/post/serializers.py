@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import fields
 from rest_framework import serializers
-from post.models import Sport,EquipmentPost,EventPost,Comment,Application,Badge,BadgeOfferedByEventPost
+from post.models import Sport,EquipmentPost,EventPost,EventComment,Application,Badge,BadgeOfferedByEventPost, EquipmentComment
 
 class SportSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,9 +18,14 @@ class EventPostSerializer(serializers.ModelSerializer):
         model=EventPost
         fields='__all__'
 
-class CommentSerializer(serializers.ModelSerializer):
+class EventCommentSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Comment
+        model=EventComment
+        fields='__all__'
+
+class EquipmentCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=EquipmentComment
         fields='__all__'
 
 class ApplicationSerializer(serializers.ModelSerializer):
