@@ -132,6 +132,7 @@ def createEquipmentPost(request):
         sports=list(Sport.objects.values())
         res={"sports":sports}
         return Response(res,status=status.HTTP_200_OK)
+
 # It is a script for only one time run. It can only be run by Superadmin to avoid possible security bug
 # It will fill the database with sports which are fetched from Decathlon API, with necessary fields.
 class SaveSportListScript(APIView):
@@ -162,6 +163,7 @@ class SaveSportListScript(APIView):
         # if all save operations are successfull, return their ids, with HTTP_201
         return Response({'AcceptedIds': ids}, status=status.HTTP_201_CREATED)
 
+# It is executed once at the initial boot of the application. Badges will be decided later and for now there is only one type of badge as an example
 class SaveBadgesScript(APIView):
     permission_classes = [permissions.IsAdminUser]
 
