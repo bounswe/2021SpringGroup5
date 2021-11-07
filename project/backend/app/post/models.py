@@ -1,3 +1,4 @@
+from typing import Callable
 from django.db import models
 
 from django.contrib.auth.models import User # It will be changed once registiration module is done
@@ -7,10 +8,6 @@ from django.db.models.deletion import CASCADE
 
 class Sport(models.Model):
     sport_name=models.CharField(max_length=30,null=False,unique=True)
-    equipments=models.TextField(null=True,blank=True,max_length=300)
-    max_players=models.IntegerField(null=True,blank=True)
-    special_location=models.CharField(null=True,blank=True,max_length=30)
-    general_rules=models.TextField(null=True,blank=True,max_length=300)
 
 
 class EquipmentPost(models.Model):
@@ -43,6 +40,20 @@ class EventPost(models.Model):
     repeating_frequency=models.IntegerField(null=False,blank=False)
     pathToEventImage=models.URLField(null=True,blank=True)
 
+class EventPostActivityStream(models.Model):
+    context=models.URLField(null=False,blank=False) #????????????
+    summary=models.CharField(max_length=200,null=False,blank=False)
+    actor=models.ForeignKey(User,on_delete=CASCADE)
+    type=models.CharField(max_length=20,null=False,blank=False)
+    object=models.ForeignKey(EventPost,on_delete=CASCADE)
+
+class EquipmentPostActivtyStream(models.Model):
+    context=models.URLField(null=False,blank=False) #????????????
+    summary=models.CharField(max_length=200,null=False,blank=False)
+    actor=models.ForeignKey(User,on_delete=CASCADE)
+    type=models.CharField(max_length=20,null=False,blank=False)
+    object=models.ForeignKey(EquipmentPost,on_delete=CASCADE)
+
 class SkillLevel(models.Model):
     level_name=models.CharField(null=False,blank=False,max_length=10, unique=True)
 
@@ -70,11 +81,25 @@ class EventComment(models.Model):
     created_date=models.DateTimeField(auto_now_add=True)
     event_post=models.ForeignKey(EventPost,null=True,blank=True,on_delete=models.CASCADE)
 
+class EventCommentActivtyStream(models.Model):
+    object=models.ForeignKey(EventComment,on_delete=CASCADE)
+    context=models.URLField(null=False,blank=False) #????????????
+    summary=models.CharField(max_length=200,null=False,blank=False)
+    actor=models.ForeignKey(User,on_delete=CASCADE)
+    type=models.CharField(max_length=20,null=False,blank=False)
+
 class EquipmentComment(models.Model):
     content=models.TextField(max_length=300)
     owner=models.ForeignKey(User,on_delete=models.CASCADE)
     created_date=models.DateTimeField(auto_now_add=True)
     equipment_post=models.ForeignKey(EquipmentPost,null=True,blank=True,on_delete=models.CASCADE)
+
+class EquipmentCommentActivtyStream(models.Model):
+    object=models.ForeignKey(EquipmentComment,on_delete=CASCADE)
+    context=models.URLField(null=False,blank=False) #????????????
+    summary=models.CharField(max_length=200,null=False,blank=False)
+    actor=models.ForeignKey(User,on_delete=CASCADE)
+    type=models.CharField(max_length=20,null=False,blank=False)
 
 class Badge(models.Model):
     name=models.CharField(max_length=100,null=False,blank=False)

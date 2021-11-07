@@ -12,7 +12,7 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=4,sport_name="Handball",equipments="ball",max_players=22,special_location=None,general_rules="Don't shout")
+        Sport.objects.create(id=4,sport_name="Handball")
         Badge.objects.create(id=5,name="surprised",description="You are a friendly player",pathToBadgeImage="....com")
         SkillLevel.objects.create(id=1,level_name="beginner")
         data={
@@ -57,14 +57,57 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=1,sport_name="Football",equipments="ball",max_players=22,special_location=None,general_rules="Don't shout")
+        Sport.objects.create(id=1,sport_name="Football")
         Badge.objects.create(id=1,name="friendly",description="You are a friendly player",pathToBadgeImage="....com")
         SkillLevel.objects.create(id=1,level_name="beginner")
-        Sport.objects.create(id=2,sport_name="Volleyball",equipments="ball",max_players=22,special_location=None,general_rules="Don't shout")
+        Sport.objects.create(id=2,sport_name="Volleyball")
         Badge.objects.create(id=2,name="bad",description="You are a friendly player",pathToBadgeImage="....com")
         SkillLevel.objects.create(id=2,level_name="expert")
 
         client=APIClient()
         client.login(username="crazy_girl", password="123")
         response=client.get("/post/create_event_post/")
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+
+    def test_create_equipment_post_post(self):
+        User.objects.create(id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=4,sport_name="Handball")
+        data={
+            "@context": "https://www.w3.org/ns/activitystreams",
+            "summary": "Sally is creating an equipment post",
+            "type": "Create",
+            "actor": {
+                "type": "Person",
+                "id":321,
+                "name": "Sally",
+                "surname": "Sparrow",
+                "username":"crazy_girl"
+            },
+            "object": {
+                "type": "EquipmetPost",
+                "owner_id": 321,
+                "name": "adidas bileklik",
+                "sport_category": "Tennis",
+                "location": "Null",
+                "description": "adadasdasdad",
+            "image": "..com",
+                "link": "www....",
+            }
+            }
+        client=APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.post("/post/create_equipment_post/",data,format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_equipment_post_get(self):
+        User.objects.create(id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        client=APIClient()
+        client.login(username="crazy_girl", password="123")
+        response=client.get("/post/create_equipment_post/")
         self.assertEqual(response.status_code,status.HTTP_200_OK)

@@ -1,17 +1,18 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render
-from post.models import Badge, EventPost, SkillLevel, Sport,BadgeOfferedByEventPost, EventPostSkillRequirements
-from post.serializers import SportSerializer
+from post.models import Badge, EventPost, EventPostActivityStream, SkillLevel, Sport,BadgeOfferedByEventPost, EventPostSkillRequirements
+from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SportSerializer,EventPostSkillRequirementsSerializer
 from rest_framework.decorators import api_view
 import requests
 from django.conf import settings
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status,permissions
 from django.contrib.auth.decorators import login_required
 import json
 import datetime
-
+from rest_framework.views import APIView
 # Create your views here.
+
 @login_required(login_url='login_user/')
 @api_view(['GET','POST'])
 def createEventPost(request):
@@ -41,34 +42,45 @@ def createEventPost(request):
         except:
             sport_ser=SportSerializer(data={"sport_name":sport_category})
             if sport_ser.is_valid():
-                sport_obj=Sport(sport_name=sport_category)
-                sport_obj.save()
-                sport=sport_obj
+                sport_ser.save()
+                sport=sport_ser
             #Sport name has too many caharacters
             else:
                 res={"actor":request.POST.get("actor"),"message":"Sport name is too long"}
                 return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
        
-
-        event={"post_name":name,"owner":request.user,"sport_category":sport,"description":description,\
+        actor=User.objects.get(id=data["actor"]["id"])
+        event={"post_name":name,"owner":actor,"sport_category":sport,"description":description,\
             "location":location,"date_time":date,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
                 "rule":rule,"equipment_requirement":equipment_requirement, "status":event_status,"capacity":capacity,\
                     "location_requirement":location_requirement,"contact_info":contact_info,"repeating_frequency":repeating_frequency,\
                         "pathToEventImage":image}
-       
-        event_obj=EventPost(**event)
-        event_obj.save()
+
+        event_ser=EventPostSerializer(data=event)
+        if event_ser.is_valid():
+            event_ser.save()
+
+        del data["actor"]["type"]
+        del data["object"]["type"]
+        
+
+        event_act_stream_ser=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
+            "type":data["type"],"actor":actor,"object":event_ser})
+        if event_act_stream_ser.is_valid():
+            event_act_stream_ser.save()
 
         for badge_info in badges:
             badge_id=badge_info["id"]
             badge=Badge.objects.get(id=badge_id)
-            badge_event_obj=BadgeOfferedByEventPost(**{"post":event_obj,"badge":badge})
-            badge_event_obj.save()
+            badge_event_ser=BadgeOfferedByEventPostSerializer(data={"post":event_ser,"badge":badge})
+            if badge_event_ser.is_valid():
+                badge_event_ser.save()
             
         skill_requirement=SkillLevel.objects.get(id=skill_requirement_info["id"])
-        skill_event_obj=EventPostSkillRequirements(**{"event_post":event_obj,"level":skill_requirement})
-        skill_event_obj.save()
+        skill_event_ser=EventPostSkillRequirementsSerializer(data={"event_post":event_ser,"level":skill_requirement})
+        if skill_event_ser.is_valid():
+            skill_event_ser.save()
         
         res={"actor":request.POST.get("actor"),"message":"Sport event is created successfully"}
         return Response(res,status=status.HTTP_201_CREATED)
@@ -80,3 +92,83 @@ def createEventPost(request):
         skill_levels=list(SkillLevel.objects.values())
         res={"badges":badges,"sports":sports,"skill_levels":skill_levels}
         return Response(res,status=status.HTTP_200_OK)
+
+@login_required(login_url='login_user/')
+@api_view(['GET','POST'])
+def createEquipmentPost(request):
+    if request.method=='POST':
+        data=json.loads(request.body)
+        _,owner_id,equipment_post_name,sport_category,location,description,image,link=data["object"].values()
+        actor=User.objects.get(id=owner_id)
+        sport_category=sport_category.lower()
+
+        try:
+            sport=Sport.objects.get(sport_name=sport_category)
+        except:
+            sport_ser=SportSerializer(data={"sport_name":sport_category})
+            if sport_ser.is_valid():
+                sport_ser.save()
+                sport=sport_ser
+            #Sport name has too many caharacters
+            else:
+                res={"actor":request.POST.get("actor"),"message":"Sport name is too long"}
+                return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        active=True
+        equipment_post_ser=EquipmentPostSerializer(data={"post_name":equipment_post_name,"owner":actor,"sport_category":sport,\
+            "description":description,"location":location,"link":link,"active":active,"pathToEquipmentPostImage":image})
+
+        if equipment_post_ser.is_valid():
+            equipment_post_ser.save()
+
+        equipment_post_act_stream_ser=EquipmentPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
+            "actor":actor,"type":data["type"],"object":equipment_post_ser})
+        if equipment_post_act_stream_ser.is_valid():
+            equipment_post_act_stream_ser.save()
+
+        res={"actor":request.POST.get("actor"),"message":"Equipment post is created successfully"}
+        return Response(res,status=status.HTTP_201_CREATED)
+
+    else:
+        sports=list(Sport.objects.values())
+        res={"sports":sports}
+        return Response(res,status=status.HTTP_200_OK)
+# It is a script for only one time run. It can only be run by Superadmin to avoid possible security bug
+# It will fill the database with sports which are fetched from Decathlon API, with necessary fields.
+class SaveSportListScript(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def post(self, request):
+        #max_number_of_players='P1873'
+        #uses='P2283'
+
+        url = 'https://sports.api.decathlon.com/sports/'
+        response = requests.get(url)  # fetch all sports
+        sportlist = response.json()['data']
+
+        sportlist = [{  # filter fields of sports
+            'name': x['attributes']['name']
+        } for x in sportlist]
+
+        ids = []
+
+        for sport in sportlist:  # save fetched sports to datavase
+            serializer = SportSerializer(data=sport)
+            if serializer.is_valid():
+                serializer.save()
+                ids.append(sport['id'])
+            else:  # if there is an array while saving the database, return HTTP_400
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # if all save operations are successfull, return their ids, with HTTP_201
+        return Response({'AcceptedIds': ids}, status=status.HTTP_201_CREATED)
+
+class SaveBadgesScript(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def post(self, request):
+        badges=[{"name":"awesome player","description":"You are an awesome player","pathToBadgeImage":""}]
+        for badge in badges:
+            serializer=BadgeSerializer(data=badge)
+            if badge.is_valid():
+                serializer.save()
+        return Response({"message":"Badges are saved into the database"},status=status.HTTP_201_CREATED)
