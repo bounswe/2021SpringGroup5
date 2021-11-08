@@ -6,7 +6,7 @@ from post.models import Sport,EquipmentPost,EventPost,Application,Badge,BadgeOff
 class SportSerializer(serializers.ModelSerializer):
     class Meta:
         model= Sport
-        fields=['id','sport_name','equipments','max_players','special_location','general_rules']
+        fields='__all__'
 
 class EquipmentPostSerializer(serializers.ModelSerializer):
     class Meta:
