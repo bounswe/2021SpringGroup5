@@ -33,12 +33,12 @@ class PostTests(APITestCase):
                 "city":'İstanbul',
                 "neighborhood":'Kadıköy',
                 "description": "adadasdasdad",
-                "image": "Null",
+                "image": None,
                 "date_time": "2021-02-10 10:30",
                 "participant_limit": 14,
-                "spectator_limit": "Null",
+                "spectator_limit": None,
                 "rule": "asd",
-                "equipment_requirement": "Null",           
+                "equipment_requirement": None,           
                 "status": 0,
                 "capacity": "open to applications",
                 "location_requirement": "asd",
@@ -60,10 +60,10 @@ class PostTests(APITestCase):
         u.set_password('123')
         u.save()
         Sport.objects.create(id=1,sport_name="Football")
-        Badge.objects.create(id=1,name="friendly",description="You are a friendly player",pathToBadgeImage="....com")
+        Badge.objects.create(id=1,name="friendly",description="You are a friendly player",pathToBadgeImage=None)
         SkillLevel.objects.create(id=1,level_name="beginner")
         Sport.objects.create(id=2,sport_name="Volleyball")
-        Badge.objects.create(id=2,name="bad",description="You are a friendly player",pathToBadgeImage="....com")
+        Badge.objects.create(id=2,name="bad",description="You are a bad player",pathToBadgeImage=None)
         SkillLevel.objects.create(id=2,level_name="expert")
 
         client=APIClient()
@@ -94,11 +94,11 @@ class PostTests(APITestCase):
                 "name": "adidas bileklik",
                 "sport_category": "Tennis",
                 "country":'Turkey',
-                "city":"Null",
-                "neighborhood":"Null",
+                "city":None,
+                "neighborhood":None,
                 "description": "adadasdasdad",
-            "image": "..com",
-                "link": "www....",
+            "image": None,
+                "link": "https://www.adidas.com.tr/tr",
             }
             }
         client=APIClient()

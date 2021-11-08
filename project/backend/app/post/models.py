@@ -39,7 +39,7 @@ class EventPost(models.Model):
     participant_limit=models.IntegerField(null=False,blank=False)
     spectator_limit=models.IntegerField(null=False,blank=False)
     rule=models.TextField(null=False,blank=False,max_length=300)
-    equipment_requirement=models.TextField(null=False,blank=False,max_length=300)
+    equipment_requirement=models.TextField(null=True,blank=True,max_length=300)
     status=models.CharField(null=False,blank=False,max_length=10)
     capacity=models.CharField(null=False,blank=False,max_length=25)
     location_requirement=models.CharField(null=True,blank=True,max_length=30)
@@ -122,4 +122,5 @@ class BadgeOwnedByUser(models.Model):
     owner=models.ForeignKey(User, on_delete=models.CASCADE)
     date_time=models.DateTimeField(auto_now_add=True)
     isGivenBySystem=models.BooleanField()
+
 
