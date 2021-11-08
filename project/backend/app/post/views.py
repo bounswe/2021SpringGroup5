@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render
-from post.models import Badge,SkillLevel, Sport
+from post.models import Badge, EquipmentPostActivtyStream, EventPost,SkillLevel, Sport,EquipmentPost
 from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, \
     EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer
 from rest_framework.decorators import api_view
@@ -12,7 +12,13 @@ from django.contrib.auth.decorators import login_required
 import json
 import datetime
 from rest_framework.views import APIView
+from unidecode import unidecode
 # Create your views here.
+
+def process_string(s):
+    if s != None:
+        return unidecode(s.lower())
+    return s
 
 @login_required(login_url='login_user/')
 @api_view(['GET','POST'])
@@ -24,7 +30,12 @@ def createEventPost(request):
         image,date_time,participant_limit,spectator_limit,rule,equipment_requirement, \
         event_status, capacity, location_requirement, contact_info, skill_requirement_info,repeating_frequency,badges=data["object"].values()
         
-        if spectator_limit=="Null":
+
+        country=process_string(country)
+        city=process_string(city)
+        neighborhood=process_string(neighborhood)
+
+        if spectator_limit==None:
             spectator_limit=0
         
         event_status="upcoming"
@@ -36,46 +47,49 @@ def createEventPost(request):
             res={"actor":request.POST.get("actor"),"message":"Invalid event time"}
             return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY) 
         
-        sport_category=sport_category.lower()
+        sport_category=process_string(sport_category)
         # There is already a sport with this name in the database
         try:
-            sport=Sport.objects.get(sport_name=sport_category)
+            sport_id=Sport.objects.get(sport_name=sport_category).id
         except:
             sport_ser=SportSerializer(data={"sport_name":sport_category})
             if sport_ser.is_valid():
                 sport_ser.save()
-                sport=sport_ser
+                sport_id=sport_ser.data["id"]
             #Sport name has too many caharacters
             else:
                 res={"actor":request.POST.get("actor"),"message":"Sport name is too long"}
                 return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
        
-        actor=User.objects.get(id=data["actor"]["id"])
         skill_requirement=SkillLevel.objects.get(level_name=skill_requirement_info)
-        event={"post_name":name,"owner":actor,"sport_category":sport,"description":description,\
+        event={"post_name":name,"owner":data["actor"]["id"],"sport_category":sport_id,"description":description,\
             "country":country,"city":city,"neighborhood":neighborhood,"date_time":date,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
                 "rule":rule,"equipment_requirement":equipment_requirement, "status":event_status,"capacity":capacity,\
                     "location_requirement":location_requirement,"contact_info":contact_info,"repeating_frequency":repeating_frequency,\
-                        "pathToEventImage":image,"level":skill_requirement}
+                        "pathToEventImage":image,"level":skill_requirement.id}
 
         event_ser=EventPostSerializer(data=event)
         if event_ser.is_valid():
             event_ser.save()
+        
+        else:
+            return Response({"message":event_ser.errors},406)
 
         del data["actor"]["type"]
         del data["object"]["type"]
         
 
         event_act_stream_ser=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
-            "type":data["type"],"actor":actor,"object":event_ser})
+            "type":data["type"],"actor":data["actor"]["id"],"object":event_ser.data["id"]})
         if event_act_stream_ser.is_valid():
             event_act_stream_ser.save()
+        else:
+            return Response({"message":"there was an error while deleting the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
         for badge_info in badges:
             badge_id=badge_info["id"]
-            badge=Badge.objects.get(id=badge_id)
-            badge_event_ser=BadgeOfferedByEventPostSerializer(data={"post":event_ser,"badge":badge})
+            badge_event_ser=BadgeOfferedByEventPostSerializer(data={"post":event_ser.data["id"],"badge":badge_id})
             if badge_event_ser.is_valid():
                 badge_event_ser.save()
         
@@ -97,39 +111,83 @@ def createEquipmentPost(request):
     if request.method=='POST':
         data=json.loads(request.body)
         _,owner_id,equipment_post_name,sport_category,country,city,neighborhood,description,image,link=data["object"].values()
-        actor=User.objects.get(id=owner_id)
-        sport_category=sport_category.lower()
+        try:
+            actor=User.objects.get(id=owner_id)
+        except:
+            return Response({"message":"There is no such user in the system"},404)
+
+        sport_category=process_string(sport_category)
+
+        country=process_string(country)
+        city=process_string(city)
+        neighborhood=process_string(neighborhood)
 
         try:
-            sport=Sport.objects.get(sport_name=sport_category)
+            sport_id=Sport.objects.get(sport_name=sport_category).id
         except:
             sport_ser=SportSerializer(data={"sport_name":sport_category})
             if sport_ser.is_valid():
                 sport_ser.save()
-                sport=sport_ser
+                sport_id=sport_ser.data["id"]
             #Sport name has too many caharacters
             else:
                 res={"actor":request.POST.get("actor"),"message":"Sport name is too long"}
                 return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
         active=True
-        equipment_post_ser=EquipmentPostSerializer(data={"post_name":equipment_post_name,"owner":actor,"sport_category":sport,\
+        equipment_post_ser=EquipmentPostSerializer(data={"post_name":equipment_post_name,"owner":owner_id,"sport_category":sport_id,\
             "description":description,"country":country,"city":city,"neighborhood":neighborhood,"link":link,"active":active,"pathToEquipmentPostImage":image})
 
         if equipment_post_ser.is_valid():
             equipment_post_ser.save()
-
+        else:
+            return Response({"message":"there was an error while deleting the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
+        
         equipment_post_act_stream_ser=EquipmentPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
-            "actor":actor,"type":data["type"],"object":equipment_post_ser})
+            "actor":owner_id,"type":data["type"],"object":equipment_post_ser.data["id"]})
+
         if equipment_post_act_stream_ser.is_valid():
             equipment_post_act_stream_ser.save()
+        else:
+            return Response({"message":"there was an error while deleting the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
         res={"actor":request.POST.get("actor"),"message":"Equipment post is created successfully"}
         return Response(res,status=status.HTTP_201_CREATED)
 
+    # GET request
     else:
         sports=list(Sport.objects.values())
         res={"sports":sports}
         return Response(res,status=status.HTTP_200_OK)
+
+
+@api_view(['DELETE'])
+def deleteEquipmentPost(request):
+    data=json.loads(request.body)
+
+    _,actor_id,_,_,_=data["actor"].values()
+    _,equipment_post_id=data["object"].values()
+
+    try:
+        actor=User.objects.get(id=actor_id)
+    except:
+        return Response({"message":"There is no such user in the system"},404)
+    try:
+        EquipmentPost.objects.filter(pk=equipment_post_id).update(active=False)
+        equipment_post=EquipmentPost.objects.get(id=equipment_post_id)
+    except:
+        return Response({"message":"There is no such event in the database, deletion operation is aborted"},status=status.HTTP_404_NOT_FOUND)
+    
+    
+    equipment_post_ser=EquipmentPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
+        "actor":actor_id,"type":data["type"],"object":equipment_post_id})
+
+    if equipment_post_ser.is_valid():
+        equipment_post_ser.save()
+    else:
+        return Response({"message":"there was an error while deleting the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    return Response({"message":"Equipment post is deleted"},status=status.HTTP_200_OK)
 
 # It is a script for only one time run. It can only be run by Superadmin to avoid possible security bug
 # It will fill the database with sports which are fetched from Decathlon API, with necessary fields.
@@ -145,7 +203,7 @@ class SaveSportListScript(APIView):
         sportlist = response.json()['data']
 
         sportlist = [{  # filter fields of sports
-            'name': x['attributes']['name']
+            'name': process_string(x['attributes']['name'])
         } for x in sportlist]
 
         ids = []
