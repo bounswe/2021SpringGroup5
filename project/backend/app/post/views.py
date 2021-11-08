@@ -20,7 +20,7 @@ def createEventPost(request):
     if request.method=='POST':
         
         data=json.loads(request.body)
-        _,owner_id,name,sport_category,location,description,\
+        _,owner_id,name,sport_category,country,city,neighborhood,description,\
         image,date_time,participant_limit,spectator_limit,rule,equipment_requirement, \
         event_status, capacity, location_requirement, contact_info, skill_requirement_info,repeating_frequency,badges=data["object"].values()
         
@@ -54,7 +54,7 @@ def createEventPost(request):
         actor=User.objects.get(id=data["actor"]["id"])
         skill_requirement=SkillLevel.objects.get(level_name=skill_requirement_info)
         event={"post_name":name,"owner":actor,"sport_category":sport,"description":description,\
-            "location":location,"date_time":date,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
+            "country":country,"city":city,"neighborhood":neighborhood,"date_time":date,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
                 "rule":rule,"equipment_requirement":equipment_requirement, "status":event_status,"capacity":capacity,\
                     "location_requirement":location_requirement,"contact_info":contact_info,"repeating_frequency":repeating_frequency,\
                         "pathToEventImage":image,"level":skill_requirement}
@@ -96,7 +96,7 @@ def createEventPost(request):
 def createEquipmentPost(request):
     if request.method=='POST':
         data=json.loads(request.body)
-        _,owner_id,equipment_post_name,sport_category,location,description,image,link=data["object"].values()
+        _,owner_id,equipment_post_name,sport_category,country,city,neighborhood,description,image,link=data["object"].values()
         actor=User.objects.get(id=owner_id)
         sport_category=sport_category.lower()
 
@@ -113,7 +113,7 @@ def createEquipmentPost(request):
                 return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         active=True
         equipment_post_ser=EquipmentPostSerializer(data={"post_name":equipment_post_name,"owner":actor,"sport_category":sport,\
-            "description":description,"location":location,"link":link,"active":active,"pathToEquipmentPostImage":image})
+            "description":description,"country":country,"city":city,"neighborhood":neighborhood,"link":link,"active":active,"pathToEquipmentPostImage":image})
 
         if equipment_post_ser.is_valid():
             equipment_post_ser.save()

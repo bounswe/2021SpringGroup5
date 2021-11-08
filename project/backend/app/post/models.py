@@ -16,11 +16,12 @@ class EquipmentPost(models.Model):
     sport_category=models.ForeignKey(Sport,on_delete=models.CASCADE)
     created_date=models.DateTimeField(auto_now_add=True)
     description=models.TextField(max_length=300,null=False,blank=False)
-    location=models.CharField(null=True,blank=True,max_length=200)
+    country=models.CharField(null=True,blank=True,max_length=100)
+    city=models.CharField(null=True,blank=True,max_length=100)
+    neighborhood=models.CharField(null=True,blank=True,max_length=100)
     link=models.URLField(null=True,blank=True)
     active=models.BooleanField(null=False,blank=False)
     pathToEquipmentPostImage=models.URLField(null=True,blank=True)
-    
 
 class SkillLevel(models.Model):
     level_name=models.CharField(null=False,blank=False,max_length=10, unique=True)
@@ -31,7 +32,9 @@ class EventPost(models.Model):
     sport_category=models.ForeignKey(Sport,on_delete=models.CASCADE)
     created_date=models.DateTimeField(auto_now_add=True)
     description=models.TextField(max_length=300,null=False,blank=False)
-    location=models.CharField(null=True,blank=True,max_length=200)
+    country=models.CharField(null=True,blank=True,max_length=100)
+    city=models.CharField(null=True,blank=True,max_length=100)
+    neighborhood=models.CharField(null=True,blank=True,max_length=100)
     date_time=models.DateTimeField(null=False,blank=False)
     participant_limit=models.IntegerField(null=False,blank=False)
     spectator_limit=models.IntegerField(null=False,blank=False)
@@ -59,7 +62,6 @@ class EquipmentPostActivtyStream(models.Model):
     type=models.CharField(max_length=20,null=False,blank=False)
     object=models.ForeignKey(EquipmentPost,on_delete=CASCADE)
 
-    
 
 class Application(models.Model):
     class Meta:
