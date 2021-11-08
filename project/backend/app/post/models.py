@@ -16,11 +16,12 @@ class EquipmentPost(models.Model):
     sport_category=models.ForeignKey(Sport,on_delete=models.CASCADE)
     created_date=models.DateTimeField(auto_now_add=True)
     description=models.TextField(max_length=300,null=False,blank=False)
-    location=models.CharField(null=True,blank=True,max_length=200)
+    country=models.CharField(null=True,blank=True,max_length=100)
+    city=models.CharField(null=True,blank=True,max_length=100)
+    neighborhood=models.CharField(null=True,blank=True,max_length=100)
     link=models.URLField(null=True,blank=True)
     active=models.BooleanField(null=False,blank=False)
     pathToEquipmentPostImage=models.URLField(null=True,blank=True)
-    
 
 class SkillLevel(models.Model):
     level_name=models.CharField(null=False,blank=False,max_length=10, unique=True)
@@ -31,12 +32,14 @@ class EventPost(models.Model):
     sport_category=models.ForeignKey(Sport,on_delete=models.CASCADE)
     created_date=models.DateTimeField(auto_now_add=True)
     description=models.TextField(max_length=300,null=False,blank=False)
-    location=models.CharField(null=True,blank=True,max_length=200)
+    country=models.CharField(null=True,blank=True,max_length=100)
+    city=models.CharField(null=True,blank=True,max_length=100)
+    neighborhood=models.CharField(null=True,blank=True,max_length=100)
     date_time=models.DateTimeField(null=False,blank=False)
     participant_limit=models.IntegerField(null=False,blank=False)
     spectator_limit=models.IntegerField(null=False,blank=False)
     rule=models.TextField(null=False,blank=False,max_length=300)
-    equipment_requirement=models.TextField(null=False,blank=False,max_length=300)
+    equipment_requirement=models.TextField(null=True,blank=True,max_length=300)
     status=models.CharField(null=False,blank=False,max_length=10)
     capacity=models.CharField(null=False,blank=False,max_length=25)
     location_requirement=models.CharField(null=True,blank=True,max_length=30)
@@ -59,7 +62,6 @@ class EquipmentPostActivtyStream(models.Model):
     type=models.CharField(max_length=20,null=False,blank=False)
     object=models.ForeignKey(EquipmentPost,on_delete=CASCADE)
 
-    
 
 class Application(models.Model):
     class Meta:
@@ -120,4 +122,5 @@ class BadgeOwnedByUser(models.Model):
     owner=models.ForeignKey(User, on_delete=models.CASCADE)
     date_time=models.DateTimeField(auto_now_add=True)
     isGivenBySystem=models.BooleanField()
+
 
