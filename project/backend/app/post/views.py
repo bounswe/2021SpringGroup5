@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render
-from post.models import Badge, EventPost, EventPostActivityStream, SkillLevel, Sport,BadgeOfferedByEventPost, EventPostSkillRequirements
-from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SportSerializer,EventPostSkillRequirementsSerializer
+from post.models import Badge,SkillLevel, Sport
+from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, \
+    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer
 from rest_framework.decorators import api_view
 import requests
 from django.conf import settings
@@ -51,11 +52,12 @@ def createEventPost(request):
 
        
         actor=User.objects.get(id=data["actor"]["id"])
+        skill_requirement=SkillLevel.objects.get(level_name=skill_requirement_info)
         event={"post_name":name,"owner":actor,"sport_category":sport,"description":description,\
             "location":location,"date_time":date,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
                 "rule":rule,"equipment_requirement":equipment_requirement, "status":event_status,"capacity":capacity,\
                     "location_requirement":location_requirement,"contact_info":contact_info,"repeating_frequency":repeating_frequency,\
-                        "pathToEventImage":image}
+                        "pathToEventImage":image,"level":skill_requirement}
 
         event_ser=EventPostSerializer(data=event)
         if event_ser.is_valid():
@@ -76,11 +78,7 @@ def createEventPost(request):
             badge_event_ser=BadgeOfferedByEventPostSerializer(data={"post":event_ser,"badge":badge})
             if badge_event_ser.is_valid():
                 badge_event_ser.save()
-            
-        skill_requirement=SkillLevel.objects.get(id=skill_requirement_info["id"])
-        skill_event_ser=EventPostSkillRequirementsSerializer(data={"event_post":event_ser,"level":skill_requirement})
-        if skill_event_ser.is_valid():
-            skill_event_ser.save()
+        
         
         res={"actor":request.POST.get("actor"),"message":"Sport event is created successfully"}
         return Response(res,status=status.HTTP_201_CREATED)
@@ -174,3 +172,16 @@ class SaveBadgesScript(APIView):
             if badge.is_valid():
                 serializer.save()
         return Response({"message":"Badges are saved into the database"},status=status.HTTP_201_CREATED)
+
+# It is executed once at the initial boot of the application. Skill levels will be decided later and for now there is only one type of badge as an example
+class SaveSkillLevelsScript(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def post(self, request):
+        levels=[{"id":1,"level":"beginner"},{"id":2, "level":"average"},{"id":3, "level":"skilled"},\
+            {"id":4,"level":"specialist"},{"id":4, "level":"expert"}]
+        for level in levels:
+            serializer=SkillLevelSerializer(data=level)
+            if level.is_valid():
+                serializer.save()
+        return Response({"message":"Skill levels are saved into the database"},status=status.HTTP_201_CREATED)

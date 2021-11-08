@@ -21,6 +21,10 @@ class EquipmentPost(models.Model):
     active=models.BooleanField(null=False,blank=False)
     pathToEquipmentPostImage=models.URLField(null=True,blank=True)
     
+
+class SkillLevel(models.Model):
+    level_name=models.CharField(null=False,blank=False,max_length=10, unique=True)
+    
 class EventPost(models.Model):
     post_name=models.CharField(null=False,blank=False,max_length=30)
     owner=models.ForeignKey(User,on_delete=models.CASCADE)
@@ -39,6 +43,7 @@ class EventPost(models.Model):
     contact_info=models.CharField(null=True,blank=True,max_length=50)
     repeating_frequency=models.IntegerField(null=False,blank=False)
     pathToEventImage=models.URLField(null=True,blank=True)
+    level=models.ForeignKey(SkillLevel,on_delete=CASCADE)
 
 class EventPostActivityStream(models.Model):
     context=models.URLField(null=False,blank=False) #????????????
@@ -54,16 +59,7 @@ class EquipmentPostActivtyStream(models.Model):
     type=models.CharField(max_length=20,null=False,blank=False)
     object=models.ForeignKey(EquipmentPost,on_delete=CASCADE)
 
-class SkillLevel(models.Model):
-    level_name=models.CharField(null=False,blank=False,max_length=10, unique=True)
-
-class EventPostSkillRequirements(models.Model):
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['event_post', 'level'], name='skill requirements for an event post')
-        ]
-    event_post=models.ForeignKey(EventPost,on_delete=CASCADE)
-    level=models.ForeignKey(SkillLevel,on_delete=CASCADE)
+    
 
 class Application(models.Model):
     class Meta:

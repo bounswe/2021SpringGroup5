@@ -41,7 +41,7 @@ class PostTests(APITestCase):
                 "capacity": "open to applications",
                 "location_requirement": "asd",
                 "contact_info": "054155555",
-                "skill_requirement": {"id":1,"level_name":"beginner"},
+                "skill_requirement": "beginner",
                 "repeating_frequency": "5",
                 "badges": [ {"id":5,"name":"surprised","description":"You are a friendly player","pathToBadgeImage":"....com"}]
             
