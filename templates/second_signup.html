@@ -3,7 +3,7 @@
 <p> You activated your account, {{ user.name}}</p>
 <form method="POST" action="register_second" >
     {% csrf_token %}
-  <p>Name</p>
+  <p>Username</p>
   <input type="text" name="username" value="{{data.username}}">
   <p>Password</p>
   <input type="password" name="password" value="{{data.password}}">

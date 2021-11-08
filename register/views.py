@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .models import User
 from django.urls import reverse
 import hashlib
-from django.http import HttpResponse
+
 from django.contrib import messages
 from django.template.loader import render_to_string
 from .utils import generate_token
@@ -60,8 +60,8 @@ def register_second(request):
     if request.method == 'POST':
         context = {'data': request.POST}
         username = request.POST.get('username')
-        password = request.POST.get('passsword')
-        password2 = request.POST.get('passsword2')
+        password = request.POST.get('password')
+        password2 = request.POST.get('password2')
         name = request.POST.get('name')
         surname = request.POST.get('surname')
         mail = request.POST.get('mail')
@@ -82,6 +82,7 @@ def register_second(request):
         user.set_password(password)
         user.save()
 
+
         # if user and not user.is_email_verified:
         #      messages.add_message(request, messages.ERROR,
         #                         'Email is not verified, please check your email inbox')
@@ -92,13 +93,39 @@ def register_second(request):
                                  'Invalid credentials, try again')
             return render(request, 'second_signup.html', context, status=401)
 
+        messages.add_message(request, messages.SUCCESS,
+                             f'Welcome {user.username}')
+        return redirect(reverse('login'))
+
+    return render(request, 'second_signup.html')
+
+
+def login_user(request):
+    if request.method == 'POST':
+        context = {'data': request.POST}
+        u = request.POST.get('username')
+        p = request.POST.get('password')
+
+        user = authenticate(username=u, password=p)
+
+        # if user and not user.is_email_verified:
+        # messages.add_message(request, messages.ERROR,
+        #                      'Please check your email inbox, your email is not verified')
+        # return render(request, 'login.html', context, status=401)
+
+        # if not user:
+        # messages.add_message(request, messages.ERROR,
+        #   'You entered invalid credentials, try again please')
+        # return render(request, 'login.html', context, status=401)
+
         login(request, user)
 
         messages.add_message(request, messages.SUCCESS,
-                             f'Welcome {user.username}')
+                             f'Welcome ')
+
         return redirect(reverse('home'))
 
-    return render(request, 'second_signup.html')
+    return render(request, 'login.html')
 
 
 def logout_user(request):
