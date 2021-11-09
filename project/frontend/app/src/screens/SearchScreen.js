@@ -18,7 +18,6 @@ function CustomCard({ data }) {
                     component="img"
                     height="140"
                     image={data.src}
-                    alt="green iguana"
                 />
                 <CardContent>
                     <div className='row mb-2'>
@@ -146,7 +145,7 @@ function SearchScreen(props) {
             }
             <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={openNotification} autoHideDuration={2000} onClose={handleCloseNotification}>
                 <Alert onClose={handleCloseNotification} severity="success" sx={{ width: '100%' }}>
-                    Successfully joined to event!
+                    Successfully applied for the event!
                 </Alert>
             </Snackbar>
         </div>
