@@ -32,7 +32,7 @@ class PostTests(APITestCase):
                 "city":'İstanbul',
                 "neighborhood":'Kadıköy',
                 "description": "adadasdasdad",
-                "image": None,
+                "pathToEventImage": None,
                 "date_time": "2021-02-10 10:30",
                 "participant_limit": 14,
                 "spectator_limit": None,
@@ -97,7 +97,7 @@ class PostTests(APITestCase):
                 "city":None,
                 "neighborhood":None,
                 "description": "adadasdasdad",
-            "image": None,
+            "pathToEquipmentPostImage": None,
                 "link": "https://www.adidas.com.tr/tr",
             }
             }

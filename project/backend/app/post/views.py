@@ -67,7 +67,7 @@ def createEventPost(request):
             "country":country,"city":city,"neighborhood":neighborhood,"date_time":date,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
                 "rule":rule,"equipment_requirement":equipment_requirement, "status":event_status,"capacity":capacity,\
                     "location_requirement":location_requirement,"contact_info":contact_info,"repeating_frequency":repeating_frequency,\
-                        "pathToEventImage":image,"level":skill_requirement.id}
+                        "pathToEventImage":image,"skill_requirement":skill_requirement.id}
 
         event_ser=EventPostSerializer(data=event)
         if event_ser.is_valid():
@@ -94,7 +94,7 @@ def createEventPost(request):
                 badge_event_ser.save()
         
         
-        res={"actor":request.POST.get("actor"),"message":"Sport event is created successfully"}
+        res=event_ser.data
         return Response(res,status=status.HTTP_201_CREATED)
 
     # It is a get request, badges in the db should be returned
@@ -151,7 +151,7 @@ def createEquipmentPost(request):
         else:
             return Response({"message":"there was an error while deleting the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
-        res={"actor":request.POST.get("actor"),"message":"Equipment post is created successfully"}
+        res=equipment_post_ser.data
         return Response(res,status=status.HTTP_201_CREATED)
 
     # GET request
@@ -188,6 +188,13 @@ def deleteEquipmentPost(request):
         return Response({"message":"there was an error while deleting the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
     return Response({"message":"Equipment post is deleted"},status=status.HTTP_200_OK)
+    
+@api_view(['PATCH'])
+def changeEquipmentInfo(request):
+    data=json.loads(request.body)
+
+    _,actor_id,_,_,_=data["actor"].values()
+    _,post_id=data["object"].values()
 
 # It is a script for only one time run. It can only be run by Superadmin to avoid possible security bug
 # It will fill the database with sports which are fetched from Decathlon API, with necessary fields.
