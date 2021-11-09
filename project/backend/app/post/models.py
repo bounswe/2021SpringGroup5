@@ -46,7 +46,7 @@ class EventPost(models.Model):
     contact_info=models.CharField(null=True,blank=True,max_length=50)
     repeating_frequency=models.IntegerField(null=False,blank=False)
     pathToEventImage=models.URLField(null=True,blank=True)
-    level=models.ForeignKey(SkillLevel,on_delete=CASCADE)
+    skill_requirement=models.ForeignKey(SkillLevel,on_delete=CASCADE)
 
 class EventPostActivityStream(models.Model):
     context=models.URLField(null=False,blank=False) #????????????
