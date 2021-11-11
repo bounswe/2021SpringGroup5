@@ -1,8 +1,11 @@
+import requests
 from django.shortcuts import render, redirect
+from rest_framework.response import Response
+
 from .models import User
 from django.urls import reverse
 import hashlib
-
+from django.http import JsonResponse
 from django.contrib import messages
 from django.template.loader import render_to_string
 from .utils import generate_token
@@ -12,18 +15,21 @@ from app import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str, force_text, DjangoUnicodeDecodeError
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .serializers import UserSerializer
+from rest_framework.decorators import api_view
 
 
 def send_mail(user, request):
     current_site = get_current_site(request)
     mail_subject = 'Complete Your Login'
-    mail_body = render_to_string('verification.html', {
+    mail_body = {
         'User': user,
         'domain': current_site,
         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
         'token': generate_token.make_token(user)
-
-    })
+    }
 
     email = EmailMessage(subject=mail_subject, body=mail_body,
                          from_email=settings.EMAIL_HOST_USER,
@@ -31,113 +37,104 @@ def send_mail(user, request):
     email.send(fail_silently=False)
 
 
-def register_first(request):
+@api_view(['GET', 'POST'])
+@csrf_exempt
+def register(request):
     if request.method == 'POST':
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        context = body['context']
 
-        context = {'has_error': False, 'data': request.POST}
-
-        mail = request.POST.get('mail')
-        name = request.POST.get('name')
-        surname = request.POST.get('surname')
-        if User.objects.filter(mail=mail).exists():
-            messages.add_message(request, messages.ERROR,
-                                 'Mail address is already taken, please choose another')
-            return render(request, 'signup.html', status=409)
-
-        user = User()
-        user.name = name
-        user.surname = surname
-        user.mail = mail
-
-        # send_mail(user1, request)
-        context2 = {'user': user}
-        return render(request, 'second_signup.html', context2)
-
-    return render(request, 'signup.html')
-
-
-def register_second(request):
-    if request.method == 'POST':
-        context = {'data': request.POST}
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        password2 = request.POST.get('password2')
-        name = request.POST.get('name')
-        surname = request.POST.get('surname')
-        mail = request.POST.get('mail')
-
-        if password != password2:
-            messages.add_message(request, messages.ERROR,
-                                 'Passwords are not equal, please try again')
-            return render(request, 'second_signup.html', context, status=401)
+        mail = context['data']['mail']
+        name = context['data']['name']
+        surname = context['data']['surname']
+        password = context['data']['password']
+        password2 = context['data']['password2']
+        username = context['data']['username']
 
         if User.objects.filter(username=username).exists():
-            messages.add_message(request, messages.ERROR,
-                                 'Username is taken, choose another one')
+            context['errormessage'] = 'Username is taken, choose another one'
             context['has_error'] = True
 
-            return render(request, 'second_signup.html', context, status=409)
+            return JsonResponse(context, status=409)
+
+        if User.objects.filter(mail=mail).exists():
+            context['errormessage'] = 'This mail address is already in use'
+            context['has_error'] = True
+
+            return JsonResponse(context, status=409)
+
+        if password != password2:
+            context['errormessage'] = 'Passwords are not equal, please try again'
+            context['has_error'] = True
+
+            return JsonResponse(context, status=401)
 
         user = User.objects.create_user(username=username, mail=mail, name=name, surname=surname)
         user.set_password(password)
         user.save()
 
+        userob = {
+            "username": username,
+            "password": password,
+            "mail": mail,
+            "name": name,
+            "surname": surname
+        }
 
-        # if user and not user.is_email_verified:
-        #      messages.add_message(request, messages.ERROR,
-        #                         'Email is not verified, please check your email inbox')
-        #     return render(request, 'second_signup.html', context, status=401)
+        context2 = {'user': userob}
+        return Response(context2)
 
-        if not user:
-            messages.add_message(request, messages.ERROR,
-                                 'Invalid credentials, try again')
-            return render(request, 'second_signup.html', context, status=401)
-
-        messages.add_message(request, messages.SUCCESS,
-                             f'Welcome {user.username}')
-        return redirect(reverse('login'))
-
-    return render(request, 'second_signup.html')
+    context = {'frontend': True}
+    return JsonResponse(context)
 
 
+@api_view(['GET', 'POST'])
+@csrf_exempt
 def login_user(request):
     if request.method == 'POST':
-        context = {'data': request.POST}
-        u = request.POST.get('username')
-        p = request.POST.get('password')
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        context = body['context']
 
-        user = authenticate(username=u, password=p)
+        username = context['data']['username']
+        password = context['data']['password']
+
+        user = authenticate(username=username, password=password)
 
         # if user and not user.is_email_verified:
-        # messages.add_message(request, messages.ERROR,
-        #                      'Please check your email inbox, your email is not verified')
-        # return render(request, 'login.html', context, status=401)
+        #     context['errormessage'] = 'Please check your email inbox, your email is not verified'
+        #     context['has_error'] = True
+        #     return JsonResponse(context)
 
-        # if not user:
-        # messages.add_message(request, messages.ERROR,
-        #   'You entered invalid credentials, try again please')
-        # return render(request, 'login.html', context, status=401)
+        if not user:
+            context['errormessage'] = 'You entered invalid credentials, try again please'
+            context['has_error'] = True
+            return JsonResponse(context)
 
         login(request, user)
 
-        messages.add_message(request, messages.SUCCESS,
-                             f'Welcome ')
+        userob = {
+            "username": username,
+            "password": password,
+        }
 
-        return redirect(reverse('home'))
+        context2 = {'user': userob}
+        return JsonResponse(context2)
 
-    return render(request, 'login.html')
+    context = {'frontend': True}
+    return JsonResponse(context)
 
 
 def logout_user(request):
     logout(request)
 
-    messages.add_message(request, messages.SUCCESS,
-                         'Successfully logged out')
-
-    return redirect(reverse('login'))
+    context = {'has_error': False}
+    return JsonResponse(context)
 
 
 def activate_user(request, uidb64, token):
+    context = {'has_error': False, 'message': ''}
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
 
@@ -150,12 +147,9 @@ def activate_user(request, uidb64, token):
         user.is_email_verified = True
         user.save()
 
-        messages.add_message(request, messages.SUCCESS,
-                             'Email verified, you can now login')
-        return redirect(reverse('login'))
+        context['message'] = 'Email verified, you can now login'
+        return JsonResponse(context)
 
-    return render(request, 'verification_failed.html', {"user": user})
-
-
-def home(request):
-    return render(request, 'home.html')
+    context['has_error'] = True
+    context['message'] = 'There is a problem with activation'
+    return JsonResponse(context)
