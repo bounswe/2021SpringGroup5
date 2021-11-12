@@ -105,6 +105,7 @@ def login_user(request):
         return Response('SUCCESS', status=status.HTTP_200_OK)
 
 
+@api_view(['POST'])
 def logout_user(request):
     logout(request)
 
@@ -112,6 +113,7 @@ def logout_user(request):
     return JsonResponse(context)
 
 
+@api_view(['POST'])
 def activate_user(request, uidb64, token):
     context = {'has_error': False, 'message': ''}
     try:
