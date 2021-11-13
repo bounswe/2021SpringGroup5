@@ -3,13 +3,13 @@ import 'package:ludo_app/constants.dart';
 
 class RoundedButton extends StatelessWidget {
   final String text;
-  final Function press;
+  final VoidCallback? press;
   final Color color, textColor;
 
   const RoundedButton({
     Key? key,
     required this.text,
-    required this.press,
+    this.press,
     this.color = kPrimaryColor,
     this.textColor = Colors.white,
   }) : super(key: key);
@@ -22,14 +22,19 @@ class RoundedButton extends StatelessWidget {
       width: size.width * 0.8,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(29),
-        child: RaisedButton(
-            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-            color: color,
-            onPressed: press(),
-            child: Text(
-              text,
-              style: TextStyle(color: textColor),
-            )),
+        child: newRaisedButton(),
+      ),
+    );
+  }
+
+  Widget newRaisedButton() {
+    return RaisedButton(
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+      color: color,
+      onPressed: press,
+      child: Text(
+        text,
+        style: TextStyle(color: textColor),
       ),
     );
   }

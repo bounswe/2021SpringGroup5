@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ludo_app/constants.dart';
-import 'package:ludo_app/screens/welcome_screen.dart';
+import 'package:ludo_app/screens/welcome/welcome_screen.dart';
 
 void main() => runApp(MyApp());
 
