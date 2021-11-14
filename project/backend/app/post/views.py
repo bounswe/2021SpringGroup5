@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render
-from post.models import Badge,SkillLevel, Sport,EquipmentPost
+from requests.api import post
+from post.models import Badge,SkillLevel, Sport,EquipmentPost,EventPost,BadgeOfferedByEventPost
 from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, \
     EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer
 from rest_framework.decorators import api_view
@@ -17,7 +18,7 @@ from django.forms.models import model_to_dict
 # Create your views here.
 
 def process_string(s):
-    if s != None:
+    if s != None and (type(s)==str):
         return unidecode(s.lower())
     return s
 
@@ -166,8 +167,8 @@ def createEquipmentPost(request):
 def deleteEquipmentPost(request):
     data=json.loads(request.body)
 
-    _,actor_id,_,_,_=data["actor"].values()
-    _,equipment_post_id=data["object"].values()
+    actor_id=data["actor"]["id"]
+    equipment_post_id=data["object"]["post_id"]
 
     try:
         actor=User.objects.get(id=actor_id)
@@ -195,8 +196,8 @@ def deleteEquipmentPost(request):
 def changeEquipmentInfo(request):
     data=json.loads(request.body)
 
-    _,actor_id,_,_,_=data["actor"].values()
-    _,post_id=data["object"].values()
+    actor_id=data["actor"]["id"]
+    post_id=data["object"]["post_id"]
     try:
         actor=User.objects.get(id=actor_id)
     except:
@@ -209,44 +210,110 @@ def changeEquipmentInfo(request):
 
     modifications_keys=data["modifications"].keys()
    
-    equipment_post_ser=EquipmentPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
+    equipment_post_act_ser=EquipmentPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
     "actor":actor_id,"type":data["type"],"object":equipment_post.id})
 
-    if equipment_post_ser.is_valid():
-       
-        try:
-            for key,value in data["modifications"].items():
-                value=process_string(value)
-                
-                if key=="sport_category":
-                    try:
-                        sport_id=Sport.objects.get(sport_name=value).id
-                        
-                    except:
-                        sport_ser=SportSerializer(data={"sport_name":value})
-                        if sport_ser.is_valid():
-                            sport_ser.save()
-                            sport_id=sport_ser.data["id"]
-                        #Sport name has too many caharacters
-                        else:
-                            res={"message":"Sport name is too long"}
-                            return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
-                    equipment_post.key=sport_id
+    for k,v in data["modifications"].items():
+        data["modifications"][k]=process_string(v)
+
+    if equipment_post_act_ser.is_valid():
+
+        if "sport_category" in modifications_keys:
+            try:
+                s=Sport.objects.get(sport_name=data["modifications"]["sport_category"])
+                data["modifications"]["sport_category"]=s.id
+            except:
+                sport_ser=SportSerializer(data={"sport_name":data["modifications"]["sport_category"]})
+                if sport_ser.is_valid():
+                    s=sport_ser.save()
+                    data["modifications"]["sport_category"]=s.id
+                #Sport name has too many caharacters
                 else:
-                    equipment_post.key=value
-            equipment_post.save(update_fields=modifications_keys)
-        except:
-            return Response({"message":"Invalid modifications, information of the post did not change"},422)
-        equipment_post_ser.save()
+                    res={"message":"Sport name is too long"}
+                    return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+        equipment_post_ser = EquipmentPostSerializer(equipment_post, data=data["modifications"], partial=True)
+        if equipment_post_ser.is_valid():
+            equipment_post_updated=model_to_dict(equipment_post_ser.save())
+            equipment_post_updated["sport_category"]=Sport.objects.get(id=equipment_post_updated["sport_category"]).sport_name
+            equipment_post_act_ser.save()
+        else:
+            return Response({"message":equipment_post_ser.errors},422)
 
     else:
         return Response({"message":"There was an error while updating the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
-    res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":model_to_dict(equipment_post)}
+    res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":equipment_post_updated}
     return Response(res,200)
 
 
+@login_required(login_url='login_user/')  
+@api_view(['PATCH'])
+def changeEventInfo(request):
+    data=json.loads(request.body)
+    actor_id=data["actor"]["id"]
+    post_id=data["object"]["post_id"]
+    try:
+        actor=User.objects.get(id=actor_id)
+    except:
+        return Response({"message":"There is no such user in the system"},404)
+
+    try:
+        event_post=EventPost.objects.get(id=post_id)
+    except:
+        return Response({"message":"There is no such post in the database"},404)
+
+    modifications_keys=data["modifications"].keys()
+   
+    event_post_act_ser=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
+    "actor":actor_id,"type":data["type"],"object":event_post.id})
+
+    for k,v in data["modifications"].items():
+        data["modifications"][k]=process_string(v)
+
+    if event_post_act_ser.is_valid():
+
+        if "sport_category" in modifications_keys:
+            try:
+                s=Sport.objects.get(sport_name=data["modifications"]["sport_category"])
+                data["modifications"]["sport_category"]=s.id
+            except:
+                sport_ser=SportSerializer(data={"sport_name":data["modifications"]["sport_category"]})
+                if sport_ser.is_valid():
+                    s=sport_ser.save()
+                    data["modifications"]["sport_category"]=s.id
+                #Sport name has too many caharacters
+                else:
+                    res={"message":"Sport name is too long"}
+                    return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+        skill=SkillLevel.objects.get(level_name=data["modifications"]["skill_requirement"])
+        data["modifications"]["skill_requirement"]=skill.id
+
+        event_post_ser = EventPostSerializer(event_post, data=data["modifications"], partial=True)
+        if event_post_ser.is_valid():
+            event_post_updated=model_to_dict(event_post_ser.save())
+            event_post_updated["sport_category"]=Sport.objects.get(id=event_post_updated["sport_category"]).sport_name
+            event_post_updated["skill_requirement"]=skill.level_name
+            BadgeOfferedByEventPost.objects.filter(post=event_post).delete()
+            for badge_name in data["modifications"]["badges"]:
+                badge=Badge.objects.get(name=badge_name)
+                badge_id=badge.id
+                badge_ser=BadgeOfferedByEventPostSerializer(data={"post_id":post_id,"badge_id":badge_id})
+                if badge_ser.is_valid():
+                    badge_ser.save()
+
+            event_post_act_ser.save()
+        else:
+            return Response({"message":event_post_ser.errors},422)
+
+    else:
+        return Response({"message":"There was an error while updating the event post"},status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+    res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":event_post_updated}
+    return Response(res,200)
 
 # It is a script for only one time run. It can only be run by Superadmin to avoid possible security bug
 # It will fill the database with sports which are fetched from Decathlon API, with necessary fields.
