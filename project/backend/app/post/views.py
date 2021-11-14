@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from requests.api import post
-from post.models import Badge,SkillLevel, Sport,EquipmentPost,EventPost,BadgeOfferedByEventPost
+from post.models import Badge,SkillLevel, Sport,EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream,
+
 from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, \
     EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer
 from rest_framework.decorators import api_view
@@ -28,14 +29,31 @@ def createEventPost(request):
     if request.method=='POST':
         
         data=json.loads(request.body)
-        _,owner_id,name,sport_category,country,city,neighborhood,description,\
-        image,date_time,participant_limit,spectator_limit,rule,equipment_requirement, \
-        event_status, capacity, location_requirement, contact_info, skill_requirement_info,repeating_frequency,badges=data["object"].values()
-        
 
+
+        post_name=data["object"]["post_name"]
+        sport_category=data["object"]["sport_category"]
+        country=data["object"]["country"]
+        city=data["object"]["city"]
+        neighborhood=data["object"]["neighborhood"]
+        description=data["object"]["description"]
+        image=data["object"]["pathToEventImage"]
+        date_time=data["object"]["date_time"]
+        participant_limit=data["object"]["participant_limit"]
+        spectator_limit=data["object"]["spectator_limit"]
+        rule=data["object"]["rule"]
+        equipment_requirement=data["object"]["equipment_requirement"]
+        location_requirement=data["object"]["location_requirement"]
+        contact_info=data["object"]["contact_info"]
+        skill_requirement_info=data["object"]["skill_requirement"]
+        repeating_frequency=data["object"]["repeating_frequency"]
+        badges=data["object"]["badges"]
+
+        actor_id=data["actor"]["id"]
         country=process_string(country)
         city=process_string(city)
         neighborhood=process_string(neighborhood)
+        sport_category=process_string(sport_category)
 
         if spectator_limit==None:
             spectator_limit=0
@@ -49,7 +67,6 @@ def createEventPost(request):
             res={"message":"Invalid event time"}
             return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY) 
         
-        sport_category=process_string(sport_category)
         # There is already a sport with this name in the database
         try:
             sport_id=Sport.objects.get(sport_name=sport_category).id
@@ -65,7 +82,8 @@ def createEventPost(request):
 
        
         skill_requirement=SkillLevel.objects.get(level_name=skill_requirement_info)
-        event={"post_name":name,"owner":data["actor"]["id"],"sport_category":sport_id,"description":description,\
+
+        event={"post_name":post_name,"owner":actor_id,"sport_category":sport_id,"description":description,\
             "country":country,"city":city,"neighborhood":neighborhood,"date_time":date,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
                 "rule":rule,"equipment_requirement":equipment_requirement, "status":event_status,"capacity":capacity,\
                     "location_requirement":location_requirement,"contact_info":contact_info,"repeating_frequency":repeating_frequency,\
@@ -111,8 +129,18 @@ def createEventPost(request):
 @api_view(['GET','POST'])
 def createEquipmentPost(request):
     if request.method=='POST':
+        
         data=json.loads(request.body)
-        _,owner_id,equipment_post_name,sport_category,country,city,neighborhood,description,image,link=data["object"].values()
+
+        owner_id=data["object"]["owner_id"]
+        equipment_post_name=data["object"]["post_name"]
+        sport_category=data["object"]["sport_category"]
+        country=data["object"]["country"]
+        city=data["object"]["city"]
+        neighborhood=data["object"]["neighborhood"]
+        description=data["object"]["description"]
+        image=data["object"]["pathToEquipmentPostImage"]
+        link=data["object"]["link"]
         try:
             actor=User.objects.get(id=owner_id)
         except:
@@ -329,31 +357,36 @@ class SaveSportListScript(APIView):
         sportlist = response.json()['data']
 
         sportlist = [{  # filter fields of sports
-            'name': process_string(x['attributes']['name'])
+            'sport_name': process_string(x['attributes']['name'])
         } for x in sportlist]
 
-        ids = []
+        sports = []
 
         for sport in sportlist:  # save fetched sports to datavase
             serializer = SportSerializer(data=sport)
             if serializer.is_valid():
                 serializer.save()
-                ids.append(sport['id'])
+                sports.append(sport["sport_name"])
             else:  # if there is an array while saving the database, return HTTP_400
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                continue
 
         # if all save operations are successfull, return their ids, with HTTP_201
-        return Response({'AcceptedIds': ids}, status=status.HTTP_201_CREATED)
+        return Response({'AcceptedSports': sports}, status=status.HTTP_201_CREATED)
+
 
 # It is executed once at the initial boot of the application. Badges will be decided later and for now there is only one type of badge as an example
 class SaveBadgesScript(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def post(self, request):
-        badges=[{"name":"awesome player","description":"You are an awesome player","pathToBadgeImage":""}]
+        badges=[{"name":"friendly","description":"You are a friendly player","pathToBadgeImage":""},\
+            {"name":"team player","description":"You are such a team player","pathToBadgeImage":""},\
+                {"name":"fair player","description":"You are a fair player","pathToBadgeImage":""},\
+                    {"name":"good server","description":"You are a good server","pathToBadgeImage":""},\
+                        {"name":"fast runner","description":"Wow! You were very fast","pathToBadgeImage":""}]
         for badge in badges:
             serializer=BadgeSerializer(data=badge)
-            if badge.is_valid():
+            if serializer.is_valid():
                 serializer.save()
         return Response({"message":"Badges are saved into the database"},status=status.HTTP_201_CREATED)
 
@@ -362,10 +395,10 @@ class SaveSkillLevelsScript(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def post(self, request):
-        levels=[{"id":1,"level":"beginner"},{"id":2, "level":"average"},{"id":3, "level":"skilled"},\
-            {"id":4,"level":"specialist"},{"id":4, "level":"expert"}]
+        levels=[{"level_name":"beginner"},{"level_name":"average"},{"level_name":"skilled"},\
+            {"level_name":"specialist"},{"level_name":"expert"}]
         for level in levels:
             serializer=SkillLevelSerializer(data=level)
-            if level.is_valid():
+            if serializer.is_valid():
                 serializer.save()
         return Response({"message":"Skill levels are saved into the database"},status=status.HTTP_201_CREATED)

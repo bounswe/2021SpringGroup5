@@ -1,10 +1,11 @@
 from django.test import TestCase
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User  # will be changed after custom User is implemented
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 from post.models import Badge, EquipmentPost, SkillLevel, Sport ,EventPost
 import json
 from datetime import datetime
+
 class PostTests(APITestCase):
 # Create your tests here.
     def test_create_event_post_post(self):
@@ -27,7 +28,7 @@ class PostTests(APITestCase):
             "object": {
                 "type": "Event_Post",
                 "owner_id": 321,
-                "name": "abc hali saha",
+                "post_name": "abc hali saha",
                 "sport_category": "Handball",
                 "country":'Turkey',
                 "city":'İstanbul',
@@ -38,9 +39,7 @@ class PostTests(APITestCase):
                 "participant_limit": 14,
                 "spectator_limit": None,
                 "rule": "asd",
-                "equipment_requirement": None,           
-                "status": 0,
-                "capacity": "open to applications",
+                "equipment_requirement": None,      
                 "location_requirement": "asd",
                 "contact_info": "054155555",
                 "skill_requirement": "beginner",
@@ -61,10 +60,10 @@ class PostTests(APITestCase):
         u.set_password('123')
         u.save()
         Sport.objects.create(id=1,sport_name="Football")
-        Badge.objects.create(id=1,name="friendly",description="You are a friendly player",pathToBadgeImage="....com")
+        Badge.objects.create(id=1,name="friendly",description="You are a friendly player",pathToBadgeImage=None)
         SkillLevel.objects.create(id=1,level_name="beginner")
         Sport.objects.create(id=2,sport_name="Volleyball")
-        Badge.objects.create(id=2,name="bad",description="You are a friendly player",pathToBadgeImage="....com")
+        Badge.objects.create(id=2,name="bad",description="You are a bad player",pathToBadgeImage=None)
         SkillLevel.objects.create(id=2,level_name="expert")
 
         client=APIClient()
@@ -92,7 +91,7 @@ class PostTests(APITestCase):
             "object": {
                 "type": "EquipmetPost",
                 "owner_id": 321,
-                "name": "adidas bileklik",
+                "post_name": "adidas bileklik",
                 "sport_category": "Tennis",
                 "country":'Turkey',
                 "city":None,
@@ -345,3 +344,4 @@ class PostTests(APITestCase):
         client.login(username="crazy_girl", password="123")
         response = client.patch("/post/change_event_post/",data,format='json')
         self.assertEqual(response.status_code, 422)
+
