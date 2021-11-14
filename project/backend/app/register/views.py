@@ -2,7 +2,7 @@ import requests
 from django.shortcuts import render, redirect
 from rest_framework.response import Response
 from rest_framework import status
-from .models import User
+from .models import User, Sport, InterestLevel
 from django.urls import reverse
 import hashlib
 from django.http import JsonResponse
@@ -51,6 +51,10 @@ def register(request):
         password = context['password1']
         password2 = context['password2']
         username = context['username']
+        interest1 = body['items'][0]['name']
+        interest2 = body['items'][1]['name']
+        level1 = body['items'][0]['level']
+        level2 = body['items'][1]['level']
 
         if User.objects.filter(username=username).exists():
             context['errormessage'] = 'Username is taken, choose another one'
@@ -73,6 +77,15 @@ def register(request):
         user = User.objects.create_user(username=username, mail=mail, name=name, surname=surname)
         user.set_password(password)
         user.save()
+
+        sport1 = Sport.objects.get(sport_name=interest1)
+        sport2 = Sport.objects.get(sport_name=interest2)
+
+        interest1 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport1, skill_level=level1)
+        interest2 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport2, skill_level=level2)
+
+        interest1.save()
+        interest2.save()
 
         return Response('SUCCESS', status=status.HTTP_200_OK)
 
