@@ -186,9 +186,34 @@ def createEquipmentPost(request):
         res={"sports":sports}
         return Response(res,status=status.HTTP_200_OK)
 
+@login_required(login_url='login_user/')
+@api_view(['DELETE'])
+def deleteEquipmentPost(request):
+    data=json.loads(request.body)
 
+    actor_id=data["actor"]["id"]
+    equipment_post_id=data["object"]["post_id"]
 
+    try:
+        actor=User.objects.get(id=actor_id)
+    except:
+        return Response({"message":"There is no such user in the system"},404)
+    try:
+        EquipmentPost.objects.filter(pk=equipment_post_id).update(active=False)
+        equipment_post=EquipmentPost.objects.get(id=equipment_post_id)
+    except:
+        return Response({"message":"There is no such event in the database, deletion operation is aborted"},status=status.HTTP_404_NOT_FOUND)
+    
+    
+    equipment_post_ser=EquipmentPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
+        "actor":actor_id,"type":data["type"],"object":equipment_post_id})
 
+    if equipment_post_ser.is_valid():
+        equipment_post_ser.save()
+    else:
+        return Response({"message":"there was an error while deleting the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    return Response({"message":"Equipment post is deleted"},status=status.HTTP_200_OK)
 
 # It is a script for only one time run. It can only be run by Superadmin to avoid possible security bug
 # It will fill the database with sports which are fetched from Decathlon API, with necessary fields.

@@ -1,10 +1,9 @@
 from django.test import TestCase
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User # will be changed after custom User is implemented
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
-from post.models import Badge, EventPost, SkillLevel, Sport # will be changed after custom User is implemented
-from django.contrib.auth import authenticate, login
-
+from post.models import Badge, EquipmentPost, SkillLevel, Sport 
+import json
 class PostTests(APITestCase):
 # Create your tests here.
     def test_create_event_post_post(self):
@@ -50,6 +49,7 @@ class PostTests(APITestCase):
         client=APIClient()
         client.login(username="crazy_girl", password="123")
         response = client.post("/post/create_event_post/",data,format='json')
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_event_post_get(self):
@@ -113,3 +113,41 @@ class PostTests(APITestCase):
         client.login(username="crazy_girl", password="123")
         response=client.get("/post/create_equipment_post/")
         self.assertEqual(response.status_code,status.HTTP_200_OK)
+
+    def test_delete_equipment_post(self):
+        User.objects.create(id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=4,sport_name="Handball")
+        s=Sport.objects.get(sport_name='Handball')
+        EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,\
+            description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
+                country='Turkey',city='Istanbul',neighborhood='Kadıkoy',link='...com',active=True,pathToEquipmentPostImage="...com")
+
+        data={
+            "@context": "https://www.w3.org/ns/activitystreams",
+            "summary": "Sally deleted an event post",
+            "type": "Delete",
+            "actor": {
+                "type": "Person",
+                "id":12345,
+                "name": "Sally",
+                "surname": "Sparrow",
+                "username":"crazy_girl"
+            },
+            "object": {
+            "type":"EquipmentPost",
+            "post_id": 12345
+            },
+            "origin": {
+                "type": "Collection",
+                "name": "Sally's Event posts"
+            }
+            }
+        
+        client=APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.delete("/post/delete_equipment_post/",data,format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
