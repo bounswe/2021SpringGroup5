@@ -7,7 +7,7 @@ from django.db.models.deletion import CASCADE
 # Create your models here.
 
 class Sport(models.Model):
-    sport_name=models.CharField(max_length=30,null=False,unique=True)
+    sport_name=models.CharField(max_length=70,null=False,unique=True)
 
 
 class EquipmentPost(models.Model):

@@ -204,21 +204,21 @@ class SaveSportListScript(APIView):
         sportlist = response.json()['data']
 
         sportlist = [{  # filter fields of sports
-            'name': process_string(x['attributes']['name'])
+            'sport_name': process_string(x['attributes']['name'])
         } for x in sportlist]
 
-        ids = []
+        sports = []
 
         for sport in sportlist:  # save fetched sports to datavase
             serializer = SportSerializer(data=sport)
             if serializer.is_valid():
                 serializer.save()
-                ids.append(sport['id'])
+                sports.append(sport["sport_name"])
             else:  # if there is an array while saving the database, return HTTP_400
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                continue
 
         # if all save operations are successfull, return their ids, with HTTP_201
-        return Response({'AcceptedIds': ids}, status=status.HTTP_201_CREATED)
+        return Response({'AcceptedIds': sports}, status=status.HTTP_201_CREATED)
 
 # It is executed once at the initial boot of the application. Badges will be decided later and for now there is only one type of badge as an example
 class SaveBadgesScript(APIView):
