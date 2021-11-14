@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render
-from post.models import Badge, EquipmentPostActivtyStream, EventPost,SkillLevel, Sport,EquipmentPost
+from post.models import Badge,SkillLevel, Sport,EquipmentPost
 from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, \
     EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer
 from rest_framework.decorators import api_view
@@ -13,6 +13,7 @@ import json
 import datetime
 from rest_framework.views import APIView
 from unidecode import unidecode
+from django.forms.models import model_to_dict
 # Create your views here.
 
 def process_string(s):
@@ -44,7 +45,7 @@ def createEventPost(request):
         try:
             date = datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M")
         except:
-            res={"actor":request.POST.get("actor"),"message":"Invalid event time"}
+            res={"message":"Invalid event time"}
             return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY) 
         
         sport_category=process_string(sport_category)
@@ -58,7 +59,7 @@ def createEventPost(request):
                 sport_id=sport_ser.data["id"]
             #Sport name has too many caharacters
             else:
-                res={"actor":request.POST.get("actor"),"message":"Sport name is too long"}
+                res={"message":"Sport name is too long"}
                 return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
        
@@ -131,7 +132,7 @@ def createEquipmentPost(request):
                 sport_id=sport_ser.data["id"]
             #Sport name has too many caharacters
             else:
-                res={"actor":request.POST.get("actor"),"message":"Sport name is too long"}
+                res={"message":"Sport name is too long"}
                 return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
         active=True
@@ -160,7 +161,7 @@ def createEquipmentPost(request):
         res={"sports":sports}
         return Response(res,status=status.HTTP_200_OK)
 
-
+@login_required(login_url='login_user/')
 @api_view(['DELETE'])
 def deleteEquipmentPost(request):
     data=json.loads(request.body)
@@ -188,13 +189,64 @@ def deleteEquipmentPost(request):
         return Response({"message":"there was an error while deleting the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
     return Response({"message":"Equipment post is deleted"},status=status.HTTP_200_OK)
-    
+
+@login_required(login_url='login_user/')  
 @api_view(['PATCH'])
 def changeEquipmentInfo(request):
     data=json.loads(request.body)
 
     _,actor_id,_,_,_=data["actor"].values()
     _,post_id=data["object"].values()
+    try:
+        actor=User.objects.get(id=actor_id)
+    except:
+        return Response({"message":"There is no such user in the system"},404)
+
+    try:
+        equipment_post=EquipmentPost.objects.get(id=post_id)
+    except:
+        return Response({"message":"There is no such post in the database"},404)
+
+    modifications_keys=data["modifications"].keys()
+   
+    equipment_post_ser=EquipmentPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
+    "actor":actor_id,"type":data["type"],"object":equipment_post.id})
+
+    if equipment_post_ser.is_valid():
+       
+        try:
+            for key,value in data["modifications"].items():
+                value=process_string(value)
+                
+                if key=="sport_category":
+                    try:
+                        sport_id=Sport.objects.get(sport_name=value).id
+                        
+                    except:
+                        sport_ser=SportSerializer(data={"sport_name":value})
+                        if sport_ser.is_valid():
+                            sport_ser.save()
+                            sport_id=sport_ser.data["id"]
+                        #Sport name has too many caharacters
+                        else:
+                            res={"message":"Sport name is too long"}
+                            return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+                    equipment_post.key=sport_id
+                else:
+                    equipment_post.key=value
+            equipment_post.save(update_fields=modifications_keys)
+        except:
+            return Response({"message":"Invalid modifications, information of the post did not change"},422)
+        equipment_post_ser.save()
+
+    else:
+        return Response({"message":"There was an error while updating the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+    res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":model_to_dict(equipment_post)}
+    return Response(res,200)
+
+
 
 # It is a script for only one time run. It can only be run by Superadmin to avoid possible security bug
 # It will fill the database with sports which are fetched from Decathlon API, with necessary fields.

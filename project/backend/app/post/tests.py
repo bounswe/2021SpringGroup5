@@ -129,7 +129,7 @@ class PostTests(APITestCase):
 
         data={
             "@context": "https://www.w3.org/ns/activitystreams",
-            "summary": "Sally deleted an event post",
+            "summary": "Sally deleted an equipment post",
             "type": "Delete",
             "actor": {
                 "type": "Person",
@@ -153,3 +153,44 @@ class PostTests(APITestCase):
         response = client.delete("/post/delete_equipment_post/",data,format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_change_equipment_post_info(self):
+        User.objects.create(id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=4,sport_name="Handball")
+        s=Sport.objects.get(sport_name='Handball')
+        EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,\
+            description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
+                country='Turkey',city='Istanbul',neighborhood='Kadıkoy',link='...com',active=True,pathToEquipmentPostImage="...com")
+
+        data={
+            "@context": "https://www.w3.org/ns/activitystreams",
+            "summary": "Sally updated an equipment post",
+            "type": "Update",
+            "actor": {
+                "type": "Person",
+                "id":12345,
+                "name": "Sally",
+                "surname": "Sparrow",
+                "username":"crazy_girl"
+            },
+            "object": {
+            "type":"EquipmentPost",
+            "post_id": 12345
+            },
+            "modifications": {
+                "post_name":"adidas harika bileklik",
+                "sport_category":"Football", 
+                "description":"blabla", 
+                "neighborhood":None, 
+                "link":"asdd.com",
+                "pathToEquipmentPostImage":None
+                }
+            }
+        
+        client=APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.patch("/post/change_equipment_post/",data,format='json')
+        print(response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
