@@ -13,27 +13,16 @@ class Background extends StatelessWidget {
     Size size = MediaQuery.of(context).size; // size will give the total H & W.
 
     return Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage("assets/images/sports-tools.jpg"),
+              fit: BoxFit.cover),
+        ),
         height: size.height,
         width: double.infinity,
         child: Stack(
           alignment: Alignment.center,
           children: <Widget>[
-            Positioned(
-              top: 0,
-              left: 0,
-              child: Image.asset(
-                "assets/images/ludo_logo.png",
-                width: size.width * 0.3,
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              child: Image.asset(
-                "assets/images/ludo_logo.png",
-                width: size.width * 0.2,
-              ),
-            ),
             child,
           ],
         ));

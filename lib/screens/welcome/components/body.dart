@@ -10,15 +10,25 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Size size = MediaQuery
+        .of(context)
+        .size;
     return Background(
       child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              "Ludo, A New Social Sport App",
-              style: TextStyle(fontWeight: FontWeight.bold),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                border:Border.all(color:kPrimaryLightColor, width: 20),
+                color: kPrimaryLightColor,
+              ),
+              child: Text(
+                "  LUDO,  SOCIAL SPORT APP  ",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+              ),
             ),
             SizedBox(height: size.height * 0.03),
             Image.asset(
@@ -28,7 +38,6 @@ class Body extends StatelessWidget {
             SizedBox(height: size.height * 0.05),
             RoundedButton(
               text: "LOGIN",
-
               press: () {
                 Navigator.push(
                   context,
