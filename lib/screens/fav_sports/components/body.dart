@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ludo_app/components/rounded_button.dart';
 import 'package:ludo_app/components/rounded_input_field.dart';
+import 'package:ludo_app/constants.dart';
 import 'package:ludo_app/screens/fav_sports/components/background.dart';
 import 'package:ludo_app/screens/fav_sports/fav_sports_screen.dart';
+import 'package:ludo_app/screens/main_page/main_screen.dart';
 
 class Body extends StatelessWidget {
   @override
@@ -29,16 +31,32 @@ class Body extends StatelessWidget {
               icon: Icons.double_arrow,
               onChanged: (value) {},
             ),
-            RoundedButton(text: "NEXT", press: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return FavSportsScreen();
-                  },
-                ),
-              );
-            }),
+            RoundedButton(
+                text: "ADD MORE INTEREST",
+                press: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return FavSportsScreen();
+                      },
+                    ),
+                  );
+                }),
+            RoundedButton(
+                text: "COMPLETE SIGN UP",
+                textColor: Colors.black,
+                color: kPrimaryLightColor,
+                press: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return MainScreen();
+                      },
+                    ),
+                  );
+                }),
             SizedBox(height: size.height * 0.03),
           ],
         ),
