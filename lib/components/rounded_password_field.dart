@@ -4,10 +4,12 @@ import 'package:ludo_app/constants.dart';
 
 class RoundedPasswordField extends StatelessWidget {
   final ValueChanged<String> onChanged;
+  final String hintText;
 
   const RoundedPasswordField({
     Key? key,
     required this.onChanged,
+    this.hintText = "Password",
   }) : super(key: key);
 
   @override
@@ -17,7 +19,7 @@ class RoundedPasswordField extends StatelessWidget {
         obscureText: true,
         onChanged: onChanged,
         decoration: InputDecoration(
-          hintText: "Password",
+          hintText: hintText,
           icon: Icon(
             Icons.lock,
             color: kPrimaryColor,
