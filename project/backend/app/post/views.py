@@ -160,13 +160,13 @@ def createEquipmentPost(request):
         res={"sports":sports}
         return Response(res,status=status.HTTP_200_OK)
 
-
+@login_required(login_url='login_user/')
 @api_view(['DELETE'])
 def deleteEquipmentPost(request):
     data=json.loads(request.body)
 
-    _,actor_id,_,_,_=data["actor"].values()
-    _,equipment_post_id=data["object"].values()
+    actor_id=data["actor"]["id"]
+    equipment_post_id=data["object"]["post_id"]
 
     try:
         actor=User.objects.get(id=actor_id)
