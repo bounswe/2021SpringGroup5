@@ -7,7 +7,7 @@ from django.db.models.deletion import CASCADE
 # Create your models here.
 
 class Sport(models.Model):
-    sport_name=models.CharField(max_length=30,null=False,unique=True)
+    sport_name=models.CharField(max_length=70,null=False,unique=True)
 
 
 class EquipmentPost(models.Model):
@@ -46,7 +46,7 @@ class EventPost(models.Model):
     contact_info=models.CharField(null=True,blank=True,max_length=50)
     repeating_frequency=models.IntegerField(null=False,blank=False)
     pathToEventImage=models.URLField(null=True,blank=True)
-    level=models.ForeignKey(SkillLevel,on_delete=CASCADE)
+    skill_requirement=models.ForeignKey(SkillLevel,on_delete=CASCADE)
 
 class EventPostActivityStream(models.Model):
     context=models.URLField(null=False,blank=False) #????????????
@@ -122,4 +122,5 @@ class BadgeOwnedByUser(models.Model):
     owner=models.ForeignKey(User, on_delete=models.CASCADE)
     date_time=models.DateTimeField(auto_now_add=True)
     isGivenBySystem=models.BooleanField()
+
 
