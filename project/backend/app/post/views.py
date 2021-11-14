@@ -225,10 +225,14 @@ class SaveBadgesScript(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def post(self, request):
-        badges=[{"name":"awesome player","description":"You are an awesome player","pathToBadgeImage":""}]
+        badges=[{"name":"friendly","description":"You are a friendly player","pathToBadgeImage":""},\
+            {"name":"team player","description":"You are such a team player","pathToBadgeImage":""},\
+                {"name":"fair player","description":"You are a fair player","pathToBadgeImage":""},\
+                    {"name":"good server","description":"You are a good server","pathToBadgeImage":""},\
+                        {"name":"fast runner","description":"Wow! You were very fast","pathToBadgeImage":""}]
         for badge in badges:
             serializer=BadgeSerializer(data=badge)
-            if badge.is_valid():
+            if serializer.is_valid():
                 serializer.save()
         return Response({"message":"Badges are saved into the database"},status=status.HTTP_201_CREATED)
 
@@ -237,10 +241,10 @@ class SaveSkillLevelsScript(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def post(self, request):
-        levels=[{"id":1,"level":"beginner"},{"id":2, "level":"average"},{"id":3, "level":"skilled"},\
-            {"id":4,"level":"specialist"},{"id":4, "level":"expert"}]
+        levels=[{"level_name":"beginner"},{"level_name":"average"},{"level_name":"skilled"},\
+            {"level_name":"specialist"},{"level_name":"expert"}]
         for level in levels:
             serializer=SkillLevelSerializer(data=level)
-            if level.is_valid():
+            if serializer.is_valid():
                 serializer.save()
         return Response({"message":"Skill levels are saved into the database"},status=status.HTTP_201_CREATED)
