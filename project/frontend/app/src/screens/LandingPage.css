@@ -1,0 +1,83 @@
+.landing-page-wrapper {
+    background: #98b36e;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.landing-page-content {
+    background: var(--gradient-background);
+    box-shadow: rgba(0, 0, 0, 0.3) 0 0 50px, rgba(0, 0, 0, 0.22) 0 15px 12px;
+    height: 75%;
+    width: 80vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    border-radius: 11px;
+}
+
+.landing-page-logo {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 15px;
+}
+
+.landing-page-logo span {
+    font-family: 'Montserrat';
+    font-style: normal;
+    background: white;
+    height: 5rem;
+    width: 5rem;
+    color: #98b36e;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.25rem;
+    font-weight: bolder;
+}
+
+.landing-page-form {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+    padding: 2.5rem;
+    height: 26.75rem;
+    width: 25rem;
+    background: transparent;
+    border-radius: 7px;
+    overflow: hidden;
+    box-shadow: rgba(0, 0, 0, 0.3) 0 19px 38px, rgba(0, 0, 0, 0.22) 0 15px 12px;
+}
+
+.landing-page-form p {
+    color: white;
+    font-size: 28px;
+    letter-spacing: 1px;
+}
+
+.landing-page-form-inputs {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+}
+
+.landing-page-form-submit {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+
+@media screen and (max-width: 980px) {
+    .landing-page-content {
+        height: 100%;
+        width: 100%;
+        border-radius: 0;
+        display: grid;
+        place-content: center;
+    }
+    .landing-page-logo {
+        display: none;
+    }
+}
