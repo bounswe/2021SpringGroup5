@@ -4,6 +4,7 @@ import 'package:ludo_app/components/rounded_button.dart';
 import 'package:ludo_app/components/rounded_input_field.dart';
 import 'package:ludo_app/components/rounded_password_field.dart';
 import 'package:ludo_app/screens/login/components/background.dart';
+import 'package:ludo_app/screens/main_page/main_screen.dart';
 import 'package:ludo_app/screens/signup/signup_screen.dart';
 
 class Body extends StatelessWidget {
@@ -36,7 +37,19 @@ class Body extends StatelessWidget {
             RoundedPasswordField(
               onChanged: (value) {},
             ),
-            RoundedButton(text: "LOGIN", press: () {}),
+            RoundedButton(
+              text: "LOGIN",
+              press: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return MainScreen();
+                    },
+                  ),
+                );
+              },
+            ),
             SizedBox(height: size.height * 0.03),
             CheckRegisteredAccount(
               press: () {
