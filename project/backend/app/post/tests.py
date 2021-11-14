@@ -13,7 +13,7 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=4,sport_name="Handball")
+        Sport.objects.create(id=24,sport_name="Handball")
         Badge.objects.create(id=5,name="surprised",description="You are a friendly player",pathToBadgeImage="....com")
         SkillLevel.objects.create(id=1,level_name="beginner")
         data={
@@ -76,7 +76,6 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=4,sport_name="Handball")
         data={
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "Sally is creating an equipment post",
@@ -121,8 +120,8 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=4,sport_name="Handball")
-        s=Sport.objects.get(sport_name='Handball')
+        Sport.objects.create(id=13,sport_name="Basketball")
+        s=Sport.objects.get(sport_name='Basketball')
         EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,\
             description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                 country='Turkey',city='Istanbul',neighborhood='Kadıkoy',link='...com',active=True,pathToEquipmentPostImage="...com")
@@ -158,8 +157,8 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=4,sport_name="Handball")
-        s=Sport.objects.get(sport_name='Handball')
+        Sport.objects.create(id=15,sport_name="Running")
+        s=Sport.objects.get(sport_name='Running')
         EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,\
             description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                 country='Turkey',city='Istanbul',neighborhood='Kadıkoy',link='...com',active=True,pathToEquipmentPostImage="...com")
@@ -200,8 +199,8 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=4,sport_name="Handball")
-        s=Sport.objects.get(sport_name='Handball')
+        Sport.objects.create(id=17,sport_name="Jogging")
+        s=Sport.objects.get(sport_name='Jogging')
         EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,\
             description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                 country='Turkey',city='Istanbul',neighborhood='Kadıkoy',link='...com',active=True,pathToEquipmentPostImage="...com")
@@ -241,8 +240,8 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=4,sport_name="Handball")
-        s=Sport.objects.get(sport_name='Handball')
+        Sport.objects.create(id=10,sport_name="Swimming")
+        s=Sport.objects.get(sport_name='Swimming')
         Badge.objects.create(id=1,name="awesome",description="You are an awesome player",pathToBadgeImage="....com")
         Badge.objects.create(id=5,name="surprised",description="You are a surprised player",pathToBadgeImage="....com")
         SkillLevel.objects.create(id=1,level_name="beginner")
@@ -296,8 +295,8 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=4,sport_name="Handball")
-        s=Sport.objects.get(sport_name='Handball')
+        Sport.objects.create(id=19,sport_name="Cycling")
+        s=Sport.objects.get(sport_name='Cycling')
         Badge.objects.create(id=1,name="awesome",description="You are an awesome player",pathToBadgeImage="....com")
         Badge.objects.create(id=5,name="surprised",description="You are a surprised player",pathToBadgeImage="....com")
         SkillLevel.objects.create(id=1,level_name="beginner")
