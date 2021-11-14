@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render
-from post.models import Badge, EquipmentPostActivtyStream, EventPost,SkillLevel, Sport,EquipmentPost
+from requests.api import post
+from post.models import Badge,SkillLevel, Sport,EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream,
+
 from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, \
     EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer
 from rest_framework.decorators import api_view
@@ -13,6 +15,7 @@ import json
 import datetime
 from rest_framework.views import APIView
 from unidecode import unidecode
+from django.forms.models import model_to_dict
 # Create your views here.
 
 def process_string(s):
@@ -79,6 +82,7 @@ def createEventPost(request):
 
        
         skill_requirement=SkillLevel.objects.get(level_name=skill_requirement_info)
+
         event={"post_name":post_name,"owner":actor_id,"sport_category":sport_id,"description":description,\
             "country":country,"city":city,"neighborhood":neighborhood,"date_time":date,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
                 "rule":rule,"equipment_requirement":equipment_requirement, "status":event_status,"capacity":capacity,\
@@ -157,7 +161,7 @@ def createEquipmentPost(request):
                 sport_id=sport_ser.data["id"]
             #Sport name has too many caharacters
             else:
-                res={"actor":request.POST.get("actor"),"message":"Sport name is too long"}
+                res={"message":"Sport name is too long"}
                 return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
         active=True
@@ -215,6 +219,130 @@ def deleteEquipmentPost(request):
 
     return Response({"message":"Equipment post is deleted"},status=status.HTTP_200_OK)
 
+@login_required(login_url='login_user/')  
+@api_view(['PATCH'])
+def changeEquipmentInfo(request):
+    data=json.loads(request.body)
+
+    actor_id=data["actor"]["id"]
+    post_id=data["object"]["post_id"]
+    try:
+        actor=User.objects.get(id=actor_id)
+    except:
+        return Response({"message":"There is no such user in the system"},404)
+
+    try:
+        equipment_post=EquipmentPost.objects.get(id=post_id)
+    except:
+        return Response({"message":"There is no such post in the database"},404)
+
+    modifications_keys=data["modifications"].keys()
+   
+    equipment_post_act_ser=EquipmentPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
+    "actor":actor_id,"type":data["type"],"object":equipment_post.id})
+
+    for k,v in data["modifications"].items():
+        data["modifications"][k]=process_string(v)
+
+    if equipment_post_act_ser.is_valid():
+
+        if "sport_category" in modifications_keys:
+            try:
+                s=Sport.objects.get(sport_name=data["modifications"]["sport_category"])
+                data["modifications"]["sport_category"]=s.id
+            except:
+                sport_ser=SportSerializer(data={"sport_name":data["modifications"]["sport_category"]})
+                if sport_ser.is_valid():
+                    s=sport_ser.save()
+                    data["modifications"]["sport_category"]=s.id
+                #Sport name has too many caharacters
+                else:
+                    res={"message":"Sport name is too long"}
+                    return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+        equipment_post_ser = EquipmentPostSerializer(equipment_post, data=data["modifications"], partial=True)
+        if equipment_post_ser.is_valid():
+            equipment_post_updated=model_to_dict(equipment_post_ser.save())
+            equipment_post_updated["sport_category"]=Sport.objects.get(id=equipment_post_updated["sport_category"]).sport_name
+            equipment_post_act_ser.save()
+        else:
+            return Response({"message":equipment_post_ser.errors},422)
+
+    else:
+        return Response({"message":"There was an error while updating the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+    res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":equipment_post_updated}
+    return Response(res,200)
+
+
+@login_required(login_url='login_user/')  
+@api_view(['PATCH'])
+def changeEventInfo(request):
+    data=json.loads(request.body)
+    actor_id=data["actor"]["id"]
+    post_id=data["object"]["post_id"]
+    try:
+        actor=User.objects.get(id=actor_id)
+    except:
+        return Response({"message":"There is no such user in the system"},404)
+
+    try:
+        event_post=EventPost.objects.get(id=post_id)
+    except:
+        return Response({"message":"There is no such post in the database"},404)
+
+    modifications_keys=data["modifications"].keys()
+   
+    event_post_act_ser=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
+    "actor":actor_id,"type":data["type"],"object":event_post.id})
+
+    for k,v in data["modifications"].items():
+        data["modifications"][k]=process_string(v)
+
+    if event_post_act_ser.is_valid():
+
+        if "sport_category" in modifications_keys:
+            try:
+                s=Sport.objects.get(sport_name=data["modifications"]["sport_category"])
+                data["modifications"]["sport_category"]=s.id
+            except:
+                sport_ser=SportSerializer(data={"sport_name":data["modifications"]["sport_category"]})
+                if sport_ser.is_valid():
+                    s=sport_ser.save()
+                    data["modifications"]["sport_category"]=s.id
+                #Sport name has too many caharacters
+                else:
+                    res={"message":"Sport name is too long"}
+                    return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+        skill=SkillLevel.objects.get(level_name=data["modifications"]["skill_requirement"])
+        data["modifications"]["skill_requirement"]=skill.id
+
+        event_post_ser = EventPostSerializer(event_post, data=data["modifications"], partial=True)
+        if event_post_ser.is_valid():
+            event_post_updated=model_to_dict(event_post_ser.save())
+            event_post_updated["sport_category"]=Sport.objects.get(id=event_post_updated["sport_category"]).sport_name
+            event_post_updated["skill_requirement"]=skill.level_name
+            BadgeOfferedByEventPost.objects.filter(post=event_post).delete()
+            for badge_name in data["modifications"]["badges"]:
+                badge=Badge.objects.get(name=badge_name)
+                badge_id=badge.id
+                badge_ser=BadgeOfferedByEventPostSerializer(data={"post_id":post_id,"badge_id":badge_id})
+                if badge_ser.is_valid():
+                    badge_ser.save()
+
+            event_post_act_ser.save()
+        else:
+            return Response({"message":event_post_ser.errors},422)
+
+    else:
+        return Response({"message":"There was an error while updating the event post"},status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+    res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":event_post_updated}
+    return Response(res,200)
+
 # It is a script for only one time run. It can only be run by Superadmin to avoid possible security bug
 # It will fill the database with sports which are fetched from Decathlon API, with necessary fields.
 class SaveSportListScript(APIView):
@@ -243,7 +371,8 @@ class SaveSportListScript(APIView):
                 continue
 
         # if all save operations are successfull, return their ids, with HTTP_201
-        return Response({'AcceptedIds': sports}, status=status.HTTP_201_CREATED)
+        return Response({'AcceptedSports': sports}, status=status.HTTP_201_CREATED)
+
 
 # It is executed once at the initial boot of the application. Badges will be decided later and for now there is only one type of badge as an example
 class SaveBadgesScript(APIView):

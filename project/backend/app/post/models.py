@@ -122,5 +122,3 @@ class BadgeOwnedByUser(models.Model):
     owner=models.ForeignKey(User, on_delete=models.CASCADE)
     date_time=models.DateTimeField(auto_now_add=True)
     isGivenBySystem=models.BooleanField()
-
-
