@@ -16,7 +16,7 @@ from unidecode import unidecode
 # Create your views here.
 
 def process_string(s):
-    if s != None:
+    if s != None and (type(s)==str):
         return unidecode(s.lower())
     return s
 
@@ -26,14 +26,31 @@ def createEventPost(request):
     if request.method=='POST':
         
         data=json.loads(request.body)
-        _,owner_id,name,sport_category,country,city,neighborhood,description,\
-        image,date_time,participant_limit,spectator_limit,rule,equipment_requirement, \
-        event_status, capacity, location_requirement, contact_info, skill_requirement_info,repeating_frequency,badges=data["object"].values()
-        
 
+
+        post_name=data["object"]["post_name"]
+        sport_category=data["object"]["sport_category"]
+        country=data["object"]["country"]
+        city=data["object"]["city"]
+        neighborhood=data["object"]["neighborhood"]
+        description=data["object"]["description"]
+        image=data["object"]["pathToEventImage"]
+        date_time=data["object"]["date_time"]
+        participant_limit=data["object"]["participant_limit"]
+        spectator_limit=data["object"]["spectator_limit"]
+        rule=data["object"]["rule"]
+        equipment_requirement=data["object"]["equipment_requirement"]
+        location_requirement=data["object"]["location_requirement"]
+        contact_info=data["object"]["contact_info"]
+        skill_requirement_info=data["object"]["skill_requirement"]
+        repeating_frequency=data["object"]["repeating_frequency"]
+        badges=data["object"]["badges"]
+
+        actor_id=data["actor"]["id"]
         country=process_string(country)
         city=process_string(city)
         neighborhood=process_string(neighborhood)
+        sport_category=process_string(sport_category)
 
         if spectator_limit==None:
             spectator_limit=0
@@ -44,10 +61,9 @@ def createEventPost(request):
         try:
             date = datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M")
         except:
-            res={"actor":request.POST.get("actor"),"message":"Invalid event time"}
+            res={"message":"Invalid event time"}
             return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY) 
         
-        sport_category=process_string(sport_category)
         # There is already a sport with this name in the database
         try:
             sport_id=Sport.objects.get(sport_name=sport_category).id
@@ -58,12 +74,12 @@ def createEventPost(request):
                 sport_id=sport_ser.data["id"]
             #Sport name has too many caharacters
             else:
-                res={"actor":request.POST.get("actor"),"message":"Sport name is too long"}
+                res={"message":"Sport name is too long"}
                 return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
        
         skill_requirement=SkillLevel.objects.get(level_name=skill_requirement_info)
-        event={"post_name":name,"owner":data["actor"]["id"],"sport_category":sport_id,"description":description,\
+        event={"post_name":post_name,"owner":actor_id,"sport_category":sport_id,"description":description,\
             "country":country,"city":city,"neighborhood":neighborhood,"date_time":date,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
                 "rule":rule,"equipment_requirement":equipment_requirement, "status":event_status,"capacity":capacity,\
                     "location_requirement":location_requirement,"contact_info":contact_info,"repeating_frequency":repeating_frequency,\
@@ -109,8 +125,18 @@ def createEventPost(request):
 @api_view(['GET','POST'])
 def createEquipmentPost(request):
     if request.method=='POST':
+        
         data=json.loads(request.body)
-        _,owner_id,equipment_post_name,sport_category,country,city,neighborhood,description,image,link=data["object"].values()
+
+        owner_id=data["object"]["owner_id"]
+        equipment_post_name=data["object"]["post_name"]
+        sport_category=data["object"]["sport_category"]
+        country=data["object"]["country"]
+        city=data["object"]["city"]
+        neighborhood=data["object"]["neighborhood"]
+        description=data["object"]["description"]
+        image=data["object"]["pathToEquipmentPostImage"]
+        link=data["object"]["link"]
         try:
             actor=User.objects.get(id=owner_id)
         except:

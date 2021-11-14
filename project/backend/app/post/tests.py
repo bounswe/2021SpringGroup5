@@ -27,7 +27,7 @@ class PostTests(APITestCase):
             "object": {
                 "type": "Event_Post",
                 "owner_id": 321,
-                "name": "abc hali saha",
+                "post_name": "abc hali saha",
                 "sport_category": "Handball",
                 "country":'Turkey',
                 "city":'İstanbul',
@@ -38,9 +38,7 @@ class PostTests(APITestCase):
                 "participant_limit": 14,
                 "spectator_limit": None,
                 "rule": "asd",
-                "equipment_requirement": None,           
-                "status": 0,
-                "capacity": "open to applications",
+                "equipment_requirement": None,      
                 "location_requirement": "asd",
                 "contact_info": "054155555",
                 "skill_requirement": "beginner",
@@ -91,7 +89,7 @@ class PostTests(APITestCase):
             "object": {
                 "type": "EquipmetPost",
                 "owner_id": 321,
-                "name": "adidas bileklik",
+                "post_name": "adidas bileklik",
                 "sport_category": "Tennis",
                 "country":'Turkey',
                 "city":None,
