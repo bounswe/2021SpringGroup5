@@ -18,9 +18,9 @@ class Body extends StatelessWidget {
             const Text(
               "Please enter your favourite\nsport and skill level below",
               textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15.5),
             ),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: size.height * 0.02),
             RoundedInputField(
               hintText: "Favourite sport",
               icon: Icons.directions_walk,

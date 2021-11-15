@@ -17,13 +17,15 @@ class Body extends StatelessWidget {
           children: <Widget>[
             Text(
               "SIGN UP",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15.5),
             ),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: size.height * 0.02),
             Image.asset(
               "assets/images/ludo_logo.png",
-              height: size.height * 0.35,
+              height: size.height * 0.30,
             ),
+            SizedBox(height: size.height * 0.02),
+
             RoundedInputField(hintText: "Name", onChanged: (value) {}),
             RoundedInputField(hintText: "Surname", onChanged: (value) {}),
             RoundedInputField(hintText: "Your Email", icon: Icons.alternate_email, onChanged: (value) {}),
@@ -38,7 +40,7 @@ class Body extends StatelessWidget {
                 ),
               );
             }),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: size.height * 0.02),
             CheckRegisteredAccount(
               login: false,
               press: () {

@@ -16,9 +16,9 @@ class Body extends StatelessWidget {
           children: <Widget>[
             const Text(
               "Set your username and password",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15.5),
             ),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: size.height * 0.02),
             RoundedInputField(
               hintText: "Username",
               onChanged: (value) {},

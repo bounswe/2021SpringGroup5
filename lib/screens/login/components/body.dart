@@ -25,14 +25,14 @@ class Body extends StatelessWidget {
           children: <Widget>[
             const Text(
               "LOGIN",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15.5),
             ),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: size.height * 0.02),
             Image.asset(
               "assets/images/ludo_logo.png",
               height: size.height * 0.35,
             ),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: size.height * 0.02),
             RoundedInputField(
               hintText: "Your Email",
               onChanged: (value) {},

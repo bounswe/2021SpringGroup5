@@ -20,14 +20,16 @@ class Body extends StatelessWidget {
           children: <Widget>[
             DecoratedBox(
               decoration: BoxDecoration(
-                border:Border.all(color:kPrimaryLightColor, width: 20),
-                color: kPrimaryLightColor,
+                border:Border.all(color:kPrimaryColor, width: 25),
+                color: kPrimaryColor,
               ),
               child: Text(
                 "  LUDO,  SOCIAL SPORT APP  ",
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black),
+                    fontSize: 18,
+                    fontStyle: FontStyle.italic,
+                    color: Colors.white),
               ),
             ),
             SizedBox(height: size.height * 0.03),
@@ -38,6 +40,7 @@ class Body extends StatelessWidget {
             SizedBox(height: size.height * 0.05),
             RoundedButton(
               text: "LOGIN",
+
               press: () {
                 Navigator.push(
                   context,

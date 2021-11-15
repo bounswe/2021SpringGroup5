@@ -15,10 +15,10 @@ class Body extends StatelessWidget {
           children: <Widget>[
             const Text(
               "Please enter the verification code\nsent to your email address",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.normal,fontSize: 15.5),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: size.height * 0.02),
             RoundedInputField(hintText: "Verification Code", icon: null, onChanged: (value) {}),
             //RoundedPasswordField(onChanged: (value) {}),
             RoundedButton(text: "NEXT", press: () {
