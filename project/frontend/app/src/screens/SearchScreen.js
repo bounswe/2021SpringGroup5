@@ -83,7 +83,7 @@ function SearchScreen(props) {
             title: "Basketball Game 1",
             type: "Basketball",
             location: "Uskudar",
-            date: "19 May",
+            date: "17 Nov",
             time: "13:00"
         },
         {
@@ -91,7 +91,7 @@ function SearchScreen(props) {
             title: "Basketball Game 2",
             type: "Basketball",
             location: "Kadikoy",
-            date: "21 May",
+            date: "18 Nov",
             time: "17:00"
         },
         {
@@ -99,7 +99,7 @@ function SearchScreen(props) {
             title: "Basketball Game 3",
             type: "Basketball",
             location: "Besiktas",
-            date: "22 May",
+            date: "19 Nov",
             time: "18:00"
         },
         {
@@ -107,7 +107,7 @@ function SearchScreen(props) {
             title: "Basketball Game 4",
             type: "Basketball",
             location: "Hisarustu",
-            date: "25 May",
+            date: "23 Nov",
             time: "18:30"
         }
     ]
