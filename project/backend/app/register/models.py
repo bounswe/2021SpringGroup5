@@ -14,11 +14,7 @@ class User(AbstractUser):
 
 
 class Sport(models.Model):
-    sport_name = models.CharField(max_length=30, null=False)
-    equipments = models.CharField(max_length=200)
-    max_players = models.IntegerField(null=True)
-    special_location = models.CharField(null=True, max_length=30)
-    general_rules = models.CharField(null=True, max_length=300)
+    sport_name = models.CharField(max_length=70, null=False, unique=True)
 
 
 class InterestLevel(models.Model):
