@@ -5,6 +5,10 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --color-ludo-green: rgb(123,166,109);
+  --color-ludo-yellow: rgb(251,222,112);
+  --gradient-background: linear-gradient(45deg, var(--color-ludo-yellow) 0%, var(--color-ludo-green) 75%);
 }
 
 code {
