@@ -63,6 +63,12 @@
     row-gap: 1rem;
 }
 
+.landing-page-form-inputs-row{
+    display: flex;
+    flex-direction: row;
+    column-gap: 1rem;
+}
+
 .landing-page-form-submit {
     display: flex;
     flex-direction: column;
