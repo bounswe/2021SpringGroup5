@@ -7,9 +7,10 @@ import HomeScreen from './screens/HomeScreen';
 import EventScreen from './screens/EventScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
+import SearchScreen from './screens/SearchScreen';
 
 function App() {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(true);
 
   if (!user) {
     return (
@@ -32,6 +33,7 @@ function App() {
     <div className="App">
       <Header user={user} />
       <Switch>
+        <Route path="/search" component={SearchScreen} />
         <Route path="/event/:id" component={EventScreen} />
         <Route path="/" component={HomeScreen} />
       </Switch>

@@ -16,7 +16,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import { Home, Logout, Search } from '@mui/icons-material';
+import { Add, Home, Logout, Search } from '@mui/icons-material';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import { useHistory } from 'react-router';
 
 // #f8f8f8 background
@@ -52,6 +54,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
+
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -102,6 +105,15 @@ export default function MiniDrawer() {
     setOpen(false);
   };
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const openCreateMenu = Boolean(anchorEl);
+  const handleOpenCreateMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseCreateMenu = () => {
+    setAnchorEl(null);
+  };
+
   const handleLogout = () => {
 
   };
@@ -122,8 +134,8 @@ export default function MiniDrawer() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div" className="fs-4 fw-bolder text-dark" sx={{ flexGrow: 1 }}>
-            Sport
+          <Typography style={{ color: "black" }} variant="h6" component="div" className="fs-4 fw-bolder" sx={{ flexGrow: 1 }}>
+            Ludo
           </Typography>
         </Toolbar>
       </AppBar>
@@ -147,6 +159,24 @@ export default function MiniDrawer() {
             </ListItemIcon>
             <ListItemText primary={"Search"} />
           </ListItem>
+          <ListItem button key={3} onClick={handleOpenCreateMenu}>
+            <ListItemIcon>
+              <Add />
+            </ListItemIcon>
+            <ListItemText primary={"Create"} />
+          </ListItem>
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={openCreateMenu}
+            onClose={handleCloseCreateMenu}
+            MenuListProps={{
+              'aria-labelledby': 'basic-button',
+            }}
+          >
+            <MenuItem onClick={() => history.push("/createEvent") && handleCloseCreateMenu}>Create Event Post</MenuItem>
+            <MenuItem onClick={() => history.push("/createEquipment") && handleCloseCreateMenu}>Create Equipment Post</MenuItem>
+          </Menu>
           <ListItem button key={3} onClick={() => history.push("/profile")}>
             <ListItemIcon>
               <AccountCircle />
@@ -164,6 +194,7 @@ export default function MiniDrawer() {
           </ListItem>
         </List>
       </Drawer>
+      <DrawerHeader />
     </Box>
   );
 }
