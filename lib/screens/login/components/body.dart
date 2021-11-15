@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:ludo_app/components/change_password.dart';
 import 'package:ludo_app/components/check_registered_account.dart';
 import 'package:ludo_app/components/rounded_button.dart';
 import 'package:ludo_app/components/rounded_input_field.dart';
 import 'package:ludo_app/components/rounded_password_field.dart';
+import 'package:ludo_app/constants.dart';
+import 'package:ludo_app/screens/change_password/change_password_screen.dart';
 import 'package:ludo_app/screens/login/components/background.dart';
 import 'package:ludo_app/screens/main_page/main_screen.dart';
 import 'package:ludo_app/screens/signup/signup_screen.dart';
@@ -50,7 +53,18 @@ class Body extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: size.height * 0.02),
+            ChangePassword(press: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return ChangePasswordScreen();
+                  },
+                ),
+              );
+            },),
+            SizedBox(height: size.height * 0.015),
             CheckRegisteredAccount(
               press: () {
                 Navigator.push(
