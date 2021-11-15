@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+
 from django.shortcuts import render
 from requests.api import post
 from post.models import Badge,SkillLevel, Sport,EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream
@@ -17,6 +17,9 @@ from rest_framework.views import APIView
 from unidecode import unidecode
 from django.forms.models import model_to_dict
 # Create your views here.
+
+from django.apps import apps
+User = apps.get_model('register', 'User')
 
 def process_string(s):
     if s != None and (type(s)==str):
