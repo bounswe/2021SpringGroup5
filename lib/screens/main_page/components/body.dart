@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ludo_app/components/rounded_button.dart';
 import 'package:ludo_app/components/rounded_button.dart';
+import 'package:ludo_app/constants.dart';
 import 'package:ludo_app/screens/main_page/components/background.dart';
 import 'package:ludo_app/screens/main_page/main_screen.dart';
+import 'package:ludo_app/screens/welcome/welcome_screen.dart';
 
 class Body extends StatelessWidget {
   const Body({
@@ -33,6 +35,7 @@ class Body extends StatelessWidget {
                   "assets/images/squash-sport.jpg", height: size.height * 0.3,),
               SizedBox(height: 15,),
               Text("1v1 Squash Game near Etiler."),
+              Text("Today 19.00 @Etiler Stadium"),
               RoundedButton(
                 text: "ATTEND",
                 press: () {
@@ -41,6 +44,22 @@ class Body extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return MainScreen();
+                      },
+                    ),
+                  );
+                },
+              ),
+              SizedBox(height:80),
+              RoundedButton(
+                color: kPrimaryLightColor,
+                textColor: Colors.black,
+                text: "LOGOUT",
+                press: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return WelcomeScreen();
                       },
                     ),
                   );
