@@ -1,5 +1,5 @@
 from django.test import TestCase
-from django.contrib.auth.models import User  # will be changed after custom User is implemented
+from register.models import User  # will be changed after custom User is implemented
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 from post.models import Badge, EquipmentPost, SkillLevel, Sport ,EventPost
@@ -9,7 +9,7 @@ from datetime import datetime
 class PostTests(APITestCase):
 # Create your tests here.
     def test_create_event_post_post(self):
-        User.objects.create(id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
@@ -55,7 +55,7 @@ class PostTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_event_post_get(self):
-        User.objects.create(id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
@@ -72,7 +72,7 @@ class PostTests(APITestCase):
         self.assertEqual(response.status_code,status.HTTP_200_OK)
 
     def test_create_equipment_post_post(self):
-        User.objects.create(id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
@@ -106,7 +106,7 @@ class PostTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_equipment_post_get(self):
-        User.objects.create(id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
@@ -116,7 +116,7 @@ class PostTests(APITestCase):
         self.assertEqual(response.status_code,status.HTTP_200_OK)
 
     def test_delete_equipment_post(self):
-        User.objects.create(id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
@@ -153,7 +153,7 @@ class PostTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_change_equipment_post_invalid_info(self):
-        User.objects.create(id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
@@ -195,7 +195,7 @@ class PostTests(APITestCase):
         self.assertEqual(response.status_code, 422)
     
     def test_change_equipment_post_valid_info(self):
-        User.objects.create(id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
@@ -236,7 +236,7 @@ class PostTests(APITestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_change_event_post_valid_info(self):
-        User.objects.create(id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
@@ -276,7 +276,7 @@ class PostTests(APITestCase):
                    "date_time": "2021-12-13 10:10:10", 
                      "location_requirement": "In 250 m radius",
                      "rule": "Don't shout", 
-                     "skill_requirement": "Medium", 
+                     "skill_requirement": "medium", 
                      "contact_info": "05555555555",
                       "repeating_frequency": 1, 
                       "badges":["awesome"], 
@@ -291,7 +291,7 @@ class PostTests(APITestCase):
 
 
     def test_change_event_post_invalid_info(self):
-        User.objects.create(id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
@@ -331,7 +331,7 @@ class PostTests(APITestCase):
                    "date_time": "2021-12-13 10:10:10", 
                      "location_requirement": "In 250 m radius",
                      "rule": "Don't shout", 
-                     "skill_requirement": "Medium", 
+                     "skill_requirement": "medium", 
                      "contact_info": "05555555555",
                       "repeating_frequency": 1, 
                       "badges":["awesome"], 
