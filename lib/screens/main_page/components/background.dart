@@ -13,15 +13,20 @@ class Background extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: size.height,
-      child: Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          Positioned(
-            child: Image.asset("assets/images/ludo_logo.png"),
-            width: size.width * 0.3,
-          ),
-          child,
-        ],
+
+      child: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: Stack(
+
+          alignment: Alignment.topCenter,
+          children: <Widget>[
+            Positioned(
+              child: Image.asset("assets/images/ludo_logo.png"),
+              width: size.width * 0.15,
+            ),
+            child,
+          ],
+        ),
       ),
     );
   }

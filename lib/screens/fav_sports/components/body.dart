@@ -26,6 +26,26 @@ class Body extends StatelessWidget {
               icon: Icons.directions_walk,
               onChanged: (value) {},
             ),
+            /*Container(
+              margin: EdgeInsets.symmetric(vertical: 10),
+              width: size.width * 0.8,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(29),
+                child: DropdownButton<String>(
+                  dropdownColor: kPrimaryLightColor,
+                  hint: Text('Skill Level'),
+                  borderRadius: BorderRadius.circular(20),
+                  items: <String>['Beginner', 'Intermediate', 'Advanced']
+                      .map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (_) {},
+                ),
+              ),
+            ),*/
             RoundedInputField(
               hintText: "Skill level",
               icon: Icons.double_arrow,
