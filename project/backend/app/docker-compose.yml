@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   db:
-    image: postgres
+    image: postgres:11
     volumes:
       - ./data/db:/var/lib/postgresql/data
     environment:
@@ -18,10 +18,10 @@ services:
       - /bin/bash
       - -c
       - |
-        python manage.py makemigrations
-        python manage.py migrate
-        echo "from django.contrib.auth.models import User; User.objects.create_superuser('${ADMIN_USERNAME}', '${ADMIN_EMAIL}', '${ADMIN_PASSWORD}')" | python manage.py shell
-        python manage.py runserver 0.0.0.0:8000
+        python3 manage.py makemigrations
+        python3 manage.py migrate
+        echo "from register.models import User; User.objects.create_superuser('${ADMIN_USERNAME}', '${ADMIN_EMAIL}', '${ADMIN_PASSWORD}')" | python3 manage.py shell
+        python3 manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
     ports:
