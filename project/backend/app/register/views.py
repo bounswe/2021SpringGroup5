@@ -22,6 +22,7 @@ from rest_framework.decorators import api_view
 
 from django.apps import apps
 Sport = apps.get_model('post', 'Sport')
+SkillLevel=apps.get_model('post','SkillLevel')
 
 def send_mail(user, request):
     current_site = get_current_site(request)
@@ -39,7 +40,7 @@ def send_mail(user, request):
     email.send(fail_silently=False)
 
 
-@api_view(['POST'])
+@api_view(['GET','POST'])
 @csrf_exempt
 def register(request):
     if request.method == 'POST':
@@ -90,6 +91,11 @@ def register(request):
         interest2.save()
 
         return Response('SUCCESS', status=status.HTTP_200_OK)
+    else:
+        sports=list(Sport.objects.values())
+        skill_levels=list(SkillLevel.objects.values())
+        res={"sports":sports,"skill_levels":skill_levels}
+        return Response(res,status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
