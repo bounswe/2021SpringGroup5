@@ -1,5 +1,6 @@
 
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from requests.api import post
 from post.models import Badge,SkillLevel, Sport,EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream
 
@@ -26,12 +27,11 @@ def process_string(s):
         return unidecode(s.lower())
     return s
 
-@login_required(login_url='login_user/')
+@login_required()
 @api_view(['GET','POST'])
 def createEventPost(request):
     if request.method=='POST':
         
-        #b=request.data
         data=request.data
 
 
@@ -133,7 +133,7 @@ def createEventPost(request):
         res={"badges":badges,"sports":sports,"skill_levels":skill_levels}
         return Response(res,status=status.HTTP_200_OK)
 
-@login_required(login_url='login_user/')
+@login_required()
 @api_view(['GET','POST'])
 def createEquipmentPost(request):
     if request.method=='POST':
@@ -197,7 +197,7 @@ def createEquipmentPost(request):
         res={"sports":sports}
         return Response(res,status=status.HTTP_200_OK)
 
-@login_required(login_url='login_user/')
+@login_required()
 @api_view(['DELETE'])
 def deleteEquipmentPost(request):
     data=request.data
@@ -226,7 +226,7 @@ def deleteEquipmentPost(request):
 
     return Response({"message":"Equipment post is deleted"},status=status.HTTP_200_OK)
 
-@login_required(login_url='login_user/')  
+@login_required()  
 @api_view(['PATCH'])
 def changeEquipmentInfo(request):
     data=request.data
@@ -286,7 +286,7 @@ def changeEquipmentInfo(request):
     return Response(res,200)
 
 
-@login_required(login_url='login_user/')  
+@login_required()  
 @api_view(['PATCH'])
 def changeEventInfo(request):
     data=request.data
