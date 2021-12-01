@@ -1,6 +1,6 @@
 from typing import Callable
 from django.db import models
-
+from django.contrib import admin
 from django.db.models.deletion import CASCADE
 
 
@@ -14,7 +14,7 @@ class EquipmentPost(models.Model):
     post_name=models.CharField(null=False,blank=False,max_length=30)
     owner=models.ForeignKey('register.User',on_delete=models.CASCADE)
     sport_category=models.ForeignKey(Sport,on_delete=models.CASCADE)
-    created_date=models.DateTimeField(auto_now_add=True)
+    created_date=models.DateTimeField(null=False,blank=False)
     description=models.TextField(max_length=300,null=False,blank=False)
     country=models.CharField(null=True,blank=True,max_length=100)
     city=models.CharField(null=True,blank=True,max_length=100)
@@ -23,14 +23,15 @@ class EquipmentPost(models.Model):
     active=models.BooleanField(null=False,blank=False)
     pathToEquipmentPostImage=models.URLField(null=True,blank=True)
 
+
 class SkillLevel(models.Model):
     level_name=models.CharField(null=False,blank=False,max_length=10, unique=True)
     
 class EventPost(models.Model):
     post_name=models.CharField(null=False,blank=False,max_length=30)
-    owner=models.ForeignKey('register.User',on_delete=models.CASCADE)
+    owner=models.ForeignKey('register.User',on_delete=models.CASCADE,to_field='Id')
     sport_category=models.ForeignKey(Sport,on_delete=models.CASCADE)
-    created_date=models.DateTimeField(auto_now_add=True)
+    created_date=models.DateTimeField(null=False,blank=False)
     description=models.TextField(max_length=300,null=False,blank=False)
     country=models.CharField(null=True,blank=True,max_length=100)
     city=models.CharField(null=True,blank=True,max_length=100)
@@ -47,6 +48,7 @@ class EventPost(models.Model):
     repeating_frequency=models.IntegerField(null=False,blank=False)
     pathToEventImage=models.URLField(null=True,blank=True)
     skill_requirement=models.ForeignKey(SkillLevel,on_delete=CASCADE)
+
 
 class EventPostActivityStream(models.Model):
     context=models.URLField(null=False,blank=False) #????????????
@@ -73,10 +75,11 @@ class Application(models.Model):
     status=models.CharField(null=False,blank=False,max_length=8)
     applicant_type=models.CharField(null=False,blank=False,max_length=9)
     
+
 class EventComment(models.Model):
     content=models.TextField(max_length=300)
     owner=models.ForeignKey('register.User',on_delete=models.CASCADE)
-    created_date=models.DateTimeField(auto_now_add=True)
+    created_date=models.DateTimeField(null=False,blank=False)
     event_post=models.ForeignKey(EventPost,null=True,blank=True,on_delete=models.CASCADE)
 
 class EventCommentActivtyStream(models.Model):
@@ -89,7 +92,7 @@ class EventCommentActivtyStream(models.Model):
 class EquipmentComment(models.Model):
     content=models.TextField(max_length=300)
     owner=models.ForeignKey('register.User',on_delete=models.CASCADE)
-    created_date=models.DateTimeField(auto_now_add=True)
+    created_date=models.DateTimeField(null=False,blank=False)
     equipment_post=models.ForeignKey(EquipmentPost,null=True,blank=True,on_delete=models.CASCADE)
 
 class EquipmentCommentActivtyStream(models.Model):

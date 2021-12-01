@@ -1,6 +1,7 @@
 
 from django.shortcuts import render
 from requests.api import post
+from .models import Application, EquipmentComment, EventComment
 from post.models import Badge,SkillLevel, Sport,EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream
 
 from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, \
@@ -31,7 +32,6 @@ def process_string(s):
 def createEventPost(request):
     if request.method=='POST':
         
-        #b=request.data
         data=request.data
 
 
@@ -62,7 +62,7 @@ def createEventPost(request):
         if spectator_limit==None:
             spectator_limit=0
         try:
-            actor=User.objects.get(Id=actor_id)
+            actor=list(User.objects.filter(Id=actor_id).values('Id','name','username','surname'))[0]
         except:
             return Response({"message":"There is no such user in the system"},404)
 
@@ -70,19 +70,22 @@ def createEventPost(request):
         capacity="open to applications"
         #Check if the date_time is valid
         try:
-            date = datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M")
+            date_time = datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M")
         except:
             res={"message":"Invalid event time"}
             return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY) 
         
         # There is already a sport with this name in the database
         try:
-            sport_id=Sport.objects.get(sport_name=sport_category).id
+            sport=Sport.objects.get(sport_name=sport_category)
+            sport_id=sport.id
+            sport_name=sport.sport_name
         except:
             sport_ser=SportSerializer(data={"sport_name":sport_category})
             if sport_ser.is_valid():
                 sport_ser.save()
                 sport_id=sport_ser.data["id"]
+                sport_name=sport_ser.data["sport_name"]
             #Sport name has too many caharacters
             else:
                 res={"message":"Sport name is too long"}
@@ -90,9 +93,10 @@ def createEventPost(request):
 
        
         skill_requirement=SkillLevel.objects.get(level_name=skill_requirement_info)
-
-        event={"post_name":post_name,"owner":actor_id,"sport_category":sport_id,"description":description,\
-            "country":country,"city":city,"neighborhood":neighborhood,"date_time":date,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
+        created_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        event={"post_name":post_name,"owner":actor_id,"sport_category":sport_id,\
+            "created_date":created_date,"description":description,\
+            "country":country,"city":city,"neighborhood":neighborhood,"date_time":date_time,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
                 "rule":rule,"equipment_requirement":equipment_requirement, "status":event_status,"capacity":capacity,\
                     "location_requirement":location_requirement,"contact_info":contact_info,"repeating_frequency":repeating_frequency,\
                         "pathToEventImage":image,"skill_requirement":skill_requirement.id}
@@ -121,9 +125,16 @@ def createEventPost(request):
             if badge_event_ser.is_valid():
                 badge_event_ser.save()
         
-        
+        data["actor"]["type"]="Person"
         res=event_ser.data
-        return Response(res,status=status.HTTP_201_CREATED)
+        res["owner"]=actor
+        res["created_date"]=created_date
+        res["date_time"]=str(date_time)
+        res["skill_requirement"]=skill_requirement.level_name
+        res["sport_category"]=sport_name
+        res["type"]="EventPost"
+        data["object"]=res
+        return Response(data,status=status.HTTP_201_CREATED)
 
     # It is a get request, badges in the db should be returned
     else:
@@ -149,7 +160,7 @@ def createEquipmentPost(request):
         image=data["object"]["pathToEquipmentPostImage"]
         link=data["object"]["link"]
         try:
-            actor=User.objects.get(Id=owner_id)
+            actor=list(User.objects.filter(Id=owner_id).values('Id','name','surname','username'))[0]
         except:
             return Response({"message":"There is no such user in the system"},404)
 
@@ -159,20 +170,25 @@ def createEquipmentPost(request):
         city=process_string(city)
         neighborhood=process_string(neighborhood)
         sport_category=process_string(sport_category)
+        
         try:
-            sport_id=Sport.objects.get(sport_name=sport_category).id
+            sport=Sport.objects.get(sport_name=sport_category)
+            sport_id=sport.id
+            sport_name=sport.sport_name
         except:
             sport_ser=SportSerializer(data={"sport_name":sport_category})
             if sport_ser.is_valid():
                 sport_ser.save()
                 sport_id=sport_ser.data["id"]
+                sport_name=sport_ser.data["sport_name"]
             #Sport name has too many caharacters
             else:
                 res={"message":"Sport name is too long"}
                 return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
         active=True
-        equipment_post_ser=EquipmentPostSerializer(data={"post_name":equipment_post_name,"owner":owner_id,"sport_category":sport_id,\
+        created_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        equipment_post_ser=EquipmentPostSerializer(data={"post_name":equipment_post_name,"owner":owner_id,"sport_category":sport_id,"created_date":created_date,\
             "description":description,"country":country,"city":city,"neighborhood":neighborhood,"link":link,"active":active,"pathToEquipmentPostImage":image})
 
         if equipment_post_ser.is_valid():
@@ -189,7 +205,12 @@ def createEquipmentPost(request):
             return Response({"message":"there was an error while deleting the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
         res=equipment_post_ser.data
-        return Response(res,status=status.HTTP_201_CREATED)
+        res["owner"]=actor
+        res["sport_category"]=sport_name
+        res["created_date"]=created_date
+        res["type"]="EquipmentPost"
+        result={"@context":data["@context"],"summary":data["summary"],"type":data["type"],"actor":data["actor"],"object":res}
+        return Response(result,status=status.HTTP_201_CREATED)
 
     # GET request
     else:
@@ -234,7 +255,7 @@ def changeEquipmentInfo(request):
     actor_id=data["actor"]["id"]
     post_id=data["object"]["post_id"]
     try:
-        actor=User.objects.get(Id=actor_id)
+        actor=list(User.objects.filter(Id=actor_id).values('Id','name','surname','username'))[0]
     except:
         return Response({"message":"There is no such user in the system"},404)
 
@@ -248,10 +269,6 @@ def changeEquipmentInfo(request):
     equipment_post_act_ser=EquipmentPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
     "actor":actor_id,"type":data["type"],"object":equipment_post.id})
 
-    data["modifications"]["country"]=process_string(data["modifications"]["country"])
-    data["modifications"]["city"]=process_string(data["modifications"]["city"])
-    data["modifications"]["neighborhood"]=process_string(data["modifications"]["neighborhood"])
-    data["modifications"]["sport_category"]=process_string(data["modifications"]["sport_category"])
 
 
     if equipment_post_act_ser.is_valid():
@@ -281,7 +298,8 @@ def changeEquipmentInfo(request):
     else:
         return Response({"message":"There was an error while updating the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
-
+    equipment_post_updated["owner"]=actor
+    equipment_post_updated["created_date"]=equipment_post_updated["created_date"].strftime('%Y-%m-%d %H:%M')
     res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":equipment_post_updated}
     return Response(res,200)
 
@@ -293,7 +311,7 @@ def changeEventInfo(request):
     actor_id=data["actor"]["id"]
     post_id=data["object"]["post_id"]
     try:
-        actor=User.objects.get(Id=actor_id)
+        actor=list(User.objects.filter(Id=actor_id).values('Id','name','surname','username'))[0]
     except:
         return Response({"message":"There is no such user in the system"},404)
 
@@ -306,11 +324,6 @@ def changeEventInfo(request):
    
     event_post_act_ser=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
     "actor":actor_id,"type":data["type"],"object":event_post.id})
-
-    data["modifications"]["country"]=process_string(data["modifications"]["country"])
-    data["modifications"]["city"]=process_string(data["modifications"]["city"])
-    data["modifications"]["neighborhood"]=process_string(data["modifications"]["neighborhood"])
-    data["modifications"]["sport_category"]=process_string(data["modifications"]["sport_category"])
 
     if event_post_act_ser.is_valid():
 
@@ -351,9 +364,148 @@ def changeEventInfo(request):
     else:
         return Response({"message":"There was an error while updating the event post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
-
+    event_post_updated["created_date"]=event_post_updated["created_date"].strftime('%Y-%m-%d %H:%M')
+    event_post_updated["date_time"]=event_post_updated["date_time"].strftime('%Y-%m-%d %H:%M')
+    event_post_updated["owner"]=actor
     res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":event_post_updated}
     return Response(res,200)
+
+@login_required()
+@api_view(['POST'])
+def getEventPostDetails(request):
+    data=request.data
+    actor_id=data["actor"]["Id"]
+    post_id=data["object"]["post_id"]
+    is_event_creator=False
+    try:
+        actor=model_to_dict(User.objects.get(Id=actor_id))
+    except:
+        return Response({"message":"There is no such user in the system"},404)
+
+    try:
+        event_post_details=EventPost.objects.get(id=post_id)
+        
+    except:
+        return Response({"message":"There is no such post in the database"},404)
+    
+    if actor_id==event_post_details.owner_id:
+        is_event_creator=True
+    
+    badges_offered=list(BadgeOfferedByEventPost.objects.filter(post=post_id).values('badge__id','badge__name','badge__description','badge__pathToBadgeImage'))
+
+    try:
+        comments=list(EventComment.objects.filter(post=post_id).order_by('id').values('id','content','owner','created_date','owner__Id','owner__name',\
+            'owner__surname','owner__username'))
+        for i in range(len(comments)):
+            comments[i]["created_date"]=comments[i]["created_date"].strftime('%Y-%m-%d %H:%M')
+    except:
+        comments=[]
+
+    try:
+        sport=Sport.objects.get(id=event_post_details.sport_category_id).sport_name
+    except:
+        sport=event_post_details.sport_category_id
+
+    try:
+        accepted_players=list(Application.objects.filter(event_post=post_id,status="accepted",applicant_type="player").values('user__Id',\
+        'user__name','user__surname','user__username'))
+    except:
+        accepted_players=[]
+    
+    try:
+        spectators=list(Application.objects.filter(event_post=post_id,status="accepted",applicant_type="spectator").values('user__Id',\
+        'user__name','user__surname','user__username'))
+    except:
+        spectators=[]
+    
+    if actor_id==event_post_details.owner_id:
+        try:
+            waiting_players=list(Application.objects.filter(event_post=post_id,status="waiting",applicant_type="player").order_by('id').values('user__Id',\
+        'user__name','user__surname','user__username'))
+        except:
+            waiting_players=[]
+        try:
+            rejected_players=list(Application.objects.filter(event_post=post_id,status="rejected",applicant_type="player").values('user__Id',\
+        'user__name','user__surname','user__username'))
+        except:
+            rejected_players=[]
+
+    del data["actor"]["type"]
+    del data["object"]["type"]
+
+    event_ser=EventPostSerializer(event_post_details)
+    act_str=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
+            "type":data["type"],"actor":data["actor"]["Id"],"object":event_ser.data["id"]})
+
+    event_post_details=model_to_dict(event_post_details)
+    event_post_details["sport_category"]=sport
+    event_post_details["comments"]=comments
+    event_post_details["spectators"]=spectators
+    event_post_details["waiting_players"]=waiting_players
+    event_post_details["accepted_players"]=accepted_players
+    event_post_details["rejected_players"]=rejected_players
+    event_post_details["owner"]=list(User.objects.filter(Id=event_post_details["owner"]).values('Id','name','surname','username'))[0]
+    event_post_details["is_event_creator"]=is_event_creator
+    event_post_details["badges"]=badges_offered
+    event_post_details["date_time"]=event_post_details["date_time"].strftime('%Y-%m-%d %H:%M')
+    event_post_details["created_date"]=event_post_details["created_date"].strftime('%Y-%m-%d %H:%M')
+    data["actor"]["type"]="Person"
+    event_post_details["type"]="EventPost"
+    data["object"]=event_post_details
+
+    return Response(data,201)
+
+@login_required()
+@api_view(['POST'])
+def getEquipmentPostDetails(request):
+    data=request.data
+    actor_id=data["actor"]["Id"]
+    post_id=data["object"]["post_id"]
+    is_event_creator=False
+    try:
+        actor=User.objects.get(Id=actor_id)
+    except:
+        return Response({"message":"There is no such user in the system"},404)
+
+    try:
+        equipment_post_details=EquipmentPost.objects.get(id=post_id)
+    except:
+        return Response({"message":"There is no such post in the database"},404)
+
+    if actor_id==equipment_post_details.owner_id:
+        is_event_creator=True
+
+    try:
+        sport=Sport.objects.get(id=equipment_post_details.sport_category_id).sport_name
+    except:
+        sport=equipment_post_details.sport_category_id
+
+    try:
+        comments=list(EventComment.objects.filter(post=post_id).order_by('id').values('id','content','owner','created_date','owner__Id','owner__name',\
+            'owner__surname','owner__username'))
+        for i in range(len(comments)):
+            comments[i]["created_date"]=str(comments[i]["created_date"])
+    except:
+        comments=[]
+
+    equipment_post_ser=EquipmentPostSerializer(equipment_post_details)
+    act_str=EquipmentPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
+            "actor":data["actor"]["Id"],"type":data["type"],"object":equipment_post_ser.data["id"]})
+    if act_str.is_valid():
+        act_str.save()
+    else:
+        return Response({"message":"there was an error while viewing the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    equipment_post_details=model_to_dict(equipment_post_details)
+    equipment_post_details["sport_category"]=sport
+    equipment_post_details["created_date"]=equipment_post_details["created_date"].strftime('%Y-%m-%d %H:%M')
+    equipment_post_details["is_event_creator"]=is_event_creator
+    equipment_post_details["comments"]=comments
+    equipment_post_details["type"]="EventPost"
+    equipment_post_details["owner"]=list(User.objects.filter(Id=equipment_post_details["owner"]).values('Id','name','surname','username'))[0]
+    res={"@context":data["@context"],"summary":data["summary"],"type":data["type"],"actor":data["actor"],"object":equipment_post_details}
+    return Response(res,201)
+
 
 # It is a script for only one time run. It can only be run by Superadmin to avoid possible security bug
 # It will fill the database with sports which are fetched from Decathlon API, with necessary fields.
