@@ -1,5 +1,6 @@
 
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from requests.api import post
 from post.models import Badge,SkillLevel, Sport,EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream
 
@@ -26,12 +27,12 @@ def process_string(s):
         return unidecode(s.lower())
     return s
 
-@login_required(login_url='login_user/')
+@login_required()
 @api_view(['GET','POST'])
 def createEventPost(request):
     if request.method=='POST':
         
-        data=json.loads(request.body)
+        data=request.data
 
 
         post_name=data["object"]["post_name"]
@@ -60,7 +61,11 @@ def createEventPost(request):
 
         if spectator_limit==None:
             spectator_limit=0
-        
+        try:
+            actor=User.objects.get(Id=actor_id)
+        except:
+            return Response({"message":"There is no such user in the system"},404)
+
         event_status="upcoming"
         capacity="open to applications"
         #Check if the date_time is valid
@@ -128,12 +133,11 @@ def createEventPost(request):
         res={"badges":badges,"sports":sports,"skill_levels":skill_levels}
         return Response(res,status=status.HTTP_200_OK)
 
-@login_required(login_url='login_user/')
+@login_required()
 @api_view(['GET','POST'])
 def createEquipmentPost(request):
     if request.method=='POST':
-        
-        data=json.loads(request.body)
+        data=request.data
 
         owner_id=data["object"]["owner_id"]
         equipment_post_name=data["object"]["post_name"]
@@ -145,7 +149,7 @@ def createEquipmentPost(request):
         image=data["object"]["pathToEquipmentPostImage"]
         link=data["object"]["link"]
         try:
-            actor=User.objects.get(id=owner_id)
+            actor=User.objects.get(Id=owner_id)
         except:
             return Response({"message":"There is no such user in the system"},404)
 
@@ -154,7 +158,7 @@ def createEquipmentPost(request):
         country=process_string(country)
         city=process_string(city)
         neighborhood=process_string(neighborhood)
-
+        sport_category=process_string(sport_category)
         try:
             sport_id=Sport.objects.get(sport_name=sport_category).id
         except:
@@ -193,16 +197,16 @@ def createEquipmentPost(request):
         res={"sports":sports}
         return Response(res,status=status.HTTP_200_OK)
 
-@login_required(login_url='login_user/')
+@login_required()
 @api_view(['DELETE'])
 def deleteEquipmentPost(request):
-    data=json.loads(request.body)
+    data=request.data
 
     actor_id=data["actor"]["id"]
     equipment_post_id=data["object"]["post_id"]
 
     try:
-        actor=User.objects.get(id=actor_id)
+        actor=User.objects.get(Id=actor_id)
     except:
         return Response({"message":"There is no such user in the system"},404)
     try:
@@ -222,15 +226,15 @@ def deleteEquipmentPost(request):
 
     return Response({"message":"Equipment post is deleted"},status=status.HTTP_200_OK)
 
-@login_required(login_url='login_user/')  
+@login_required()  
 @api_view(['PATCH'])
 def changeEquipmentInfo(request):
-    data=json.loads(request.body)
+    data=request.data
 
     actor_id=data["actor"]["id"]
     post_id=data["object"]["post_id"]
     try:
-        actor=User.objects.get(id=actor_id)
+        actor=User.objects.get(Id=actor_id)
     except:
         return Response({"message":"There is no such user in the system"},404)
 
@@ -244,8 +248,11 @@ def changeEquipmentInfo(request):
     equipment_post_act_ser=EquipmentPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
     "actor":actor_id,"type":data["type"],"object":equipment_post.id})
 
-    for k,v in data["modifications"].items():
-        data["modifications"][k]=process_string(v)
+    data["modifications"]["country"]=process_string(data["modifications"]["country"])
+    data["modifications"]["city"]=process_string(data["modifications"]["city"])
+    data["modifications"]["neighborhood"]=process_string(data["modifications"]["neighborhood"])
+    data["modifications"]["sport_category"]=process_string(data["modifications"]["sport_category"])
+
 
     if equipment_post_act_ser.is_valid():
 
@@ -279,14 +286,14 @@ def changeEquipmentInfo(request):
     return Response(res,200)
 
 
-@login_required(login_url='login_user/')  
+@login_required()  
 @api_view(['PATCH'])
 def changeEventInfo(request):
-    data=json.loads(request.body)
+    data=request.data
     actor_id=data["actor"]["id"]
     post_id=data["object"]["post_id"]
     try:
-        actor=User.objects.get(id=actor_id)
+        actor=User.objects.get(Id=actor_id)
     except:
         return Response({"message":"There is no such user in the system"},404)
 
@@ -300,8 +307,10 @@ def changeEventInfo(request):
     event_post_act_ser=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
     "actor":actor_id,"type":data["type"],"object":event_post.id})
 
-    for k,v in data["modifications"].items():
-        data["modifications"][k]=process_string(v)
+    data["modifications"]["country"]=process_string(data["modifications"]["country"])
+    data["modifications"]["city"]=process_string(data["modifications"]["city"])
+    data["modifications"]["neighborhood"]=process_string(data["modifications"]["neighborhood"])
+    data["modifications"]["sport_category"]=process_string(data["modifications"]["sport_category"])
 
     if event_post_act_ser.is_valid():
 

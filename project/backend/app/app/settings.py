@@ -143,3 +143,6 @@ EMAIL_HOST_USER = 'e61hdk@yandex.com'
 EMAIL_HOST_PASSWORD = 'pnyprtggwqirndpy'
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
+
+LOGIN_URL='/login'
+LOGIN_REDIRECT_URL='/'
