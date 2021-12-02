@@ -99,6 +99,7 @@ def register(request):
 
 
 @api_view(['GET','POST'])
+@csrf_exempt
 def login_user(request):
     if request.method == 'POST':
         body_unicode = request.body.decode('utf-8')
@@ -125,6 +126,7 @@ def login_user(request):
         return Response('SUCCESS', status=status.HTTP_200_OK)
     else:
         return Response({"message":"You are not logged in, you can't do this request"},401)
+
 
 
 @api_view(['POST'])

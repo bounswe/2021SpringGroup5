@@ -1,0 +1,85 @@
+import 'package:flutter/material.dart';
+import 'package:ludo_app/components/change_password.dart';
+import 'package:ludo_app/components/check_registered_account.dart';
+import 'package:ludo_app/components/rounded_button.dart';
+import 'package:ludo_app/components/rounded_input_field.dart';
+import 'package:ludo_app/components/rounded_password_field.dart';
+import 'package:ludo_app/constants.dart';
+import 'package:ludo_app/screens/change_password/change_password_screen.dart';
+import 'package:ludo_app/screens/login/components/background.dart';
+import 'package:ludo_app/screens/main_page/main_screen.dart';
+import 'package:ludo_app/screens/signup/signup_screen.dart';
+
+class Body extends StatelessWidget {
+  const Body({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Background(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              "LOGIN",
+              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15.5),
+            ),
+            SizedBox(height: size.height * 0.02),
+            Image.asset(
+              "assets/images/ludo_logo.png",
+              height: size.height * 0.35,
+            ),
+            SizedBox(height: size.height * 0.02),
+            RoundedInputField(
+              hintText: "Your Email",
+              onChanged: (value) {},
+            ),
+            RoundedPasswordField(
+              onChanged: (value) {},
+            ),
+            RoundedButton(
+              text: "LOGIN",
+              press: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return MainScreen();
+                    },
+                  ),
+                );
+              },
+            ),
+            SizedBox(height: size.height * 0.02),
+            ChangePassword(press: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return ChangePasswordScreen();
+                  },
+                ),
+              );
+            },),
+            SizedBox(height: size.height * 0.015),
+            CheckRegisteredAccount(
+              press: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return SignUpScreen();
+                    },
+                  ),
+                );
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
