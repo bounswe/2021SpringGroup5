@@ -2,7 +2,7 @@ from django.test import TestCase
 from register.models import User  # will be changed after custom User is implemented
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
-from post.models import Badge, EquipmentPost, SkillLevel, Sport ,EventPost
+from post.models import Badge, BadgeOfferedByEventPost, EquipmentPost, SkillLevel, Sport ,EventPost
 import json
 from datetime import datetime
 
@@ -51,7 +51,6 @@ class PostTests(APITestCase):
         client=APIClient()
         client.login(username="crazy_girl", password="123")
         response = client.post("/post/create_event_post/",data,format='json')
-
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_event_post_get(self):
@@ -103,6 +102,7 @@ class PostTests(APITestCase):
         client=APIClient()
         client.login(username="crazy_girl", password="123")
         response = client.post("/post/create_equipment_post/",data,format='json')
+        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_equipment_post_get(self):
@@ -122,7 +122,9 @@ class PostTests(APITestCase):
         u.save()
         Sport.objects.create(id=13,sport_name="Basketball")
         s=Sport.objects.get(sport_name='Basketball')
-        EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,\
+        date_string = "2021-12-12 10:10:10"
+        dt=datetime.fromisoformat(date_string)
+        EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,created_date=dt,\
             description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                 country='Turkey',city='Istanbul',neighborhood='Kadıkoy',link='...com',active=True,pathToEquipmentPostImage="...com")
 
@@ -159,7 +161,9 @@ class PostTests(APITestCase):
         u.save()
         Sport.objects.create(id=15,sport_name="Running")
         s=Sport.objects.get(sport_name='Running')
-        EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,\
+        date_string = "2021-12-12 10:10:10"
+        dt=datetime.fromisoformat(date_string)
+        EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,created_date=dt,\
             description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                 country='Turkey',city='Istanbul',neighborhood='Kadıkoy',link='...com',active=True,pathToEquipmentPostImage="...com")
 
@@ -191,7 +195,6 @@ class PostTests(APITestCase):
         client=APIClient()
         client.login(username="crazy_girl", password="123")
         response = client.patch("/post/change_equipment_post/",data,format='json')
-       
         self.assertEqual(response.status_code, 422)
     
     def test_change_equipment_post_valid_info(self):
@@ -201,7 +204,9 @@ class PostTests(APITestCase):
         u.save()
         Sport.objects.create(id=17,sport_name="Jogging")
         s=Sport.objects.get(sport_name='Jogging')
-        EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,\
+        date_string = "2021-12-12 10:10:10"
+        dt=datetime.fromisoformat(date_string)
+        EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,created_date=dt,\
             description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                 country='Turkey',city='Istanbul',neighborhood='Kadıkoy',link='...com',active=True,pathToEquipmentPostImage="...com")
 
@@ -233,6 +238,7 @@ class PostTests(APITestCase):
         client=APIClient()
         client.login(username="crazy_girl", password="123")
         response = client.patch("/post/change_equipment_post/",data,format='json')
+        print(response.data)
         self.assertEqual(response.status_code, 200)
 
     def test_change_event_post_valid_info(self):
@@ -249,7 +255,7 @@ class PostTests(APITestCase):
         skill=SkillLevel.objects.get(level_name='beginner')
         date_string = "2021-12-12 10:10:10"
         dt=datetime.fromisoformat(date_string)
-        EventPost.objects.create(id=1, post_name="Ali'nin maçı", owner=u,sport_category=s,description="blabla",\
+        EventPost.objects.create(id=1, post_name="Ali'nin maçı", owner=u,sport_category=s,created_date=dt,description="blabla",\
             country="Turkey", city="Istanbul", neighborhood=None,date_time=dt, participant_limit=20,\
                 spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
                     location_requirement=None,contact_info="0555555555555",repeating_frequency=1,pathToEventImage=None,skill_requirement=skill)
@@ -287,8 +293,8 @@ class PostTests(APITestCase):
         client=APIClient()
         client.login(username="crazy_girl", password="123")
         response = client.patch("/post/change_event_post/",data,format='json')
+        print(response.data)
         self.assertEqual(response.status_code, 200)
-
 
     def test_change_event_post_invalid_info(self):
         User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
@@ -304,7 +310,7 @@ class PostTests(APITestCase):
         skill=SkillLevel.objects.get(level_name='beginner')
         date_string = "2021-12-12 10:10:10"
         dt=datetime.fromisoformat(date_string)
-        EventPost.objects.create(id=1, post_name="Ali'nin maçı", owner=u,sport_category=s,description="blabla",\
+        EventPost.objects.create(id=1, post_name="Ali'nin maçı", owner=u,sport_category=s,created_date=dt,description="blabla",\
             country="Turkey", city="Istanbul", neighborhood=None,date_time=dt, participant_limit=20,\
                 spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
                     location_requirement=None,contact_info="0555555555555",repeating_frequency=1,pathToEventImage=None,skill_requirement=skill)
@@ -344,3 +350,76 @@ class PostTests(APITestCase):
         response = client.patch("/post/change_event_post/",data,format='json')
         self.assertEqual(response.status_code, 422)
 
+    def test_get_event_post_details(self):
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=10,sport_name="Swimming")
+        s=Sport.objects.get(sport_name='Swimming')
+        Badge.objects.create(id=1,name="awesome",description="You are an awesome player",pathToBadgeImage="....com")
+        Badge.objects.create(id=5,name="surprised",description="You are a surprised player",pathToBadgeImage="....com")
+        b=Badge.objects.get(id=1)
+        SkillLevel.objects.create(id=1,level_name="beginner")
+        SkillLevel.objects.create(id=2,level_name="medium")
+        skill=SkillLevel.objects.get(level_name='beginner')
+        date_string = "2021-12-12 10:10:10"
+        dt=datetime.fromisoformat(date_string)
+        EventPost.objects.create(id=1, post_name="Ali'nin maçı", owner=u,sport_category=s,created_date=dt,description="blabla",\
+            country="Turkey", city="Istanbul", neighborhood=None,date_time=dt, participant_limit=20,\
+                spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
+                    location_requirement=None,contact_info="0555555555555",repeating_frequency=1,pathToEventImage=None,skill_requirement=skill)
+        e=EventPost.objects.get(id=1)
+        BadgeOfferedByEventPost.objects.create(id=1,post=e,badge=b)
+        data={
+            "@context": "https://www.w3.org/ns/activitystreams",
+            "summary": "Sally read an event post",
+            "type": "View",
+            "actor": {
+                "type": "Person",
+                "name": "Sally",
+            "surname": "Sparrow" ,"username":"crazy_girl","Id":321
+            },
+            "object": {
+                "type": "EventPost",
+                "post_id":1
+            }
+            }
+        client=APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.post("/post/get_event_post_details/",data,format='json')
+        print(response.data)
+        self.assertEqual(response.status_code, 201)
+
+    def test_get_equipment_post_details(self):
+        User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=17,sport_name="Jogging")
+        s=Sport.objects.get(sport_name='Jogging')
+        date_string = "2021-12-12 10:10:10"
+        dt=datetime.fromisoformat(date_string)
+        EquipmentPost.objects.create(id=1,post_name="adidas bileklik", owner=u,sport_category=s,\
+            created_date=dt,description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
+                country='Turkey',city='Istanbul',neighborhood='Kadıkoy',link='...com',active=True,pathToEquipmentPostImage="...com")
+
+        data={
+            "@context": "https://www.w3.org/ns/activitystreams",
+            "summary": "Sally read an equipment post",
+            "type": "View",
+            "actor": {
+                "type": "Person",
+                "name": "Sally",
+            "surname": "Sparrow" ,"username":"crazy_girl","Id":12345
+            },
+            "object": {
+                "type": "EquipmentPost",
+                "post_id":1
+            }
+            }
+        client=APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.post("/post/get_equipment_post_details/",data,format='json')
+        print(response.data)
+        self.assertEqual(response.status_code, 201)
