@@ -240,6 +240,47 @@ def deleteEquipmentPost(request):
 
     return Response({"message":"Equipment post is deleted"},status=status.HTTP_200_OK)
 
+
+
+
+
+
+@login_required()
+@api_view(['DELETE'])
+def deleteEventPost(request):
+    data = request.data
+
+    actor_id = data["actor"]["Id"]
+    event_post_id = data["object"]["post_id"]
+    print(event_post_id)
+
+    try:
+        actor = User.objects.get(Id=actor_id)
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+
+
+    try:
+        EventPost.objects.filter(pk=event_post_id).update(status="cancelled", capacity="cancelled")
+        event_post = EventPost.objects.get(id=event_post_id)
+        print(event_post)
+    except:
+        return Response({"message": "There is no such event in the database, deletion operation is aborted"},
+                        status=status.HTTP_404_NOT_FOUND)
+
+    event_post_ser = EventPostActivityStreamSerializer(
+        data={"context": data["@context"], "summary": data["summary"], \
+              "actor": actor_id, "type": data["type"], "object": event_post_id})
+
+    if event_post_ser.is_valid():
+        event_post_ser.save()
+    else:
+        return Response({"message": "there was an error while deleting the event post"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    return Response({"message": "Event post is deleted"}, status=status.HTTP_200_OK)
+
+
+
 @login_required()  
 @api_view(['PATCH'])
 def changeEquipmentInfo(request):
