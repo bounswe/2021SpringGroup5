@@ -38,9 +38,8 @@ def createEventPost(request):
 
         post_name=data["object"]["post_name"]
         sport_category=data["object"]["sport_category"]
-        country=data["object"]["country"]
-        city=data["object"]["city"]
-        neighborhood=data["object"]["neighborhood"]
+        longitude=data["object"]["longitude"]
+        latitude=data["object"]["latitude"]
         description=data["object"]["description"]
         image=data["object"]["pathToEventImage"]
         date_time=data["object"]["date_time"]
@@ -54,10 +53,7 @@ def createEventPost(request):
         repeating_frequency=data["object"]["repeating_frequency"]
         badges=data["object"]["badges"]
 
-        actor_id=data["actor"]["id"]
-        country=process_string(country)
-        city=process_string(city)
-        neighborhood=process_string(neighborhood)
+        actor_id=data["actor"]["Id"]
         sport_category=process_string(sport_category)
 
         if spectator_limit==None:
@@ -97,7 +93,7 @@ def createEventPost(request):
         created_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         event={"post_name":post_name,"owner":actor_id,"sport_category":sport_id,\
             "created_date":created_date,"description":description,\
-            "country":country,"city":city,"neighborhood":neighborhood,"date_time":date_time,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
+            "longitude":longitude,"latitude":latitude,"date_time":date_time,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
                 "rule":rule,"equipment_requirement":equipment_requirement, "status":event_status,"capacity":capacity,\
                     "location_requirement":location_requirement,"contact_info":contact_info,"repeating_frequency":repeating_frequency,\
                         "pathToEventImage":image,"skill_requirement":skill_requirement.id}
@@ -114,7 +110,7 @@ def createEventPost(request):
         
 
         event_act_stream_ser=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
-            "type":data["type"],"actor":data["actor"]["id"],"object":event_ser.data["id"]})
+            "type":data["type"],"actor":data["actor"]["Id"],"object":event_ser.data["id"]})
         if event_act_stream_ser.is_valid():
             event_act_stream_ser.save()
         else:
@@ -129,11 +125,13 @@ def createEventPost(request):
         data["actor"]["type"]="Person"
         res=event_ser.data
         res["owner"]=actor
+        res["type"]="EventPost"
         res["created_date"]=created_date
         res["date_time"]=str(date_time)
         res["skill_requirement"]=skill_requirement.level_name
         res["sport_category"]=sport_name
         res["type"]="EventPost"
+        res["badges"]=badges
         data["object"]=res
         return Response(data,status=status.HTTP_201_CREATED)
 
@@ -154,9 +152,8 @@ def createEquipmentPost(request):
         owner_id=data["object"]["owner_id"]
         equipment_post_name=data["object"]["post_name"]
         sport_category=data["object"]["sport_category"]
-        country=data["object"]["country"]
-        city=data["object"]["city"]
-        neighborhood=data["object"]["neighborhood"]
+        longitude=data["object"]["longitude"]
+        latitude=data["object"]["latitude"]
         description=data["object"]["description"]
         image=data["object"]["pathToEquipmentPostImage"]
         link=data["object"]["link"]
@@ -165,11 +162,6 @@ def createEquipmentPost(request):
         except:
             return Response({"message":"There is no such user in the system"},404)
 
-        sport_category=process_string(sport_category)
-
-        country=process_string(country)
-        city=process_string(city)
-        neighborhood=process_string(neighborhood)
         sport_category=process_string(sport_category)
         
         try:
@@ -190,7 +182,7 @@ def createEquipmentPost(request):
         active=True
         created_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         equipment_post_ser=EquipmentPostSerializer(data={"post_name":equipment_post_name,"owner":owner_id,"sport_category":sport_id,"created_date":created_date,\
-            "description":description,"country":country,"city":city,"neighborhood":neighborhood,"link":link,"active":active,"pathToEquipmentPostImage":image})
+            "description":description,"longitude":longitude,"latitude":latitude,"link":link,"active":active,"pathToEquipmentPostImage":image})
 
         if equipment_post_ser.is_valid():
             equipment_post_ser.save()
@@ -224,7 +216,7 @@ def createEquipmentPost(request):
 def deleteEquipmentPost(request):
     data=request.data
 
-    actor_id=data["actor"]["id"]
+    actor_id=data["actor"]["Id"]
     equipment_post_id=data["object"]["post_id"]
 
     try:
@@ -253,7 +245,7 @@ def deleteEquipmentPost(request):
 def changeEquipmentInfo(request):
     data=request.data
 
-    actor_id=data["actor"]["id"]
+    actor_id=data["actor"]["Id"]
     post_id=data["object"]["post_id"]
     try:
         actor=list(User.objects.filter(Id=actor_id).values('Id','name','surname','username'))[0]
@@ -300,7 +292,7 @@ def changeEquipmentInfo(request):
         return Response({"message":"There was an error while updating the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
     equipment_post_updated["owner"]=actor
-    equipment_post_updated["created_date"]=equipment_post_updated["created_date"].strftime('%Y-%m-%d %H:%M')
+    equipment_post_updated["created_date"]=equipment_post_updated["created_date"].strftime('%Y-%m-%d %H:%M:%S')
     res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":equipment_post_updated}
     return Response(res,200)
 
@@ -309,7 +301,7 @@ def changeEquipmentInfo(request):
 @api_view(['PATCH'])
 def changeEventInfo(request):
     data=request.data
-    actor_id=data["actor"]["id"]
+    actor_id=data["actor"]["Id"]
     post_id=data["object"]["post_id"]
     try:
         actor=list(User.objects.filter(Id=actor_id).values('Id','name','surname','username'))[0]
@@ -342,21 +334,25 @@ def changeEventInfo(request):
                     res={"message":"Sport name is too long"}
                     return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
-        skill=SkillLevel.objects.get(level_name=data["modifications"]["skill_requirement"])
-        data["modifications"]["skill_requirement"]=skill.id
+        if "skill_requirement" in modifications_keys:
+            skill=SkillLevel.objects.get(level_name=data["modifications"]["skill_requirement"])
+            data["modifications"]["skill_requirement"]=skill.id
+       
 
         event_post_ser = EventPostSerializer(event_post, data=data["modifications"], partial=True)
         if event_post_ser.is_valid():
             event_post_updated=model_to_dict(event_post_ser.save())
             event_post_updated["sport_category"]=Sport.objects.get(id=event_post_updated["sport_category"]).sport_name
-            event_post_updated["skill_requirement"]=skill.level_name
-            BadgeOfferedByEventPost.objects.filter(post=event_post).delete()
-            for badge_name in data["modifications"]["badges"]:
-                badge=Badge.objects.get(name=badge_name)
-                badge_id=badge.id
-                badge_ser=BadgeOfferedByEventPostSerializer(data={"post_id":post_id,"badge_id":badge_id})
-                if badge_ser.is_valid():
-                    badge_ser.save()
+            event_post_updated["skill_requirement"]=SkillLevel.objects.get(id=event_post_updated["skill_requirement"]).level_name
+            if "badges" in modifications_keys:
+                for badge_ in data["modifications"]["badges"]:
+                    badge_id=badge_["id"]
+                    badge_ser=BadgeOfferedByEventPostSerializer(data={"post":post_id,"badge":badge_id})
+                    if badge_ser.is_valid():
+                        BadgeOfferedByEventPost.objects.filter(post=event_post).delete()
+                        badge_ser.save()
+                    else:
+                        return Response({"message":badge_ser.errors},422)
 
             event_post_act_ser.save()
         else:
@@ -365,9 +361,10 @@ def changeEventInfo(request):
     else:
         return Response({"message":"There was an error while updating the event post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
-    event_post_updated["created_date"]=event_post_updated["created_date"].strftime('%Y-%m-%d %H:%M')
-    event_post_updated["date_time"]=event_post_updated["date_time"].strftime('%Y-%m-%d %H:%M')
+    event_post_updated["created_date"]=event_post_updated["created_date"].strftime('%Y-%m-%d %H:%M:%S')
+    event_post_updated["date_time"]=event_post_updated["date_time"].strftime('%Y-%m-%d %H:%M:%S')
     event_post_updated["owner"]=actor
+    event_post_updated["badges"]=list(BadgeOfferedByEventPost.objects.filter(post=post_id).values('badge__id','badge__name','badge__description','badge__pathToBadgeImage'))
     res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":event_post_updated}
     return Response(res,200)
 
@@ -398,7 +395,7 @@ def getEventPostDetails(request):
         comments=list(EventComment.objects.filter(post=post_id).order_by('id').values('id','content','owner','created_date','owner__Id','owner__name',\
             'owner__surname','owner__username'))
         for i in range(len(comments)):
-            comments[i]["created_date"]=comments[i]["created_date"].strftime('%Y-%m-%d %H:%M')
+            comments[i]["created_date"]=comments[i]["created_date"].strftime('%Y-%m-%d %H:%M:%S')
     except:
         comments=[]
 
@@ -448,8 +445,8 @@ def getEventPostDetails(request):
     event_post_details["owner"]=list(User.objects.filter(Id=event_post_details["owner"]).values('Id','name','surname','username'))[0]
     event_post_details["is_event_creator"]=is_event_creator
     event_post_details["badges"]=badges_offered
-    event_post_details["date_time"]=event_post_details["date_time"].strftime('%Y-%m-%d %H:%M')
-    event_post_details["created_date"]=event_post_details["created_date"].strftime('%Y-%m-%d %H:%M')
+    event_post_details["date_time"]=event_post_details["date_time"].strftime('%Y-%m-%d %H:%M:%S')
+    event_post_details["created_date"]=event_post_details["created_date"].strftime('%Y-%m-%d %H:%M:%S')
     data["actor"]["type"]="Person"
     event_post_details["type"]="EventPost"
     data["object"]=event_post_details
@@ -499,7 +496,7 @@ def getEquipmentPostDetails(request):
 
     equipment_post_details=model_to_dict(equipment_post_details)
     equipment_post_details["sport_category"]=sport
-    equipment_post_details["created_date"]=equipment_post_details["created_date"].strftime('%Y-%m-%d %H:%M')
+    equipment_post_details["created_date"]=equipment_post_details["created_date"].strftime('%Y-%m-%d %H:%M:%S')
     equipment_post_details["is_event_creator"]=is_event_creator
     equipment_post_details["comments"]=comments
     equipment_post_details["type"]="EventPost"

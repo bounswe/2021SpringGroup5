@@ -23,16 +23,15 @@ class PostTests(APITestCase):
             "actor": {
                 "type": "Person",
                 "name": "Sally",
-                "surname": "Sparrow" ,"username":"crazy_girl","id":321
+                "surname": "Sparrow" ,"username":"crazy_girl","Id":321
             },
             "object": {
                 "type": "Event_Post",
                 "owner_id": 321,
                 "post_name": "abc hali saha",
                 "sport_category": "Handball",
-                "country":'Turkey',
-                "city":'İstanbul',
-                "neighborhood":'Kadıköy',
+                "longitude":20.444,
+                "latitude":18.555,
                 "description": "adadasdasdad",
                 "pathToEventImage": None,
                 "date_time": "2021-02-10 10:30",
@@ -81,7 +80,7 @@ class PostTests(APITestCase):
             "type": "Create",
             "actor": {
                 "type": "Person",
-                "id":321,
+                "Id":321,
                 "name": "Sally",
                 "surname": "Sparrow",
                 "username":"crazy_girl"
@@ -91,9 +90,8 @@ class PostTests(APITestCase):
                 "owner_id": 321,
                 "post_name": "adidas bileklik",
                 "sport_category": "Tennis",
-                "country":'Turkey',
-                "city":None,
-                "neighborhood":None,
+                "longitude":20.444,
+                "latitude":18.555,
                 "description": "adadasdasdad",
             "pathToEquipmentPostImage": None,
                 "link": "https://www.adidas.com.tr/tr",
@@ -122,11 +120,12 @@ class PostTests(APITestCase):
         u.save()
         Sport.objects.create(id=13,sport_name="Basketball")
         s=Sport.objects.get(sport_name='Basketball')
-        date_string = "2021-12-12 10:10:10"
+        date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
         EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,created_date=dt,\
             description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
-                country='Turkey',city='Istanbul',neighborhood='Kadıkoy',link='...com',active=True,pathToEquipmentPostImage="...com")
+                longitude=20.444,
+                latitude=18.555,link='...com',active=True,pathToEquipmentPostImage="...com")
 
         data={
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -161,11 +160,12 @@ class PostTests(APITestCase):
         u.save()
         Sport.objects.create(id=15,sport_name="Running")
         s=Sport.objects.get(sport_name='Running')
-        date_string = "2021-12-12 10:10:10"
+        date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
         EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,created_date=dt,\
             description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
-                country='Turkey',city='Istanbul',neighborhood='Kadıkoy',link='...com',active=True,pathToEquipmentPostImage="...com")
+                longitude=20.444,
+                latitude=18.555,link='...com',active=True,pathToEquipmentPostImage="...com")
 
         data={
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -173,7 +173,7 @@ class PostTests(APITestCase):
             "type": "Update",
             "actor": {
                 "type": "Person",
-                "id":12345,
+                "Id":12345,
                 "name": "Sally",
                 "surname": "Sparrow",
                 "username":"crazy_girl"
@@ -186,7 +186,8 @@ class PostTests(APITestCase):
                 "post_name":"adidas harika bileklik<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
                 "sport_category":"Football", 
                 "description":"blabla", 
-                "neighborhood":None, 
+                "latitude":32.666, 
+                "longitude":12.5678,
                 "link":"https://www.adidas.com.tr/tr",
                 "pathToEquipmentPostImage":None
                 }
@@ -204,11 +205,12 @@ class PostTests(APITestCase):
         u.save()
         Sport.objects.create(id=17,sport_name="Jogging")
         s=Sport.objects.get(sport_name='Jogging')
-        date_string = "2021-12-12 10:10:10"
+        date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
         EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,created_date=dt,\
             description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
-                country='Turkey',city='Istanbul',neighborhood='Kadıkoy',link='...com',active=True,pathToEquipmentPostImage="...com")
+                longitude=20.444,
+                latitude=18.555,link='...com',active=True,pathToEquipmentPostImage="...com")
 
         data={
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -229,7 +231,6 @@ class PostTests(APITestCase):
                 "post_name":"adidas harika bileklik",
                 "sport_category":"Football", 
                 "description":"blabla", 
-                "neighborhood":None, 
                 "link":"https://www.adidas.com.tr/tr",
                 "pathToEquipmentPostImage":None
                 }
@@ -253,10 +254,11 @@ class PostTests(APITestCase):
         SkillLevel.objects.create(id=1,level_name="beginner")
         SkillLevel.objects.create(id=2,level_name="medium")
         skill=SkillLevel.objects.get(level_name='beginner')
-        date_string = "2021-12-12 10:10:10"
+        date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
         EventPost.objects.create(id=1, post_name="Ali'nin maçı", owner=u,sport_category=s,created_date=dt,description="blabla",\
-            country="Turkey", city="Istanbul", neighborhood=None,date_time=dt, participant_limit=20,\
+            longitude=20.444,
+                latitude=18.555,date_time=dt, participant_limit=20,\
                 spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
                     location_requirement=None,contact_info="0555555555555",repeating_frequency=1,pathToEventImage=None,skill_requirement=skill)
         data={
@@ -266,7 +268,7 @@ class PostTests(APITestCase):
             "actor": {
                 "type": "Person",
                 "name": "Sally",
-                "surname": "Sparrow" ,"username":"crazy_girl","id":321
+                "surname": "Sparrow" ,"username":"crazy_girl","Id":321
             },
             "object": {
                 "type":"EventPost",
@@ -279,13 +281,13 @@ class PostTests(APITestCase):
                  "participant_limit":10, 
                  "spectator_limit":30,
                   "equipment_requirement": "Racket",
-                   "date_time": "2021-12-13 10:10:10", 
+                   "date_time": "2021-12-13 10:10", 
                      "location_requirement": "In 250 m radius",
                      "rule": "Don't shout", 
                      "skill_requirement": "medium", 
                      "contact_info": "05555555555",
                       "repeating_frequency": 1, 
-                      "badges":["awesome"], 
+                      "badges":[{"id":1,"name":"awesome","description":"You are an awesome player","pathToBadgeImage":"....com"},{}], 
                       "image":None
             }
             }
@@ -308,10 +310,11 @@ class PostTests(APITestCase):
         SkillLevel.objects.create(id=1,level_name="beginner")
         SkillLevel.objects.create(id=2,level_name="medium")
         skill=SkillLevel.objects.get(level_name='beginner')
-        date_string = "2021-12-12 10:10:10"
+        date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
         EventPost.objects.create(id=1, post_name="Ali'nin maçı", owner=u,sport_category=s,created_date=dt,description="blabla",\
-            country="Turkey", city="Istanbul", neighborhood=None,date_time=dt, participant_limit=20,\
+            longitude=20.444,
+                latitude=18.555,date_time=dt, participant_limit=20,\
                 spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
                     location_requirement=None,contact_info="0555555555555",repeating_frequency=1,pathToEventImage=None,skill_requirement=skill)
         data={
@@ -321,7 +324,7 @@ class PostTests(APITestCase):
             "actor": {
                 "type": "Person",
                 "name": "Sally",
-                "surname": "Sparrow" ,"username":"crazy_girl","id":321
+                "surname": "Sparrow" ,"username":"crazy_girl","Id":321
             },
             "object": {
                 "type":"EventPost",
@@ -334,13 +337,13 @@ class PostTests(APITestCase):
                  "participant_limit":10, 
                  "spectator_limit":30,
                   "equipment_requirement": "Racket",
-                   "date_time": "2021-12-13 10:10:10", 
+                   "date_time": "2021-12-13 10:10", 
                      "location_requirement": "In 250 m radius",
                      "rule": "Don't shout", 
                      "skill_requirement": "medium", 
                      "contact_info": "05555555555",
                       "repeating_frequency": 1, 
-                      "badges":["awesome"], 
+                      "badges":[{"id":1,"name":"awesome","description":"You are an awesome player","pathToBadgeImage":"....com"},{}], 
                       "image":None
             }
             }
@@ -363,10 +366,11 @@ class PostTests(APITestCase):
         SkillLevel.objects.create(id=1,level_name="beginner")
         SkillLevel.objects.create(id=2,level_name="medium")
         skill=SkillLevel.objects.get(level_name='beginner')
-        date_string = "2021-12-12 10:10:10"
+        date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
         EventPost.objects.create(id=1, post_name="Ali'nin maçı", owner=u,sport_category=s,created_date=dt,description="blabla",\
-            country="Turkey", city="Istanbul", neighborhood=None,date_time=dt, participant_limit=20,\
+            longitude=20.444,
+                latitude=18.555,date_time=dt, participant_limit=20,\
                 spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
                     location_requirement=None,contact_info="0555555555555",repeating_frequency=1,pathToEventImage=None,skill_requirement=skill)
         e=EventPost.objects.get(id=1)
@@ -398,11 +402,12 @@ class PostTests(APITestCase):
         u.save()
         Sport.objects.create(id=17,sport_name="Jogging")
         s=Sport.objects.get(sport_name='Jogging')
-        date_string = "2021-12-12 10:10:10"
+        date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
         EquipmentPost.objects.create(id=1,post_name="adidas bileklik", owner=u,sport_category=s,\
             created_date=dt,description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
-                country='Turkey',city='Istanbul',neighborhood='Kadıkoy',link='...com',active=True,pathToEquipmentPostImage="...com")
+                longitude=20.444,
+                latitude=18.555,link='...com',active=True,pathToEquipmentPostImage="...com")
 
         data={
             "@context": "https://www.w3.org/ns/activitystreams",
