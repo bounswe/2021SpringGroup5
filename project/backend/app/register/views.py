@@ -92,7 +92,7 @@ def register(request):
 
         return Response('SUCCESS', status=status.HTTP_200_OK)
     else:
-        sports=list(Sport.objects.values())
+        sports=list(Sport.objects.filter(is_custom=False).values('id',"sport_name"))
         skill_levels=list(SkillLevel.objects.values())
         res={"sports":sports,"skill_levels":skill_levels}
         return Response(res,status=status.HTTP_200_OK)

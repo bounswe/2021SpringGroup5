@@ -13,7 +13,7 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=24,sport_name="Handball")
+        Sport.objects.create(id=24,sport_name="Handball",is_custom=False)
         Badge.objects.create(id=5,name="surprised",description="You are a friendly player",pathToBadgeImage="....com")
         SkillLevel.objects.create(id=1,level_name="beginner")
         data={
@@ -42,7 +42,7 @@ class PostTests(APITestCase):
                 "location_requirement": "asd",
                 "contact_info": "054155555",
                 "skill_requirement": "beginner",
-                "repeating_frequency": "5",
+                "repeating_frequency": 5,
                 "badges": [ {"id":5,"name":"surprised","description":"You are a friendly player","pathToBadgeImage":"....com"}]
             
             }
@@ -57,10 +57,10 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=1,sport_name="Football")
+        Sport.objects.create(id=1,sport_name="Football",is_custom=False)
         Badge.objects.create(id=1,name="friendly",description="You are a friendly player",pathToBadgeImage=None)
         SkillLevel.objects.create(id=1,level_name="beginner")
-        Sport.objects.create(id=2,sport_name="Volleyball")
+        Sport.objects.create(id=2,sport_name="Volleyball",is_custom=False)
         Badge.objects.create(id=2,name="bad",description="You are a bad player",pathToBadgeImage=None)
         SkillLevel.objects.create(id=2,level_name="expert")
 
@@ -118,7 +118,7 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=13,sport_name="Basketball")
+        Sport.objects.create(id=13,sport_name="Basketball",is_custom=False)
         s=Sport.objects.get(sport_name='Basketball')
         date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
@@ -133,7 +133,7 @@ class PostTests(APITestCase):
             "type": "Delete",
             "actor": {
                 "type": "Person",
-                "id":12345,
+                "Id":12345,
                 "name": "Sally",
                 "surname": "Sparrow",
                 "username":"crazy_girl"
@@ -158,7 +158,7 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=15,sport_name="Running")
+        Sport.objects.create(id=15,sport_name="Running",is_custom=False)
         s=Sport.objects.get(sport_name='Running')
         date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
@@ -203,7 +203,7 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=17,sport_name="Jogging")
+        Sport.objects.create(id=17,sport_name="Jogging",is_custom=False)
         s=Sport.objects.get(sport_name='Jogging')
         date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
@@ -218,7 +218,7 @@ class PostTests(APITestCase):
             "type": "Update",
             "actor": {
                 "type": "Person",
-                "id":12345,
+                "Id":12345,
                 "name": "Sally",
                 "surname": "Sparrow",
                 "username":"crazy_girl"
@@ -247,7 +247,7 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=10,sport_name="Swimming")
+        Sport.objects.create(id=10,sport_name="Swimming",is_custom=False)
         s=Sport.objects.get(sport_name='Swimming')
         Badge.objects.create(id=1,name="awesome",description="You are an awesome player",pathToBadgeImage="....com")
         Badge.objects.create(id=5,name="surprised",description="You are a surprised player",pathToBadgeImage="....com")
@@ -260,7 +260,7 @@ class PostTests(APITestCase):
             longitude=20.444,
                 latitude=18.555,date_time=dt, participant_limit=20,\
                 spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
-                    location_requirement=None,contact_info="0555555555555",repeating_frequency=1,pathToEventImage=None,skill_requirement=skill)
+                    location_requirement=None,contact_info="0555555555555",pathToEventImage=None,skill_requirement=skill)
         data={
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "Sally is updating event post",
@@ -286,8 +286,7 @@ class PostTests(APITestCase):
                      "rule": "Don't shout", 
                      "skill_requirement": "medium", 
                      "contact_info": "05555555555",
-                      "repeating_frequency": 1, 
-                      "badges":[{"id":1,"name":"awesome","description":"You are an awesome player","pathToBadgeImage":"....com"},{}], 
+                      "badges":[{"id":1,"name":"awesome","description":"You are an awesome player","pathToBadgeImage":"....com"}], 
                       "image":None
             }
             }
@@ -303,7 +302,7 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=19,sport_name="Cycling")
+        Sport.objects.create(id=19,sport_name="Cycling",is_custom=False)
         s=Sport.objects.get(sport_name='Cycling')
         Badge.objects.create(id=1,name="awesome",description="You are an awesome player",pathToBadgeImage="....com")
         Badge.objects.create(id=5,name="surprised",description="You are a surprised player",pathToBadgeImage="....com")
@@ -316,7 +315,7 @@ class PostTests(APITestCase):
             longitude=20.444,
                 latitude=18.555,date_time=dt, participant_limit=20,\
                 spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
-                    location_requirement=None,contact_info="0555555555555",repeating_frequency=1,pathToEventImage=None,skill_requirement=skill)
+                    location_requirement=None,contact_info="0555555555555",pathToEventImage=None,skill_requirement=skill)
         data={
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "Sally is updating event post",
@@ -342,8 +341,7 @@ class PostTests(APITestCase):
                      "rule": "Don't shout", 
                      "skill_requirement": "medium", 
                      "contact_info": "05555555555",
-                      "repeating_frequency": 1, 
-                      "badges":[{"id":1,"name":"awesome","description":"You are an awesome player","pathToBadgeImage":"....com"},{}], 
+                      "badges":[{"id":1,"name":"awesome","description":"You are an awesome player","pathToBadgeImage":"....com"}], 
                       "image":None
             }
             }
@@ -358,7 +356,7 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=10,sport_name="Swimming")
+        Sport.objects.create(id=10,sport_name="Swimming",is_custom=False)
         s=Sport.objects.get(sport_name='Swimming')
         Badge.objects.create(id=1,name="awesome",description="You are an awesome player",pathToBadgeImage="....com")
         Badge.objects.create(id=5,name="surprised",description="You are a surprised player",pathToBadgeImage="....com")
@@ -372,7 +370,7 @@ class PostTests(APITestCase):
             longitude=20.444,
                 latitude=18.555,date_time=dt, participant_limit=20,\
                 spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
-                    location_requirement=None,contact_info="0555555555555",repeating_frequency=1,pathToEventImage=None,skill_requirement=skill)
+                    location_requirement=None,contact_info="0555555555555",pathToEventImage=None,skill_requirement=skill)
         e=EventPost.objects.get(id=1)
         BadgeOfferedByEventPost.objects.create(id=1,post=e,badge=b)
         data={
@@ -400,7 +398,7 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=17,sport_name="Jogging")
+        Sport.objects.create(id=17,sport_name="Jogging",is_custom=False)
         s=Sport.objects.get(sport_name='Jogging')
         date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
