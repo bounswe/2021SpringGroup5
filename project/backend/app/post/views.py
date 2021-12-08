@@ -6,7 +6,7 @@ from .models import Application, EquipmentComment, EventComment
 from post.models import Badge,SkillLevel, Sport,EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream
 
 from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, \
-    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer
+    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, ApplicationSerializer
 from rest_framework.decorators import api_view
 import requests
 from django.conf import settings
@@ -22,6 +22,7 @@ from django.forms.models import model_to_dict
 
 from django.apps import apps
 User = apps.get_model('register', 'User')
+InterestLevel = apps.get_model('register', 'InterestLevel')
 
 def process_string(s):
     if s != None and (type(s)==str):
@@ -252,7 +253,6 @@ def deleteEventPost(request):
 
     actor_id = data["actor"]["Id"]
     event_post_id = data["object"]["post_id"]
-    print(event_post_id)
 
     try:
         actor = User.objects.get(Id=actor_id)
@@ -263,7 +263,6 @@ def deleteEventPost(request):
     try:
         EventPost.objects.filter(pk=event_post_id).update(status="cancelled", capacity="cancelled")
         event_post = EventPost.objects.get(id=event_post_id)
-        print(event_post)
     except:
         return Response({"message": "There is no such event in the database, deletion operation is aborted"},
                         status=status.HTTP_404_NOT_FOUND)
@@ -279,6 +278,73 @@ def deleteEventPost(request):
 
     return Response({"message": "Event post is deleted"}, status=status.HTTP_200_OK)
 
+
+
+
+@login_required()
+@api_view(['POST'])
+def applyToEvent(request):
+    data = request.data
+
+    actor_id = data["actor"]["Id"]
+    event_id = data["event_id"]
+
+
+    # Try if the user is valid
+    try:
+        actor = User.objects.get(Id=actor_id)
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+    # Try if event is in the database
+    try:
+        event_post=EventPost.objects.get(id=event_id)
+    except:
+        return Response({"message":"There is no such event in the database, deletion operation is aborted"},status=status.HTTP_404_NOT_FOUND)
+
+
+    if not (event_post.capacity == "open to applications" and event_post.status == "upcoming"):                     # if the event is not open to applications or event status is
+        return Response({"message": "Event is closed to applications"}, status=400)         # event is full, passed or cancelled       HTTP412 maybe??
+
+
+    event_post_sport_id = event_post.sport_category_id
+    event_skill_requirement = event_post.skill_requirement_id  # bunu dene id olarak yaziyor ama kelime olarak nasil olduguna bak
+    isAdequate = True
+
+
+    try:
+        users_skill_level = InterestLevel.objects.get(owner_of_interest_id=actor_id, sport_name_id=event_post_sport_id)     # eger actor bu spor id icin skill level kaydetmediyse error olup except'e dusuyor adequate false aliyor
+    except:
+        return Response({"message": "There was an error about getting users skill level"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        users_skill_level_id = SkillLevel.objects.get(level_name=str(users_skill_level.skill_level))
+    except:
+        return Response({"message": "There was an error about getting users skill level"}, status=status.HTTP_404_NOT_FOUND)
+
+
+    if users_skill_level_id.id >= event_skill_requirement:
+        isAdequate = True
+    elif users_skill_level.skill_level >= event_skill_requirement:
+        isAdequate = False
+
+
+    applicationStatus = "waiting"
+    if not isAdequate:
+        applicationStatus = "inadequate"
+
+
+    application_ser=ApplicationSerializer(data={"user":actor_id, "event_post":event_post.id, "status":applicationStatus, "applicant_type":"user"})
+
+    if application_ser.is_valid():
+        try:
+            application_ser.save()
+        except:
+            return Response({"message": "There was an error about application serializer. You may have already applied."}, status=status.HTTP_406_NOT_ACCEPTABLE)
+    else:
+        return Response({"message": "There was an error about application serializer"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+    return Response({"message":"Application is successfully created"},status=status.HTTP_201_CREATED)
 
 
 @login_required()  
