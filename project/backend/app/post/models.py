@@ -70,8 +70,8 @@ class Application(models.Model):
         ]
     user=models.ForeignKey('register.User',null=False,blank=False,on_delete=CASCADE)
     event_post=models.ForeignKey(EventPost,null=False,blank=False,on_delete=CASCADE)
-    status=models.CharField(null=False,blank=False,max_length=8)
-    applicant_type=models.CharField(null=False,blank=False,max_length=9)
+    status=models.CharField(null=False,blank=False,max_length=10)
+    applicant_type=models.CharField(null=False,blank=False,max_length=20)
     
 
 class EventComment(models.Model):
