@@ -100,7 +100,7 @@ def createEventPost(request):
                 current_event_date=date_time.strftime("%Y-%m-%d %H:%M:%S")
             
             event={"post_name":post_name,"owner":actor_id,"sport_category":sport_id,\
-                "created_date":created_date,"description":description,\
+                "created_date":created_date+datetime.timedelta(hours=3),"description":description,\
                 "longitude":longitude,"latitude":latitude,"date_time":current_event_date,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
                     "rule":rule,"equipment_requirement":equipment_requirement, "status":event_status,"capacity":capacity,\
                         "location_requirement":location_requirement,"contact_info":contact_info,\
@@ -189,7 +189,7 @@ def createEquipmentPost(request):
 
         active=True
         created_date=datetime.datetime.now()
-        equipment_post_ser=EquipmentPostSerializer(data={"post_name":equipment_post_name,"owner":owner_id,"sport_category":sport_id,"created_date":created_date,\
+        equipment_post_ser=EquipmentPostSerializer(data={"post_name":equipment_post_name,"owner":owner_id,"sport_category":sport_id,"created_date":created_date+datetime.timedelta(hours=3),\
             "description":description,"longitude":longitude,"latitude":latitude,"link":link,"active":active,"pathToEquipmentPostImage":image})
 
         if equipment_post_ser.is_valid():
@@ -300,7 +300,7 @@ def changeEquipmentInfo(request):
         return Response({"message":"There was an error while updating the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
     equipment_post_updated["owner"]=actor
-    equipment_post_updated["created_date"]=(equipment_post_updated["created_date"]+datetime.timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S')
+    equipment_post_updated["created_date"]=equipment_post_updated["created_date"].strftime('%Y-%m-%d %H:%M:%S')
     res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":equipment_post_updated}
     return Response(res,200)
 
@@ -369,7 +369,7 @@ def changeEventInfo(request):
     else:
         return Response({"message":"There was an error while updating the event post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
-    event_post_updated["created_date"]=(event_post_updated["created_date"]+datetime.timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S')
+    event_post_updated["created_date"]=event_post_updated["created_date"].strftime('%Y-%m-%d %H:%M:%S')
     event_post_updated["date_time"]=event_post_updated["date_time"].strftime('%Y-%m-%d %H:%M:%S')
     event_post_updated["owner"]=actor
     event_post_updated["badges"]=list(BadgeOfferedByEventPost.objects.filter(post=post_id).values('badge__id','badge__name','badge__description','badge__pathToBadgeImage'))
@@ -403,7 +403,7 @@ def getEventPostDetails(request):
         comments=list(EventComment.objects.filter(post=post_id).order_by('id').values('id','content','owner','created_date','owner__Id','owner__name',\
             'owner__surname','owner__username'))
         for i in range(len(comments)):
-            comments[i]["created_date"]=(comments[i]["created_date"]+datetime.timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S')
+            comments[i]["created_date"]=comments[i]["created_date"].strftime('%Y-%m-%d %H:%M:%S')
     except:
         comments=[]
 
@@ -459,7 +459,7 @@ def getEventPostDetails(request):
     event_post_details["is_event_creator"]=is_event_creator
     event_post_details["badges"]=badges_offered
     event_post_details["date_time"]=event_post_details["date_time"].strftime('%Y-%m-%d %H:%M:%S')
-    event_post_details["created_date"]=(event_post_details["created_date"]+datetime.timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S')
+    event_post_details["created_date"]=event_post_details["created_date"].strftime('%Y-%m-%d %H:%M:%S')
     data["actor"]["type"]="Person"
     event_post_details["type"]="EventPost"
     data["object"]=event_post_details
@@ -509,7 +509,7 @@ def getEquipmentPostDetails(request):
 
     equipment_post_details=model_to_dict(equipment_post_details)
     equipment_post_details["sport_category"]=sport
-    equipment_post_details["created_date"]=(equipment_post_details["created_date"]+datetime.timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S')
+    equipment_post_details["created_date"]=equipment_post_details["created_date"].strftime('%Y-%m-%d %H:%M:%S')
     equipment_post_details["is_event_creator"]=is_event_creator
     equipment_post_details["comments"]=comments
     equipment_post_details["type"]="EventPost"
