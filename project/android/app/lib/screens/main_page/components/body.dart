@@ -47,7 +47,7 @@ class Body extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return MapSample();
+                        return GoogleMapsScreen();
                       },
                     ),
                   );
