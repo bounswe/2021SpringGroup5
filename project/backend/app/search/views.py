@@ -40,18 +40,15 @@ def process_string(s):
 def searchEvent(request):
     data = request.data
 
-    data_search_func  = data["search_func"]["isName"]
+    isName  = data["search_func"]["isName"]
     search_query      = process_string(data["search_func"]["search_query"])
 
     isDefaultQuery = True if search_query == "" else False
-    isName = data_search_func
-
     isSortByLocation = data["sort_func"]["isSortedByLocation"]
-    capacity = data["capacity"]
 
 
     ## Initiating the query
-    eventList = EventPost.objects.filter(status="upcoming", capacity=capacity)
+    eventList = EventPost.objects.filter(status="upcoming", capacity=data["capacity"])
 
     if isDefaultQuery:
         pass
@@ -72,13 +69,17 @@ def searchEvent(request):
 
         eventList = eventList.filter(date_time__gte=start_date_time_obj, date_time__lte=end_date_time_obj)
 
+
     isFilteredByLocation = False if data["filter_func"]["location"] == None else True
     if isFilteredByLocation:
         location_lat = data["filter_func"]["location"]["lat"]
         location_lng = data["filter_func"]["location"]["lng"]
         location_radius = data["filter_func"]["location"]["radius"]
 
-        eventList = eventList.annotate(delta=ExpressionWrapper(((F('latitude') - location_lat) ** 2) + ((F('longitude') - location_lng) ** 2), output_field = FloatField())).filter(delta__lte=location_radius**2)
+        eventList = eventList.annotate(
+            delta=ExpressionWrapper(((F('latitude') - location_lat) ** 2) + ((F('longitude') - location_lng) ** 2),
+                                    output_field = FloatField())).filter(delta__lte=location_radius**2)
+
 
     isFilteredBySport = False if data["filter_func"]["sportType"] == "" else True
     if isFilteredBySport:
@@ -86,11 +87,79 @@ def searchEvent(request):
 
         eventList = eventList.filter(sport_category__sport_name__contains=filter_sport)
 
-    if isSortByLocation:
-        eventList = eventList.annotate(delta=ExpressionWrapper(((F('latitude') - location_lat) ** 2) + ((F('longitude') - location_lng) ** 2), output_field = FloatField())).order_by('delta')
+
+    if isSortByLocation and isFilteredByLocation:
+        eventList = eventList.annotate(
+            delta=ExpressionWrapper(((F('latitude') - location_lat) ** 2) + ((F('longitude') - location_lng) ** 2),
+                                                               output_field = FloatField())).order_by('delta')
     else:                                   ## else the data must be sorted by date
         eventList = eventList.order_by('date_time')
 
 
     result = serializers.serialize('json', eventList)
-    return HttpResponse(result, content_type="application/json")
+    return HttpResponse(result, content_type="application/json", status=200)
+
+
+@login_required()
+@api_view(['POST'])
+def searchEquipment(request):
+    data = request.data
+
+    isName  = data["search_func"]["isName"]
+    search_query      = process_string(data["search_func"]["search_query"])
+
+    isDefaultQuery = True if search_query == "" else False
+    isSortByLocation = data["sort_func"]["isSortedByLocation"]
+
+
+    ## Initiating the query
+    equipmentList = EquipmentPost.objects.filter(active=True)
+
+    if isDefaultQuery:
+        pass
+    elif isName:    ## query search in post_name
+        equipmentList = equipmentList.filter(post_name__contains=search_query)
+    else:           ## query search in sport type
+        equipmentList = equipmentList.filter(sport_category__sport_name__contains=search_query)
+
+    ## Filters
+
+    isFilteredByDate = False if data["filter_func"]["created_date"] == None else True
+    if isFilteredByDate:
+        filter_start_date = data["filter_func"]["created_date"]["startDate"]
+        filter_end_date = data["filter_func"]["created_date"]["endDate"]
+        start_date_time_obj = datetime.strptime(filter_start_date, '%d/%m/%Y:%H')
+        end_date_time_obj = datetime.strptime(filter_end_date, '%d/%m/%Y:%H')
+
+        equipmentList = equipmentList.filter(date_time__gte=start_date_time_obj, date_time__lte=end_date_time_obj)
+
+
+    isFilteredByLocation = False if data["filter_func"]["location"] == None else True
+    if isFilteredByLocation:
+        location_lat = data["filter_func"]["location"]["lat"]
+        location_lng = data["filter_func"]["location"]["lng"]
+        location_radius = data["filter_func"]["location"]["radius"]
+
+        equipmentList = equipmentList.annotate(
+            delta=ExpressionWrapper(((F('latitude') - location_lat) ** 2) + ((F('longitude') - location_lng) ** 2),
+                                    output_field=FloatField())).filter(delta__lte=location_radius ** 2)
+
+
+    isFilteredBySport = False if data["filter_func"]["sportType"] == "" else True
+    if isFilteredBySport:
+        filter_sport = data["filter_func"]["sportType"]
+
+        equipmentList = equipmentList.filter(sport_category__sport_name__contains=filter_sport)
+
+
+    if isSortByLocation and isFilteredByLocation:
+        equipmentList = equipmentList.annotate(
+            delta=ExpressionWrapper(((F('latitude') - location_lat) ** 2) + ((F('longitude') - location_lng) ** 2),
+                                    output_field=FloatField())).order_by('delta')
+    else:  ## else the data must be sorted by date
+        equipmentList = equipmentList.order_by('date_time')
+
+
+    result = serializers.serialize('json', equipmentList)
+    return HttpResponse(result, content_type="application/json", status=200)
+
