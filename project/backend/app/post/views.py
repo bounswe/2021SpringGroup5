@@ -489,7 +489,7 @@ def changeEventInfo(request):
 @api_view(['GET'])
 def getWaitingApplications(request):
     eventId = request.query_params["eventId"]
-    applicationList = list(Application.objects.filter(status="waiting", event_post_id=eventId).values())
+    applicationList = list(Application.objects.filter(status="waiting", applicant_type="player", event_post_id=eventId).values())
     if applicationList != []:
         return JsonResponse(applicationList, safe=False)
     else:
@@ -500,33 +500,33 @@ def getWaitingApplications(request):
 @api_view(['GET'])
 def getRejectedApplications(request):
     eventId = request.query_params["eventId"]
-    applicationList = list(Application.objects.filter(status="rejected", event_post_id=eventId).values())
+    applicationList = list(Application.objects.filter(status="rejected", applicant_type="player", event_post_id=eventId).values())
     if applicationList != []:
         return JsonResponse(applicationList, safe=False)
     else:
-        return Response({"message": "Waiting applications are not found"},404)
+        return Response({"message": "Rejected applications are not found"},404)
 
 
 @login_required()
 @api_view(['GET'])
 def getAcceptedApplications(request):
     eventId = request.query_params["eventId"]
-    applicationList = list(Application.objects.filter(status="accepted", event_post_id=eventId).values())
+    applicationList = list(Application.objects.filter(status="accepted", applicant_type="player", event_post_id=eventId).values())
     if applicationList != []:
         return JsonResponse(applicationList, safe=False)
     else:
-        return Response({"message": "Waiting applications are not found"},404)
+        return Response({"message": "Accepted applications are not found"},404)
 
 
 @login_required()
 @api_view(['GET'])
 def getInadequateApplications(request):
     eventId = request.query_params["eventId"]
-    applicationList = list(Application.objects.filter(status="inadeq", event_post_id=eventId).values())
+    applicationList = list(Application.objects.filter(status="inadeq", applicant_type="player", event_post_id=eventId).values())
     if applicationList != []:
         return JsonResponse(applicationList, safe=False)
     else:
-        return Response({"message": "Waiting applications are not found"},404)
+        return Response({"message": "Inadequate applications are not found"},404)
 
 
 @login_required()
