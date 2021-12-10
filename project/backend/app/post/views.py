@@ -531,6 +531,10 @@ def getEventPostDetails(request):
     except:
         spectators=[]
     
+    waiting_players=[]
+    rejected_players=[]
+    inadequate_player_applications=[]
+
     if actor_id==event_post_details.owner_id:
         try:
             waiting_players=list(Application.objects.filter(event_post=post_id,status="waiting",applicant_type="player").order_by('id').values('user__Id',\
@@ -542,6 +546,11 @@ def getEventPostDetails(request):
         'user__name','user__surname','user__username'))
         except:
             rejected_players=[]
+        try:
+            inadequate_player_applications=list(Application.objects.filter(event_post=post_id,status="inadequate",applicant_type="player").values('user__Id',\
+        'user__name','user__surname','user__username'))
+        except:
+            inadequate_player_applications=[]
 
     del data["actor"]["type"]
     del data["object"]["type"]
@@ -559,6 +568,7 @@ def getEventPostDetails(request):
     event_post_details["sport_category"]=sport
     event_post_details["comments"]=comments
     event_post_details["spectators"]=spectators
+    event_post_details["inadequate_player_applications"]=inadequate_player_applications
     event_post_details["waiting_players"]=waiting_players
     event_post_details["accepted_players"]=accepted_players
     event_post_details["rejected_players"]=rejected_players
