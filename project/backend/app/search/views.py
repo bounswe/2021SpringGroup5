@@ -18,7 +18,7 @@ from rest_framework.views import APIView
 from unidecode import unidecode
 from django.forms.models import model_to_dict
 import math
-from django.db.models import F, FloatField, ExpressionWrapper
+from django.db.models import F, FloatField, ExpressionWrapper, Q
 from datetime import datetime
 import json
 from django.http import JsonResponse, HttpResponse
@@ -40,22 +40,23 @@ def process_string(s):
 def searchEvent(request):
     data = request.data
 
-    isName  = data["search_func"]["isName"]
-    search_query      = process_string(data["search_func"]["search_query"])
+    search_query      = process_string(data["search_query"])
 
     isDefaultQuery = True if search_query == "" else False
     isSortByLocation = data["sort_func"]["isSortedByLocation"]
 
+    capacity = "open to applications"
+    if data["filter_func"]["capacity"] != "":
+        capacity = data["filter_func"]["capacity"]
+
 
     ## Initiating the query
-    eventList = EventPost.objects.filter(status="upcoming", capacity=data["capacity"])
+    eventList = EventPost.objects.filter(status="upcoming", capacity=capacity)
 
     if isDefaultQuery:
         pass
-    elif isName:
-        eventList = eventList.filter(post_name__contains=search_query)
     else:
-        eventList = eventList.filter(sport_category__sport_name__contains=search_query)
+        eventList = eventList.filter(Q(sport_category__sport_name__contains=search_query) | Q(post_name__contains=search_query))
 
 
     ## Filters
@@ -70,7 +71,7 @@ def searchEvent(request):
         eventList = eventList.filter(date_time__gte=start_date_time_obj, date_time__lte=end_date_time_obj)
 
 
-    isFilteredByLocation = False if data["filter_func"]["location"] == None else True
+    isFilteredByLocation = False if (data["filter_func"]["location"]==None or data["filter_func"]["location"]=="" or data["filter_func"]["location"]==False)  else True
     if isFilteredByLocation:
         location_lat = data["filter_func"]["location"]["lat"]
         location_lng = data["filter_func"]["location"]["lng"]
@@ -105,8 +106,7 @@ def searchEvent(request):
 def searchEquipment(request):
     data = request.data
 
-    isName  = data["search_func"]["isName"]
-    search_query      = process_string(data["search_func"]["search_query"])
+    search_query      = process_string(data["search_query"])
 
     isDefaultQuery = True if search_query == "" else False
     isSortByLocation = data["sort_func"]["isSortedByLocation"]
@@ -117,10 +117,8 @@ def searchEquipment(request):
 
     if isDefaultQuery:
         pass
-    elif isName:    ## query search in post_name
-        equipmentList = equipmentList.filter(post_name__contains=search_query)
     else:           ## query search in sport type
-        equipmentList = equipmentList.filter(sport_category__sport_name__contains=search_query)
+        equipmentList = equipmentList.filter(Q(sport_category__sport_name__contains=search_query) | Q(post_name__contains=search_query))
 
     ## Filters
 
@@ -134,7 +132,7 @@ def searchEquipment(request):
         equipmentList = equipmentList.filter(date_time__gte=start_date_time_obj, date_time__lte=end_date_time_obj)
 
 
-    isFilteredByLocation = False if data["filter_func"]["location"] == None else True
+    isFilteredByLocation = False if (data["filter_func"]["location"]==None or data["filter_func"]["location"]=="" or data["filter_func"]["location"]==False)  else True
     if isFilteredByLocation:
         location_lat = data["filter_func"]["location"]["lat"]
         location_lng = data["filter_func"]["location"]["lng"]
@@ -162,4 +160,3 @@ def searchEquipment(request):
 
     result = serializers.serialize('json', equipmentList)
     return HttpResponse(result, content_type="application/json", status=200)
-
