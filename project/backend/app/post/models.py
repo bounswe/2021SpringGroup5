@@ -1,3 +1,4 @@
+import uuid
 from typing import Callable
 from django.db import models
 from django.contrib import admin
@@ -21,7 +22,8 @@ class EquipmentPost(models.Model):
     latitude=models.FloatField(null=True,blank=True)
     link=models.URLField(null=True,blank=True)
     active=models.BooleanField(null=False,blank=False)
-    pathToEquipmentPostImage=models.URLField(null=True,blank=True)
+    pathToEquipmentPostImage = models.URLField(
+        'https://nzftk20rg4.execute-api.eu-central-1.amazonaws.com/v1/lodobucket451?file=' + str(models.Model.pk), blank=True)
 
 
 class SkillLevel(models.Model):
@@ -44,8 +46,10 @@ class EventPost(models.Model):
     capacity=models.CharField(null=False,blank=False,max_length=25)
     location_requirement=models.CharField(null=True,blank=True,max_length=30)
     contact_info=models.CharField(null=True,blank=True,max_length=50)
-    pathToEventImage=models.URLField(null=True,blank=True)
     skill_requirement=models.ForeignKey(SkillLevel,on_delete=CASCADE)
+    pathToEventImage = models.URLField(
+        'https://nzftk20rg4.execute-api.eu-central-1.amazonaws.com/v1/lodobucket451?file=' + str(models.Model.pk), blank=True)
+
 
 
 class EventPostActivityStream(models.Model):
