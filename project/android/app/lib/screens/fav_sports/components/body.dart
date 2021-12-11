@@ -4,7 +4,7 @@ import 'package:ludo_app/components/rounded_input_field.dart';
 import 'package:ludo_app/constants.dart';
 import 'package:ludo_app/screens/fav_sports/components/background.dart';
 import 'package:ludo_app/screens/fav_sports/fav_sports_screen.dart';
-import 'package:ludo_app/screens/main_page/main_screen.dart';
+import 'package:ludo_app/screens/main_events/main_event_screen.dart';
 
 class Body extends StatelessWidget {
   @override
@@ -72,7 +72,7 @@ class Body extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return MainScreen();
+                        return MainEventScreen();
                       },
                     ),
                   );
