@@ -42,7 +42,7 @@ def createEventPost(request):
         longitude=data["object"]["longitude"]
         latitude=data["object"]["latitude"]
         description=data["object"]["description"]
-        image=data["object"]["pathToEventImage"]
+        #image=data["object"]["pathToEventImage"]
         date_time=data["object"]["date_time"]
         participant_limit=data["object"]["participant_limit"]
         spectator_limit=data["object"]["spectator_limit"]
@@ -105,7 +105,7 @@ def createEventPost(request):
                 "longitude":longitude,"latitude":latitude,"date_time":current_event_date,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
                     "rule":rule,"equipment_requirement":equipment_requirement, "status":event_status,"capacity":capacity,\
                         "location_requirement":location_requirement,"contact_info":contact_info,\
-                            "pathToEventImage":image,"skill_requirement":skill_requirement.id}
+                            "skill_requirement":skill_requirement.id}
 
             event_ser=EventPostSerializer(data=event)
             if event_ser.is_valid():
@@ -163,7 +163,7 @@ def createEquipmentPost(request):
         longitude=data["object"]["longitude"]
         latitude=data["object"]["latitude"]
         description=data["object"]["description"]
-        image=data["object"]["pathToEquipmentPostImage"]
+        #image=data["object"]["pathToEquipmentPostImage"]
         link=data["object"]["link"]
 
         try:
@@ -191,7 +191,7 @@ def createEquipmentPost(request):
         active=True
         created_date=datetime.datetime.now()
         equipment_post_ser=EquipmentPostSerializer(data={"post_name":equipment_post_name,"owner":owner_id,"sport_category":sport_id,"created_date":created_date+datetime.timedelta(hours=3),\
-            "description":description,"longitude":longitude,"latitude":latitude,"link":link,"active":active,"pathToEquipmentPostImage":image})
+            "description":description,"longitude":longitude,"latitude":latitude,"link":link,"active":active})
 
         if equipment_post_ser.is_valid():
             equipment_post_ser.save()
@@ -216,7 +216,7 @@ def createEquipmentPost(request):
 
     # GET request
     else:
-        sports=list(Sport.objects.filet(is_custom=False).values("id","sport_name"))
+        sports=list(Sport.objects.filter(is_custom=False).values("id","sport_name"))
         res={"sports":sports}
         return Response(res,status=status.HTTP_200_OK)
 
