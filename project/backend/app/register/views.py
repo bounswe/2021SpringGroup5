@@ -1,8 +1,10 @@
+import threading
+
 import requests
 from django.shortcuts import render, redirect
 from rest_framework.response import Response
 from rest_framework import status
-from .models import User,InterestLevel
+from .models import User, InterestLevel
 from django.urls import reverse
 import hashlib
 from django.http import JsonResponse
@@ -11,32 +13,40 @@ from django.template.loader import render_to_string
 from .utils import generate_token
 from django.core.mail import EmailMessage
 from django.contrib.auth import authenticate, login, logout
-from app import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str, force_text, DjangoUnicodeDecodeError
 from django.views.decorators.csrf import csrf_exempt
 import json
-from .serializers import UserSerializer
+from django.conf import settings
 from rest_framework.decorators import api_view
 
 from django.apps import apps
 Sport = apps.get_model('post', 'Sport')
 SkillLevel=apps.get_model('post','SkillLevel')
 
+class EmailThread(threading.Thread):
+
+    def __init__(self, email):
+        self.email = email
+        threading.Thread.__init__(self)
+
+    def run(self):
+        self.email.send()
+
 def send_mail(user, request):
     current_site = get_current_site(request)
     mail_subject = 'Complete Your Login'
-    mail_body = {
-        'User': user,
+    mail_body = render_to_string('verification/activate.html', {
+        'username': user.username,
         'domain': current_site,
         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
         'token': generate_token.make_token(user)
-    }
+    })
 
     email = EmailMessage(subject=mail_subject, body=mail_body,
                          from_email=settings.EMAIL_HOST_USER,
-                         to=[User.mail])
+                         to=[user.mail])
     email.send(fail_silently=False)
 
 
@@ -76,19 +86,26 @@ def register(request):
             context['has_error'] = True
 
             return JsonResponse(context, status=401)
+        if len(username) < 8:
+            context['errormessage'] = 'Username must have at least 8 characters'
+            context['has_error'] = True
+
+            return JsonResponse(context, status=401)
 
         user = User.objects.create_user(username=username, mail=mail, name=name, surname=surname)
         user.set_password(password)
         user.save()
 
-        sport1 = Sport.objects.get(sport_name=interest1)
-        sport2 = Sport.objects.get(sport_name=interest2)
+        send_mail(user, request)
 
-        interest1 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport1, skill_level=level1)
-        interest2 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport2, skill_level=level2)
+        #sport1 = Sport.objects.get(sport_name=interest1)
+        #sport2 = Sport.objects.get(sport_name=interest2)
 
-        interest1.save()
-        interest2.save()
+        #interest1 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport1, skill_level=level1)
+        #interest2 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport2, skill_level=level2)
+
+        #interest1.save()
+        #interest2.save()
 
         return Response('SUCCESS', status=status.HTTP_200_OK)
     else:
@@ -111,10 +128,10 @@ def login_user(request):
 
         user = authenticate(username=username, password=password)
 
-        # if user and not user.is_email_verified:
-        #     context['errormessage'] = 'Please check your email inbox, your email is not verified'
-        #     context['has_error'] = True
-        #     return JsonResponse(context)
+        if user and not user.is_email_verified:
+            context['errormessage'] = 'Please check your email inbox, your email is not verified'
+            context['has_error'] = True
+            return JsonResponse(context)
 
         if not user:
             context['errormessage'] = 'You entered invalid credentials, try again please'
@@ -137,7 +154,7 @@ def logout_user(request):
     return JsonResponse(context)
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 def activate_user(request, uidb64, token):
     context = {'has_error': False, 'message': ''}
     try:
