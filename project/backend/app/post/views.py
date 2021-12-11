@@ -1,4 +1,4 @@
-
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from requests.api import post
@@ -341,7 +341,7 @@ def applyToEvent(request):
         applicationStatus = "inadequate"
 
 
-    application_ser=ApplicationSerializer(data={"user":actor_id, "event_post":event_post.id, "status":applicationStatus, "applicant_type":"user"})
+    application_ser=ApplicationSerializer(data={"user":actor_id, "event_post":event_post.id, "status":applicationStatus, "applicant_type":"player"})
 
     if application_ser.is_valid():
         try:
@@ -623,6 +623,72 @@ def getEquipmentPostDetails(request):
     equipment_post_details["owner"]=list(User.objects.filter(Id=equipment_post_details["owner"]).values('Id','name','surname','username'))[0]
     res={"@context":data["@context"],"summary":data["summary"],"type":data["type"],"actor":data["actor"],"object":equipment_post_details}
     return Response(res,201)
+
+
+@login_required()
+@api_view(['POST'])
+def spectateToEvent(request):
+    data = request.data
+
+    actor_id = data["actor"]["Id"]
+    event_id = data["event_id"]
+
+    # Try if the user is valid
+    try:
+        actor = User.objects.get(Id=actor_id)
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+    # Try if event is in the database
+    try:
+        event_post = EventPost.objects.get(id=event_id)
+    except:
+        return Response({"message": "There is no such event in the database, spectate operation is aborted"},
+                        status=status.HTTP_404_NOT_FOUND)
+
+
+    if  event_post.current_spectator >= event_post.spectator_limit:
+        return Response({"message": "Spectator limit is full"}, status=400)
+
+    if event_post.status != "upcoming":
+        return Response({"message": "This is not an upcoming event. Maybe it is cancelled or passed."}, status=400)
+
+
+
+    ## Increase spectator by 1
+    cur_spec = event_post.current_spectator
+    EventPost.objects.filter(id=event_id).update(current_spectator = cur_spec+1)
+
+
+    applicationStatus = "accepted"
+    application_ser = ApplicationSerializer(
+        data={"user": actor_id, "event_post": event_post.id, "status": applicationStatus, "applicant_type": "spectator"})
+
+
+    if application_ser.is_valid():
+        try:
+            application_ser.save()
+        except:
+            return Response(
+                {"message": "There was an error about application serializer. You may have already applied."},
+                status=status.HTTP_406_NOT_ACCEPTABLE)
+    else:
+        return Response({"message": "There was an error about application serializer"},
+                        status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    return Response({"message": "Spectate application is successfully created"}, status=status.HTTP_201_CREATED)
+
+
+
+@login_required()
+@api_view(['GET'])
+def getSpectators(request):
+    eventId = request.query_params["eventId"]
+    applicationList = list(Application.objects.filter(applicant_type="spectator", event_post_id=eventId).values())
+    if applicationList != []:
+        return JsonResponse(applicationList, safe=False)
+    else:
+        return Response({"message": "Spectators are not found"},404)
+
 
 
 # It is a script for only one time run. It can only be run by Superadmin to avoid possible security bug

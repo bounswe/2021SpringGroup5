@@ -46,6 +46,8 @@ class EventPost(models.Model):
     contact_info=models.CharField(null=True,blank=True,max_length=50)
     pathToEventImage=models.URLField(null=True,blank=True)
     skill_requirement=models.ForeignKey(SkillLevel,on_delete=CASCADE)
+    current_player=models.IntegerField(null=False,blank=False)
+    current_spectator=models.IntegerField(null=False,blank=False)
 
 
 class EventPostActivityStream(models.Model):
