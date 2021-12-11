@@ -11,10 +11,10 @@ class EventListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Colors.green.withOpacity(0.6)),
-        margin: EdgeInsets.symmetric(vertical: 24),
+        decoration:
+            BoxDecoration(color: Colors.lightGreenAccent.withOpacity(0.6)),
         child: ListView.separated(
-          padding: EdgeInsets.symmetric(horizontal: 15),
+            padding: EdgeInsets.symmetric(horizontal: 15),
             scrollDirection: Axis.vertical,
             itemBuilder: (context, index) => EventItem(eventList[index]),
             separatorBuilder: (_, index) => SizedBox(
