@@ -268,6 +268,7 @@ def deleteEventPost(request):
         return Response({"message": "There is no such user in the system"}, 404)
 
 
+
     try:
         EventPost.objects.filter(pk=event_post_id).update(status="cancelled", capacity="cancelled")
         event_post = EventPost.objects.get(id=event_post_id)
@@ -354,6 +355,46 @@ def applyToEvent(request):
 
     return Response({"message":"Application is successfully created"},status=status.HTTP_201_CREATED)
 
+
+@login_required()
+@api_view(['POST'])
+def acceptApplicant(request):
+    data = request.data
+
+    applicant_id = data["applicant_Id"]
+    event_id = data["event_Id"]
+
+    # Try if the user is valid
+    try:
+        actor = User.objects.get(Id=applicant_id)
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+    # Try if event is in the database
+    try:
+        event_post=EventPost.objects.get(id=event_id)
+    except:
+        return Response({"message":"There is no such event in the database, deletion operation is aborted"},status=status.HTTP_404_NOT_FOUND)
+
+
+    try:
+        application = Application.objects.filter(event_post_id=event_id)
+        event_post = EventPost.objects.get(id=event_id)
+    except:
+        return Response({"message": "There is no such application in the database, operation is aborted"}, status=status.HTTP_404_NOT_FOUND)
+
+
+    if event_post.participant_limit > event_post.current_player and event_post.status == "upcoming" and event_post.capacity == "open to applications":
+        new_part = event_post.current_player+1
+        if new_part == event_post.participant_limit:
+            EventPost.objects.filter(pk=event_id).update(capacity="full", current_player=new_part)
+        else:
+            EventPost.objects.filter(pk=event_id).update(current_player=new_part)
+    else:
+        return Response({"message": "The event is not available to accept the application. Full or maybe past"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    application = application.update(status="accepted")
+    return Response({"message":"Application is accepted"},status=status.HTTP_200_OK)
 
 @login_required()  
 @api_view(['PATCH'])
