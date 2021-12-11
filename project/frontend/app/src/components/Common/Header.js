@@ -97,11 +97,13 @@ export default function MiniDrawer() {
 
   const [open, setOpen] = React.useState(false);
 
-  const handleDrawerOpen = () => {
+ const handleDrawerOpen = () => {
+    document.body.classList.add('modal-open');
     setOpen(true);
   };
 
   const handleDrawerClose = () => {
+    document.body.classList.remove('modal-open');
     setOpen(false);
   };
 

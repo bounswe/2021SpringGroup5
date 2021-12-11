@@ -7,6 +7,7 @@ import HomeScreen from './screens/HomeScreen';
 import EventScreen from './screens/EventScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
+import CreateEvent from './screens/CreateEventScreen';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 
@@ -22,6 +23,7 @@ function App() {
             <Header user={user} />
             <Switch>
               <Route path="/event/:id" component={EventScreen} />
+              <Route path="/createEvent" component={CreateEvent} />
               <Route path="/" component={HomeScreen} />
             </Switch>
           </>
