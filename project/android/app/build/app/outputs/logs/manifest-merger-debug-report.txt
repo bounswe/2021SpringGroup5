@@ -104,9 +104,9 @@ ADDED from /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/andro
 	android:name
 		ADDED from /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:38:17-48
 meta-data#com.google.android.geo.API_KEY
-ADDED from /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:40:9-41:77
+ADDED from /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:40:9-41:50
 	android:value
-		ADDED from /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:41:20-75
+		ADDED from /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:41:20-48
 	android:name
 		ADDED from /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:40:20-65
 uses-sdk
