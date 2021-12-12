@@ -1,6 +1,6 @@
 .create-new-event-container{
-    width: 80%;
-    margin-left: 100px;
+    width: 60%;
+    margin: 30px auto 0px auto !important;
 }
 .modal-open .general-container{
     margin-left: 265px;
@@ -8,11 +8,121 @@
     transition: width 225ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
 }
 .general-container{
-    margin-top:30px;
+    margin-left:100px;
 }
 .create-new-event-container{
     text-align: left;
 }
 .create-new-event-container .form-group{
     margin-bottom: 25px;
+}
+
+.gray-bg {
+    background-color: #f5f5f5;
+}
+
+.event {
+  box-shadow: 0 0 30px rgba(31, 45, 61, 0.125);
+  border-radius: 5px;
+  overflow: hidden;
+  background: #ffffff;
+  padding: 15px;
+  margin: 15px 0 30px;
+}
+.event .event-title {
+  padding: 15px 0 20px;
+}
+.event .event-title h6 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.event .event-title h6 a {
+  text-transform: uppercase;
+  color: #fc5356;
+  border-bottom: 1px solid #fc5356;
+}
+.event .event-title h2 {
+  color: #20247b;
+  font-weight: 600;
+}
+.event .event-title .media {
+  padding-top: 15px;
+  border-bottom: 1px dashed #ddd;
+  padding-bottom: 20px;
+}
+
+.event .event-title .media .media-body {
+  padding-left: 8px;
+}
+.event .event-title .media .media-body label {
+  font-weight: 600;
+  color: #fc5356;
+  margin: 0;
+}
+.event .event-title .media .media-body span {
+  display: block;
+  font-size: 12px;
+}
+.event .event-content h1,
+.event .event-content h2,
+.event .event-content h3,
+.event .event-content h4,
+.event .event-content h5,
+.event .event-content h6 {
+  color: #20247b;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.event-comment {
+  box-shadow: 0 0 30px rgba(31, 45, 61, 0.125);
+  border-radius: 5px;
+  overflow: hidden;
+  background: #ffffff;
+  padding: 20px;
+}
+.event-comment h4 {
+  color: #20247b;
+  font-weight: 700;
+  margin-bottom: 25px;
+  font-size: 22px;
+}
+img {
+    max-width: 100%;
+}
+img {
+    vertical-align: middle;
+    border-style: none;
+}
+
+
+.comment-form .form-control {
+  border: none;
+  border-bottom: 1px solid #20247b;
+  background: transparent;
+  border-radius: 0;
+  padding-left: 0;
+  box-shadow: none !important;
+}
+.comment-form .form-control:focus {
+  border-bottom: 1px solid #fc5356;
+}
+.comment-form .form-control.invalid {
+  border-bottom: 1px solid #ff0000;
+}
+.comment-form .send {
+  margin-top: 20px;
+}
+.comment-form .send {
+    margin-top: 20px;
+}
+.px-btn {
+    padding: 0 50px 0 20px;
+    line-height: 60px;
+    position: relative;
+    display: inline-block;
+    color: #20247b;
+    background: none;
+    border: none;
 }

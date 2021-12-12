@@ -5,6 +5,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 
 import HomeScreen from './screens/HomeScreen';
 import EventScreen from './screens/EventScreen';
+import EventDetailScreen from './screens/EventDetailScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import CreateEvent from './screens/CreateEventScreen';
@@ -24,6 +25,7 @@ function App() {
             <Switch>
               <Route path="/event/:id" component={EventScreen} />
               <Route path="/createEvent" component={CreateEvent} />
+              <Route path="/eventDetail/:id" component={EventDetailScreen} />
               <Route path="/" component={HomeScreen} />
             </Switch>
           </>
