@@ -93,7 +93,7 @@ class PostTests(APITestCase):
                 "longitude":20.444,
                 "latitude":18.555,
                 "description": "adadasdasdad",
-            "pathToEquipmentPostImage": None,
+                 "pathToEquipmentPostImage": None,
                 "link": "https://www.adidas.com.tr/tr",
             }
             }

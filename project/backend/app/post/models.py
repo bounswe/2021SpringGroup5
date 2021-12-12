@@ -1,3 +1,4 @@
+import uuid
 from typing import Callable
 from django.db import models
 from django.contrib import admin
@@ -46,17 +47,20 @@ class EventPost(models.Model):
     contact_info=models.CharField(null=True,blank=True,max_length=50)
     pathToEventImage=models.URLField(null=True,blank=True)
     skill_requirement=models.ForeignKey(SkillLevel,on_delete=CASCADE)
+    current_player=models.IntegerField(null=False,blank=False)
+    current_spectator=models.IntegerField(null=False,blank=False)
+
 
 
 class EventPostActivityStream(models.Model):
-    context=models.URLField(null=False,blank=False) #????????????
+    context=models.URLField(null=False,blank=False) 
     summary=models.CharField(max_length=200,null=False,blank=False)
     actor=models.ForeignKey('register.User',on_delete=CASCADE)
     type=models.CharField(max_length=20,null=False,blank=False)
     object=models.ForeignKey(EventPost,on_delete=CASCADE)
 
 class EquipmentPostActivtyStream(models.Model):
-    context=models.URLField(null=False,blank=False) #????????????
+    context=models.URLField(null=False,blank=False) 
     summary=models.CharField(max_length=200,null=False,blank=False)
     actor=models.ForeignKey('register.User',on_delete=CASCADE)
     type=models.CharField(max_length=20,null=False,blank=False)
