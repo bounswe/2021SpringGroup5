@@ -98,14 +98,14 @@ def register(request):
 
         send_mail(user, request)
 
-        #sport1 = Sport.objects.get(sport_name=interest1)
-        #sport2 = Sport.objects.get(sport_name=interest2)
+        sport1 = Sport.objects.get(sport_name=interest1)
+        sport2 = Sport.objects.get(sport_name=interest2)
 
-        #interest1 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport1, skill_level=level1)
-        #interest2 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport2, skill_level=level2)
+        interest1 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport1, skill_level=level1)
+        interest2 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport2, skill_level=level2)
 
-        #interest1.save()
-        #interest2.save()
+        interest1.save()
+        interest2.save()
 
         return Response('SUCCESS', status=status.HTTP_200_OK)
     else:
