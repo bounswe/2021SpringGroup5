@@ -33,6 +33,7 @@ class PostTests(APITestCase):
                 "longitude":20.444,
                 "latitude":18.555,
                 "description": "adadasdasdad",
+                "pathToEventImage": None,
                 "date_time": "2021-02-10 10:30",
                 "participant_limit": 14,
                 "spectator_limit": None,
@@ -92,6 +93,7 @@ class PostTests(APITestCase):
                 "longitude":20.444,
                 "latitude":18.555,
                 "description": "adadasdasdad",
+                 "pathToEquipmentPostImage": None,
                 "link": "https://www.adidas.com.tr/tr",
             }
             }
@@ -123,7 +125,7 @@ class PostTests(APITestCase):
         EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,created_date=dt,\
             description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                 longitude=20.444,
-                latitude=18.555,link='...com',active=True)
+                latitude=18.555,link='...com',active=True,pathToEquipmentPostImage="...com")
 
         data={
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -163,7 +165,7 @@ class PostTests(APITestCase):
         EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,created_date=dt,\
             description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                 longitude=20.444,
-                latitude=18.555,link='...com',active=True)
+                latitude=18.555,link='...com',active=True,pathToEquipmentPostImage="...com")
 
         data={
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -187,6 +189,7 @@ class PostTests(APITestCase):
                 "latitude":32.666, 
                 "longitude":12.5678,
                 "link":"https://www.adidas.com.tr/tr",
+                "pathToEquipmentPostImage":None
                 }
             }
         
@@ -207,7 +210,7 @@ class PostTests(APITestCase):
         EquipmentPost.objects.create(id=12345,post_name="adidas bileklik", owner=u,sport_category=s,created_date=dt,\
             description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                 longitude=20.444,
-                latitude=18.555,link='...com',active=True)
+                latitude=18.555,link='...com',active=True,pathToEquipmentPostImage="...com")
 
         data={
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -229,6 +232,7 @@ class PostTests(APITestCase):
                 "sport_category":"Football", 
                 "description":"blabla", 
                 "link":"https://www.adidas.com.tr/tr",
+                "pathToEquipmentPostImage":None
                 }
             }
         
@@ -256,7 +260,7 @@ class PostTests(APITestCase):
             longitude=20.444,
                 latitude=18.555,date_time=dt, participant_limit=20,\
                 spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
-                    location_requirement=None,contact_info="0555555555555",skill_requirement=skill)
+                    location_requirement=None,contact_info="0555555555555",pathToEventImage=None,skill_requirement=skill)
         data={
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "Sally is updating event post",
@@ -311,7 +315,7 @@ class PostTests(APITestCase):
             longitude=20.444,
                 latitude=18.555,date_time=dt, participant_limit=20,\
                 spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
-                    location_requirement=None,contact_info="0555555555555",skill_requirement=skill)
+                    location_requirement=None,contact_info="0555555555555",pathToEventImage=None,skill_requirement=skill)
         data={
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "Sally is updating event post",
@@ -366,7 +370,7 @@ class PostTests(APITestCase):
             longitude=20.444,
                 latitude=18.555,date_time=dt, participant_limit=20,\
                 spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
-                    location_requirement=None,contact_info="0555555555555",skill_requirement=skill)
+                    location_requirement=None,contact_info="0555555555555",pathToEventImage=None,skill_requirement=skill)
         e=EventPost.objects.get(id=1)
         BadgeOfferedByEventPost.objects.create(id=1,post=e,badge=b)
         data={
@@ -401,7 +405,7 @@ class PostTests(APITestCase):
         EquipmentPost.objects.create(id=1,post_name="adidas bileklik", owner=u,sport_category=s,\
             created_date=dt,description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                 longitude=20.444,
-                latitude=18.555,link='...com',active=True)
+                latitude=18.555,link='...com',active=True,pathToEquipmentPostImage="...com")
 
         data={
             "@context": "https://www.w3.org/ns/activitystreams",
