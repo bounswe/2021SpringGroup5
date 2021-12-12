@@ -1,4 +1,4 @@
-#Sun Dec 12 02:04:34 EET 2021
+#Sun Dec 12 10:03:57 EET 2021
 base.0=/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
 renamed.0=classes.dex
 path.0=classes.dex

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ludo_app/components/popup_card_effect.dart';
+import 'package:ludo_app/screens/filter_popup/filter_popup_screen.dart';
 import 'package:ludo_app/screens/google_maps/google_maps_screen.dart';
 import 'package:ludo_app/screens/popup_event_details/popup_event_details.dart';
 
@@ -11,22 +12,27 @@ class MainEventScreen extends StatefulWidget {
 }
 
 class _MainEventScreenState extends State<MainEventScreen> {
-  final List<Map<String, dynamic>> _eventList = [
+  var now_1d = DateTime.now().subtract(Duration(days: 1));
+  var now_1w = DateTime.now().subtract(Duration(days: 7));
+  var now_1m = DateTime(
+      DateTime.now().year, DateTime.now().month - 1, DateTime.now().day);
+
+  final List<Map<String, dynamic>> eventList = [
     {
       "id": 1,
       "name": "1v1 Voleybol Maçı",
       "description": 'Rekabetli Olacak',
       "image": "assets/images/basketball_event.png",
       "location": "etiler merkez",
-      "datetime": "12.10 - 16:00"
+      "datetime": "2021-11-24 20:10"
     },
     {
       "id": 2,
       "name": "1v1 Frizbi Maçı",
       "description": 'Rekabetli Olacak',
-      "image": "assets/images/basketball_event.png",
+      "image": "assets/images/ludo_logo.png",
       "location": "etiler merkez",
-      "datetime": "12.10 - 16:00"
+      "datetime": "2021-11-24 15:20"
     },
     {
       "id": 3,
@@ -35,15 +41,15 @@ class _MainEventScreenState extends State<MainEventScreen> {
           'Rekabetli Olkmdfksmd skmfsdkmfskdmfskd mfks dmfsk dmfks dmfks mfdk acak',
       "image": "assets/images/basketball_event.png",
       "location": "etiler merkez",
-      "datetime": "12.10 - 16:00"
+      "datetime": "2021-11-29 11:20"
     },
     {
       "id": 4,
       "name": "1v1 Kriket Maçı",
       "description": 'Rekabetli Olacak',
-      "image": "assets/images/basketball_event.png",
+      "image": "assets/images/squash-sport.jpg",
       "location": "etiler merkez",
-      "datetime": "12.10 - 16:00"
+      "datetime": "2021-11-24 11:11"
     },
     {
       "id": 5,
@@ -51,7 +57,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
       "description": 'Rekabetli Olacak',
       "image": "assets/images/basketball_event.png",
       "location": "etiler merkez",
-      "datetime": "12.10 - 16:00"
+      "datetime": "2021-11-24 22:20"
     },
     {
       "id": 6,
@@ -59,7 +65,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
       "description": 'Rekabetli Olacak',
       "image": "assets/images/basketball_event.png",
       "location": "etiler merkez",
-      "datetime": "12.10 - 16:00"
+      "datetime": "2021-11-24 09:20"
     },
     {
       "id": 7,
@@ -67,7 +73,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
       "description": 'Rekabetli Olacak',
       "image": "assets/images/basketball_event.png",
       "location": "etiler merkez",
-      "datetime": "12.10 - 16:00"
+      "datetime": "2021-11-24 06:40"
     },
     {
       "id": 8,
@@ -75,7 +81,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
       "description": 'Rekabetli Olacak',
       "image": "assets/images/basketball_event.png",
       "location": "etiler merkez",
-      "datetime": "12.10 - 16:00"
+      "datetime": "2021-11-24 16:20"
     },
     {
       "id": 9,
@@ -83,40 +89,50 @@ class _MainEventScreenState extends State<MainEventScreen> {
       "description": 'Rekabetli Olacak',
       "image": "assets/images/basketball_event.png",
       "location": "etiler merkez",
-      "datetime": "12.10 - 16:00"
+      "datetime": "2021-11-24 16:20"
     },
     {
       "id": 10,
       "name": "1v1 Yüzme Maçı",
       "description": 'Rekabetli Olacak',
-      "image": "assets/images/basketball_event.png",
+      "image": "assets/images/squash-sport.jpg",
       "location": "etiler merkez",
-      "datetime": "12.10 - 16:00"
+      "datetime": "2021-11-24 06:20"
     },
   ];
 
-  List<Map<String, dynamic>> _afterSearchActionEvents = [];
+  List<Map<String, dynamic>> afterSearchActionEvents = [];
 
   @override
   initState() {
-    _afterSearchActionEvents = _eventList;
+    afterSearchActionEvents = eventList;
     super.initState();
+  }
+
+  void sortByDate() {
+    List<Map<String, dynamic>> results = [];
+    eventList.sort((a, b) => a['datetime'].compareTo(b['datetime']));
+    setState(() {
+      //girdiden sonra sonuçları yansıtma
+      afterSearchActionEvents = eventList;
+    });
+    print("$eventList");
   }
 
   void _searchAction(String userInputText) {
     List<Map<String, dynamic>> results = [];
     if (userInputText.isEmpty) {
       //girdi olmazsa tüm eventler gözükecek
-      results = _eventList;
+      results = eventList;
     } else {
-      results = _eventList
+      results = eventList
           .where((event) =>
               event["name"].toLowerCase().contains(userInputText.toLowerCase()))
           .toList();
     }
     setState(() {
       //girdiden sonra sonuçları yansıtma
-      _afterSearchActionEvents = results;
+      afterSearchActionEvents = results;
     });
   }
 
@@ -141,22 +157,33 @@ class _MainEventScreenState extends State<MainEventScreen> {
                   ),
                 ),
                 IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.filter_list,
-                      color: Colors.green,
-                    )),
+                    onPressed: () {
+                      sortByDate();
+                    },
+                    icon: const Icon(Icons.sort_by_alpha, color: Colors.blue)),
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(PopupCardEffect(builder: (context) {
+                      return FilterScreen();
+                    }));
+                  },
+                  icon: const Icon(
+                    Icons.filter_list,
+                    color: Colors.blue,
+                  ),
+                ),
               ],
             ),
             Expanded(
-              child: _afterSearchActionEvents.isNotEmpty
+              child: afterSearchActionEvents.isNotEmpty
                   ? ListView.builder(
-                      itemCount: _afterSearchActionEvents.length,
+                      itemCount: afterSearchActionEvents.length,
                       itemBuilder: (context, index) => Card(
                         elevation: 5,
-                        key: ValueKey(_afterSearchActionEvents[index]["id"]),
+                        key: ValueKey(afterSearchActionEvents[index]["id"]),
                         color: Colors.white,
-                        margin: const EdgeInsets.symmetric(vertical: 9),
+                        margin: const EdgeInsets.symmetric(vertical: 10),
                         child: ListTile(
                           onTap: () {
                             Navigator.of(context)
@@ -167,16 +194,16 @@ class _MainEventScreenState extends State<MainEventScreen> {
                           leading: Image(
                             fit: BoxFit.cover,
                             image: AssetImage(
-                                _afterSearchActionEvents[index]['image']),
+                                afterSearchActionEvents[index]['image']),
                           ),
-                          title: Text(_afterSearchActionEvents[index]['name']),
+                          title: Text(afterSearchActionEvents[index]['name']),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                  '${_afterSearchActionEvents[index]["location"]}'),
+                                  '${afterSearchActionEvents[index]["location"]}'),
                               Text(
-                                  '${_afterSearchActionEvents[index]["datetime"].toString()}'),
+                                  '${afterSearchActionEvents[index]["datetime"].toString()}'),
                             ],
                           ),
                           trailing: Row(
@@ -196,21 +223,33 @@ class _MainEventScreenState extends State<MainEventScreen> {
                                   },
                                   child: Text('MAP'),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 5,
                                   width: 5,
                                 ),
                                 FloatingActionButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return GoogleMapsScreen();
+                                        },
+                                      ),
+                                    );
+                                  },
                                   child: Text('JOIN'),
                                 ),
                               ]),
                         ),
                       ),
                     )
-                  : const Text(
-                      'Event is not found!',
-                      style: TextStyle(fontSize: 20),
+                  : Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: const Text(
+                        'Event is not found!',
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
             ),
           ],
