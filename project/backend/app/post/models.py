@@ -22,6 +22,7 @@ class EquipmentPost(models.Model):
     latitude=models.FloatField(null=True,blank=True)
     link=models.URLField(null=True,blank=True)
     active=models.BooleanField(null=False,blank=False)
+    pathToEquipmentPostImage=models.URLField(null=True,blank=True)
 
 
 class SkillLevel(models.Model):
@@ -44,19 +45,20 @@ class EventPost(models.Model):
     capacity=models.CharField(null=False,blank=False,max_length=25)
     location_requirement=models.CharField(null=True,blank=True,max_length=30)
     contact_info=models.CharField(null=True,blank=True,max_length=50)
+    pathToEventImage=models.URLField(null=True,blank=True)
     skill_requirement=models.ForeignKey(SkillLevel,on_delete=CASCADE)
 
 
 
 class EventPostActivityStream(models.Model):
-    context=models.URLField(null=False,blank=False) #????????????
+    context=models.URLField(null=False,blank=False) 
     summary=models.CharField(max_length=200,null=False,blank=False)
     actor=models.ForeignKey('register.User',on_delete=CASCADE)
     type=models.CharField(max_length=20,null=False,blank=False)
     object=models.ForeignKey(EventPost,on_delete=CASCADE)
 
 class EquipmentPostActivtyStream(models.Model):
-    context=models.URLField(null=False,blank=False) #????????????
+    context=models.URLField(null=False,blank=False) 
     summary=models.CharField(max_length=200,null=False,blank=False)
     actor=models.ForeignKey('register.User',on_delete=CASCADE)
     type=models.CharField(max_length=20,null=False,blank=False)
