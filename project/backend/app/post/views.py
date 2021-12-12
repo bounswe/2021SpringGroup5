@@ -216,7 +216,7 @@ def createEquipmentPost(request):
 
     # GET request
     else:
-        sports=list(Sport.objects.filet(is_custom=False).values("id","sport_name"))
+        sports=list(Sport.objects.filter(is_custom=False).values("id","sport_name"))
         res={"sports":sports}
         return Response(res,status=status.HTTP_200_OK)
 
@@ -266,6 +266,7 @@ def deleteEventPost(request):
         actor = User.objects.get(Id=actor_id)
     except:
         return Response({"message": "There is no such user in the system"}, 404)
+
 
 
     try:
@@ -354,6 +355,46 @@ def applyToEvent(request):
 
     return Response({"message":"Application is successfully created"},status=status.HTTP_201_CREATED)
 
+
+@login_required()
+@api_view(['POST'])
+def acceptApplicant(request):
+    data = request.data
+
+    applicant_id = data["applicant_Id"]
+    event_id = data["event_Id"]
+
+    # Try if the user is valid
+    try:
+        actor = User.objects.get(Id=applicant_id)
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+    # Try if event is in the database
+    try:
+        event_post=EventPost.objects.get(id=event_id)
+    except:
+        return Response({"message":"There is no such event in the database, deletion operation is aborted"},status=status.HTTP_404_NOT_FOUND)
+
+
+    try:
+        application = Application.objects.filter(event_post_id=event_id)
+        event_post = EventPost.objects.get(id=event_id)
+    except:
+        return Response({"message": "There is no such application in the database, operation is aborted"}, status=status.HTTP_404_NOT_FOUND)
+
+
+    if event_post.participant_limit > event_post.current_player and event_post.status == "upcoming" and event_post.capacity == "open to applications":
+        new_part = event_post.current_player+1
+        if new_part == event_post.participant_limit:
+            EventPost.objects.filter(pk=event_id).update(capacity="full", current_player=new_part)
+        else:
+            EventPost.objects.filter(pk=event_id).update(current_player=new_part)
+    else:
+        return Response({"message": "The event is not available to accept the application. Full or maybe past"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    application = application.update(status="accepted")
+    return Response({"message":"Application is accepted"},status=status.HTTP_200_OK)
 
 @login_required()  
 @api_view(['PATCH'])
@@ -531,6 +572,10 @@ def getEventPostDetails(request):
     except:
         spectators=[]
     
+    waiting_players=[]
+    rejected_players=[]
+    inadequate_player_applications=[]
+
     if actor_id==event_post_details.owner_id:
         try:
             waiting_players=list(Application.objects.filter(event_post=post_id,status="waiting",applicant_type="player").order_by('id').values('user__Id',\
@@ -542,6 +587,11 @@ def getEventPostDetails(request):
         'user__name','user__surname','user__username'))
         except:
             rejected_players=[]
+        try:
+            inadequate_player_applications=list(Application.objects.filter(event_post=post_id,status="inadequate",applicant_type="player").values('user__Id',\
+        'user__name','user__surname','user__username'))
+        except:
+            inadequate_player_applications=[]
 
     del data["actor"]["type"]
     del data["object"]["type"]
@@ -559,6 +609,7 @@ def getEventPostDetails(request):
     event_post_details["sport_category"]=sport
     event_post_details["comments"]=comments
     event_post_details["spectators"]=spectators
+    event_post_details["inadequate_player_applications"]=inadequate_player_applications
     event_post_details["waiting_players"]=waiting_players
     event_post_details["accepted_players"]=accepted_players
     event_post_details["rejected_players"]=rejected_players

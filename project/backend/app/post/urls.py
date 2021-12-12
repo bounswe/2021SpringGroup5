@@ -17,4 +17,5 @@ urlpatterns=[
     path('apply_to_event/',views.applyToEvent,name='creates an application to event'),
     path('spectate_to_event/',views.spectateToEvent,name='spectate to event'),
     path('get_spectators/',views.getSpectators,name='get spectators of an event'),
+    path('accept_application/',views.acceptApplicant,name='accept an application'),
 ]
