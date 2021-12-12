@@ -15,4 +15,5 @@ urlpatterns=[
     path('save_skill_levels/',views.SaveSkillLevelsScript.as_view(),name='save skill levels'),
     path('save_badges/',views.SaveBadgesScript.as_view(),name='save badges'),
     path('apply_to_event/',views.applyToEvent,name='creates an application to event'),
+    path('accept_application/',views.acceptApplicant,name='accept an application'),
 ]
