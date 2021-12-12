@@ -1,3 +1,5 @@
+import Comment from './../components/Common/Comment';
+
 function EventDetailScreen() {
 
     const state = {
@@ -74,6 +76,7 @@ function EventDetailScreen() {
                         </div>
 
                     </article>
+                    <Comment />
                 </div>
 
             </div>
