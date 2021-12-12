@@ -41,7 +41,6 @@ def send_mail(user, request):
 
 
 @api_view(['GET','POST'])
-@csrf_exempt
 def register(request):
     if request.method == 'POST':
         body_unicode = request.body.decode('utf-8')
@@ -99,7 +98,6 @@ def register(request):
 
 
 @api_view(['GET','POST'])
-@csrf_exempt
 def login_user(request):
     if request.method == 'POST':
         body_unicode = request.body.decode('utf-8')
