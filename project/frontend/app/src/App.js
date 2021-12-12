@@ -9,9 +9,10 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
+import SearchScreen from './screens/SearchScreen';
 
 function App() {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(true);
   const queryClient = new QueryClient();
 
   return (
@@ -22,6 +23,7 @@ function App() {
             <Header user={user} />
             <Switch>
               <Route path="/event/:id" component={EventScreen} />
+              <Route path="/search" component={SearchScreen} />
               <Route path="/" component={HomeScreen} />
             </Switch>
           </>
