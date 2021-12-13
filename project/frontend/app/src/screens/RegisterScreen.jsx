@@ -1,4 +1,4 @@
-import { Alert, Button, MenuItem, TextField } from '@mui/material';
+import { Alert, Button, Checkbox, FormControlLabel, MenuItem, TextField } from '@mui/material';
 import './LandingPage.css';
 import { register } from '../services/AuthService';
 import { useForm, Controller } from 'react-hook-form';
@@ -6,11 +6,13 @@ import { useMutation, useQuery } from 'react-query';
 import { useState } from 'react';
 import { getSports } from '../services/SportsService';
 import { toTitleCase } from '../helpers/functions';
+import { Link } from 'react-router-dom';
 
 function RegisterScreen() {
   const [alert, setAlert] = useState(null);
   const [formStep, setFormStep] = useState(0);
   const { handleSubmit, control } = useForm();
+  const [checked, setChecked] = useState(false);
 
   const { data: sports_and_levels } = useQuery('sports_and_levels', getSports);
 
@@ -28,6 +30,10 @@ function RegisterScreen() {
 
   const onRegister = registerData => {
     mutation.mutate(registerData);
+  };
+
+  const handleChange = event => {
+    setChecked(event.target.checked);
   };
 
   return (
@@ -228,6 +234,22 @@ function RegisterScreen() {
                   )}
                 />
               </div>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={checked}
+                    onChange={handleChange}
+                    inputProps={{ 'aria-label': 'controlled' }}
+                    color="success"
+                  />
+                }
+                label={
+                  <div>
+                    <span>I have read and agree to the </span>
+                    <Link to={void 0}>terms and conditions</Link>
+                  </div>
+                }
+              />
             </div>
           )}
 
