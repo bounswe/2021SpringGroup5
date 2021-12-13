@@ -153,6 +153,55 @@ class PostTests(APITestCase):
         response = client.delete("/post/delete_equipment_post/",data,format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+
+    def test_delete_event_post(self):
+        User.objects.create(Id=12345, first_name="Sally", last_name="Sparrow", username="crazy_girl", password="123",
+                            email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=13, sport_name="Basketball", is_custom=False)
+        s = Sport.objects.get(sport_name='Basketball')
+        date_string = "2021-12-12 10:10"
+        dt = datetime.fromisoformat(date_string)
+        date_string2 = "2021-12-12 20:20"
+        dt2 = datetime.fromisoformat(date_string2)
+        myskill = SkillLevel.objects.create(id=1,level_name="beginner")
+        EventPost.objects.create(id=12345, post_name="hali saha", owner=u, sport_category=s, created_date=dt, \
+                                     description="We need 5 player to hali saha on Friday", \
+                                     longitude=20.444, latitude=18.555, date_time=dt2, participant_limit=5, spectator_limit=0, rule="", \
+                                 equipment_requirement="", status="upcoming", capacity="open to application", location_requirement="", \
+                                 contact_info="", skill_requirement=myskill)
+
+        data = {
+            "@context": "https://www.w3.org/ns/activitystreams",
+            "summary": "Sally deleted an event post",
+            "type": "Delete",
+            "actor": {
+                "type": "Person",
+                "Id": 12345,
+                "name": "Sally",
+                "surname": "Sparrow",
+                "username": "crazy_girl"
+            },
+            "object": {
+                "type": "EquipmentPost",
+                "post_id": 12345
+            },
+            "origin": {
+                "type": "Collection",
+                "name": "Sally's Event posts"
+            }
+        }
+
+        client = APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.delete("/post/delete_event_post/", data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+
+
     def test_change_equipment_post_invalid_info(self):
         User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
         u = User.objects.get(username='crazy_girl')
