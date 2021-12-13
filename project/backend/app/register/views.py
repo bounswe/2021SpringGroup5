@@ -99,8 +99,8 @@ def register(request):
 
         send_mail(user, request)
 
-        skill1 = SkillLevel.objects.create(level_name=level1)
-        skill2 = SkillLevel.objects.create(level_name=level2)
+        skill1 = SkillLevel.objects.get(level_name=level1)
+        skill2 = SkillLevel.objects.get(level_name=level2)
 
         sport1 = Sport.objects.get(sport_name=interest1)
         sport2 = Sport.objects.get(sport_name=interest2)
