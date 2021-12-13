@@ -71,6 +71,8 @@ function CreateEvent() {
       })
   };
 
+
+
   return (
 
     <div className="card create-new-event-container general-container">
@@ -87,17 +89,26 @@ function CreateEvent() {
               </div>
             </div>
 
-            <div className="col-md-8 form-group has-validation">
-              <label htmlFor="sportCategory">Sport Category</label>
-              <select className="form-control" id="sportCategory" name="sportCategory" required>
-                <option value="">Choose</option>
-                <option value="Handball">Handball</option>
-                <option value="Football">Football</option>
-                <option value="Basketball">Basketball</option>
-              </select>
-              <div className="invalid-feedback">
-                Please select sport category.
+            <div className="col-md-8 row">
+              <div className="col-md-8 form-group has-validation">
+                <label htmlFor="sportCategory">Sport Category</label>
+                <select className="form-control" id="sportCategory" name="sportCategory" required>
+                  <option value="">Choose</option>
+                  <option value="Handball">Handball</option>
+                  <option value="Football">Football</option>
+                  <option value="Basketball">Basketball</option>
+                  <option value="Other">Other</option>
+                </select>
+                <div className="invalid-feedback">
+                  Please select sport category.
+                </div>
               </div>
+
+              <div className="col-md-4 form-group has-validation">
+                <label htmlFor="sporCategoryOther">Spor Category (Other)</label>
+                <input type="text" className="form-control" id="sporCategoryOther" name="sporCategoryOther" placeholder="Enter spor category" />
+              </div>
+
             </div>
 
             <div className="col-md-8 form-group has-validation">
