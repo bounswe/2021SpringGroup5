@@ -147,7 +147,7 @@ def login_user(request):
             'username': username,
             'password': password
         }
-        token = requests.post("3.122.41.188:8000/api/token/", json=postjson)
+        token = requests.post("http://3.122.41.188:8000/api/token/", json=postjson)
 
         return Response(token.json(), status=status.HTTP_200_OK)
     else:
