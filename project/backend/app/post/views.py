@@ -403,7 +403,7 @@ def acceptApplicant(request):
 
 
     try:
-        application = Application.objects.filter(event_post_id=event_id)
+        application = Application.objects.filter(event_post_id=event_id, user_id=applicant_id)
         event_post = EventPost.objects.get(id=event_id)
     except:
         return Response({"message": "There is no such application in the database, operation is aborted"}, status=status.HTTP_404_NOT_FOUND)
@@ -416,7 +416,7 @@ def acceptApplicant(request):
         else:
             EventPost.objects.filter(pk=event_id).update(current_player=new_part)
     else:
-        return Response({"message": "The event is not available to accept the application. Full or maybe past"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "The event is not available to accept the application. Full, cancelled or maybe past"}, status=status.HTTP_400_BAD_REQUEST)
 
 
     application = application.update(status="accepted")

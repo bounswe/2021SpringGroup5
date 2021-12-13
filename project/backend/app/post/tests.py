@@ -3,6 +3,7 @@ from register.models import User, InterestLevel  # will be changed after custom 
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 from post.models import Badge, BadgeOfferedByEventPost, EquipmentPost, SkillLevel, Sport ,EventPost, Application
+from register.models import InterestLevel
 import json
 from datetime import datetime
 
@@ -347,6 +348,343 @@ class PostTests(APITestCase):
         response = client.patch("/post/change_event_post/",data,format='json')
         print(response.data)
         self.assertEqual(response.status_code, 200)
+
+    def test_apply_to_event_valid(self):
+        ## Creating user and adding an interest to her
+        User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
+        s = Sport.objects.get(sport_name='Football')
+        date_string = "2021-12-12 10:10"
+        dt=datetime.fromisoformat(date_string)
+
+        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
+
+
+        ## Creating mock skill level and get it
+        SkillLevel.objects.create(id=1, level_name="beginner")
+        SkillLevel.objects.create(id=2, level_name="medium")
+        skill = SkillLevel.objects.get(level_name='beginner')
+
+        ## Creating example event post
+        EventPost.objects.create(id=10, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
+                                 description="blabla", \
+                                 longitude=20.444,
+                                 latitude=18.555, date_time=dt, participant_limit=20, \
+                                 spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
+                                 capacity="open to applications", \
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
+                                 skill_requirement=skill, current_player=0, current_spectator=0)
+
+        ## data
+        data = {
+                "actor": {
+                    "type": "Person",
+                    "name": "Sally",
+                    "surname": "Sparrow",
+                    "username": "crazy_girl",
+                    "Id": 12345
+                },
+                "event_id": 10
+        }
+
+
+        client=APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.post("/post/apply_to_event/",data,format='json')
+        print(response.data)
+        self.assertEqual(response.status_code, 201)
+
+
+    def test_apply_to_event_invalid(self):
+        ## Creating user and adding an interest to her
+        User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
+        s = Sport.objects.get(sport_name='Football')
+        date_string = "2021-12-12 10:10"
+        dt=datetime.fromisoformat(date_string)
+
+        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
+
+
+        ## Creating mock skill level and get it
+        SkillLevel.objects.create(id=1, level_name="beginner")
+        SkillLevel.objects.create(id=2, level_name="medium")
+        skill = SkillLevel.objects.get(level_name='beginner')
+
+        ## Creating example event post
+        EventPost.objects.create(id=10, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
+                                 description="blabla", \
+                                 longitude=20.444,
+                                 latitude=18.555, date_time=dt, participant_limit=20, \
+                                 spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
+                                 capacity="full", \
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
+                                 skill_requirement=skill, current_player=20, current_spectator=0)
+
+        ## data
+        data = {
+                "actor": {
+                    "type": "Person",
+                    "name": "Sally",
+                    "surname": "Sparrow",
+                    "username": "crazy_girl",
+                    "Id": 12345
+                },
+                "event_id": 10
+        }
+
+
+        client=APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.post("/post/apply_to_event/",data,format='json')
+        print(response.data)
+        self.assertEqual(response.status_code, 400)
+
+
+
+    def test_spectate_to_event_valid(self):
+        ## Creating user and adding an interest to her
+        User.objects.create(Id=12345, first_name="Sally", last_name="Sparrow", username="crazy_girl", password="123",
+                            email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
+        s = Sport.objects.get(sport_name='Football')
+        date_string = "2021-12-12 10:10"
+        dt = datetime.fromisoformat(date_string)
+
+        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
+
+        ## Creating mock skill level and get it
+        SkillLevel.objects.create(id=1, level_name="beginner")
+        SkillLevel.objects.create(id=2, level_name="medium")
+        skill = SkillLevel.objects.get(level_name='beginner')
+
+        ## Creating example event post
+        EventPost.objects.create(id=10, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
+                                 description="blabla", \
+                                 longitude=20.444,
+                                 latitude=18.555, date_time=dt, participant_limit=20, \
+                                 spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
+                                 capacity="open to applications", \
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
+                                 skill_requirement=skill, current_player=0, current_spectator=0)
+
+        ## data
+        data = {
+            "actor": {
+                "type": "Person",
+                "name": "Sally",
+                "surname": "Sparrow",
+                "username": "crazy_girl",
+                "Id": 12345
+            },
+            "event_id": 10
+        }
+
+        client = APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.post("/post/spectate_to_event/", data, format='json')
+        print(response.data)
+        self.assertEqual(response.status_code, 201)
+
+    def test_spectate_to_event_invalid(self):
+        ## Creating user and adding an interest to her
+        User.objects.create(Id=12345, first_name="Sally", last_name="Sparrow", username="crazy_girl", password="123",
+                            email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
+        s = Sport.objects.get(sport_name='Football')
+        date_string = "2021-12-12 10:10"
+        dt = datetime.fromisoformat(date_string)
+
+        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
+
+        ## Creating mock skill level and get it
+        SkillLevel.objects.create(id=1, level_name="beginner")
+        SkillLevel.objects.create(id=2, level_name="medium")
+        skill = SkillLevel.objects.get(level_name='beginner')
+
+        ## Creating example event post
+        EventPost.objects.create(id=10, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
+                                 description="blabla", \
+                                 longitude=20.444,
+                                 latitude=18.555, date_time=dt, participant_limit=20, \
+                                 spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
+                                 capacity="open to applications", \
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
+                                 skill_requirement=skill, current_player=0, current_spectator=30)
+
+        ## data
+        data = {
+            "actor": {
+                "type": "Person",
+                "name": "Sally",
+                "surname": "Sparrow",
+                "username": "crazy_girl",
+                "Id": 12345
+            },
+            "event_id": 10
+        }
+
+        client = APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.post("/post/spectate_to_event/", data, format='json')
+        print(response.data)
+        self.assertEqual(response.status_code, 400)
+
+
+
+###
+    def test_accept_application_valid(self):
+        ## Creating user and adding an interest to her
+        User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
+        s = Sport.objects.get(sport_name='Football')
+        date_string = "2021-12-12 10:10"
+        dt=datetime.fromisoformat(date_string)
+
+        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
+
+
+        ## Creating mock skill level and get it
+        SkillLevel.objects.create(id=1, level_name="beginner")
+        SkillLevel.objects.create(id=2, level_name="medium")
+        skill = SkillLevel.objects.get(level_name='beginner')
+
+        ## Creating example event post
+        EventPost.objects.create(id=10, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
+                                 description="blabla", \
+                                 longitude=20.444,
+                                 latitude=18.555, date_time=dt, participant_limit=20, \
+                                 spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
+                                 capacity="open to applications", \
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
+                                 skill_requirement=skill, current_player=0, current_spectator=0)
+
+        Application.objects.filter(id=5, event_post_id=10, user_id=12345, status="waiting", applicant_type="player")
+
+        ## data
+        data = {
+            "event_Id": 10,
+            "applicant_Id": 12345
+        }
+
+
+        client=APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.post("/post/accept_application/",data,format='json')
+        print(response.data)
+        self.assertEqual(response.status_code, 200)
+
+###
+    def test_accept_application_invalid(self):
+        ## Creating user and adding an interest to her
+        User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
+        s = Sport.objects.get(sport_name='Football')
+        date_string = "2021-12-12 10:10"
+        dt=datetime.fromisoformat(date_string)
+
+        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
+
+
+        ## Creating mock skill level and get it
+        SkillLevel.objects.create(id=1, level_name="beginner")
+        SkillLevel.objects.create(id=2, level_name="medium")
+        skill = SkillLevel.objects.get(level_name='beginner')
+
+        ## Creating example event post
+        EventPost.objects.create(id=10, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
+                                 description="blabla", \
+                                 longitude=20.444,
+                                 latitude=18.555, date_time=dt, participant_limit=20, \
+                                 spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
+                                 capacity="cancelled", \
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
+                                 skill_requirement=skill, current_player=0, current_spectator=0)
+
+        Application.objects.filter(id=5, event_post_id=10, user_id=12345, status="waiting", applicant_type="player")
+
+        ## data
+        data = {
+            "event_Id": 10,
+            "applicant_Id": 12345
+        }
+
+
+        client=APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.post("/post/accept_application/",data,format='json')
+        print(response.data)
+        self.assertEqual(response.status_code, 400)
+##*****
+
+
+
+    def test_get_spectators_invalid(self):
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+
+        ## there is no spectator in this event so it gives an error
+        client = APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.get("/post/get_spectators/?eventId=3", format='json')
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_spectators_valid(self):
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
+        s = Sport.objects.get(sport_name='Football')
+        date_string = "2021-12-12 10:10"
+        dt=datetime.fromisoformat(date_string)
+        SkillLevel.objects.create(id=1, level_name="beginner")
+        skill = SkillLevel.objects.get(level_name='beginner')
+
+        event = EventPost.objects.create(id=3, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
+                                 description="blabla", \
+                                 longitude=20.444,
+                                 latitude=18.555, date_time=dt, participant_limit=20, \
+                                 spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
+                                 capacity="full", \
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
+                                 skill_requirement=skill, current_player=20, current_spectator=0)
+
+
+
+        ## there is no spectator in this event so it gives an error
+        Application.objects.create(user_id=321, event_post=event, status="accepted", applicant_type="spectator")
+
+
+
+        client = APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.get("/post/get_spectators/?eventId=3", format='json')
+        self.assertEqual(response.status_code, 200)
+
+
+
+
 
     def test_change_event_post_invalid_info(self):
         User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
