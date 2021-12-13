@@ -1,6 +1,9 @@
 function HomeScreen() {
+
     return (
-        <div style={{ marginTop: 250 }}>Home Screen</div>
+        <div style={{ marginTop: 250 }}>
+            Home Screen
+        </div>
     );
 }
 
