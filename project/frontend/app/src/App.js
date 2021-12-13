@@ -5,6 +5,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 
 import HomeScreen from './screens/HomeScreen';
 import EventScreen from './screens/EventScreen';
+import EventDetailScreen from './screens/EventDetailScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import Profile from './screens/Profile';
