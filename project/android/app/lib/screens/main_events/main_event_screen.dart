@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ludo_app/components/popup_card_effect.dart';
+import 'package:ludo_app/screens/create_event/create_event_screen.dart';
 import 'package:ludo_app/screens/filter_popup/filter_popup_screen.dart';
 import 'package:ludo_app/screens/google_maps/google_maps_screen.dart';
 import 'package:ludo_app/screens/popup_event_details/popup_event_details.dart';
@@ -238,6 +239,26 @@ class _MainEventScreenState extends State<MainEventScreen> {
             ),
           ],
         ),
+      ),
+      bottomSheet: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return CreateEventScreen();
+                    },
+                  ),
+                );
+              },
+              child: Text(
+                'CREATE EVENT',
+                style: TextStyle(fontSize: 15),
+              )),
+        ],
       ),
     );
   }
