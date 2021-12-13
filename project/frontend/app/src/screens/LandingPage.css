@@ -76,6 +76,12 @@
     row-gap: 10px;
 }
 
+.landing-page-form-submit-row {
+    display: flex;
+    justify-content: center;
+    column-gap: 20px;
+}
+
 @media screen and (max-width: 980px) {
     .landing-page-content {
         height: 100%;

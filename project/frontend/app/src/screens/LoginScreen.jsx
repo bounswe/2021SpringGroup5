@@ -68,17 +68,29 @@ function LoginScreen() {
           </div>
 
           <div className="landing-page-form-submit">
-            <Button
-              color="success"
-              variant="text"
-              size="small"
-              onClick={() => {
-                history.push('/forgot-password');
-              }}
-            >
-              Forgot Password
-            </Button>
+            <div className="landing-page-form-submit-row">
+              <Button
+                color="success"
+                variant="text"
+                size="small"
+                onClick={() => {
+                  history.push('/register');
+                }}
+              >
+                Register
+              </Button>
 
+              <Button
+                color="success"
+                variant="text"
+                size="small"
+                onClick={() => {
+                  history.push('/forgot-password');
+                }}
+              >
+                Forgot Password
+              </Button>
+            </div>
             <Button color="success" type="submit" variant="contained">
               Login
             </Button>
