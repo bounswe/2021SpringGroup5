@@ -12,8 +12,8 @@
 12         to allow setting breakpoints, to provide hot reload, etc.
 13    -->
 14    <uses-permission android:name="android.permission.INTERNET" />
-14-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/debug/AndroidManifest.xml:6:5-66
-14-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/debug/AndroidManifest.xml:6:22-64
+14-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:43:5-66
+14-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:43:22-64
 15    <!-- Include required permissions for Google Maps API to run. -->
 16    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 16-->[com.google.android.gms:play-services-maps:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:23:5-79

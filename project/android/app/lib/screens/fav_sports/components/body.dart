@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ludo_app/components/rounded_button.dart';
 import 'package:ludo_app/components/rounded_input_field.dart';
-import 'package:ludo_app/constants.dart';
 import 'package:ludo_app/screens/fav_sports/components/background.dart';
-import 'package:ludo_app/screens/fav_sports/fav_sports_screen.dart';
-import 'package:ludo_app/screens/main_page/main_screen.dart';
+import 'package:ludo_app/screens/login/login_screen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -151,6 +149,22 @@ class _BodyState extends State<Body> {
 
 showAlertDialog(BuildContext context, name, surname, email, username, pw1, pw2,
     fs1, lvl1, fs2, lvl2) async {
+  Future<String>? _futureResponse;
+  FutureBuilder<String> buildFutureBuilder() {
+    return FutureBuilder<String>(
+      future: _futureResponse,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Text(snapshot.data!);
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+
+        return const CircularProgressIndicator();
+      },
+    );
+  }
+
   var user = {
     "actor": {
       "type": "Person",
@@ -172,12 +186,12 @@ showAlertDialog(BuildContext context, name, surname, email, username, pw1, pw2,
       }
     ],
   };
-
+  _futureResponse = createUser(user, context);
   // late var futureRegister = fetchRegister();
   // print(futureRegister);
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
-    title: Text("..."),
+    content: buildFutureBuilder(),
   );
 
   // show the dialog
@@ -188,16 +202,6 @@ showAlertDialog(BuildContext context, name, surname, email, username, pw1, pw2,
     },
   );
 
-  await Future.delayed(Duration(seconds: 5));
-
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) {
-        return MainScreen();
-      },
-    ),
-  );
 }
 
 Future fetchRegister() async {
@@ -215,9 +219,33 @@ Future fetchRegister() async {
   }
 }
 
-Future<http.Response> createUser(user) {
-  return http.post(
-    Uri.parse('http://3.127.142.97:8000/register'),
+Future<String> createUser(user,BuildContext context) async {
+  final response = await http.post(
+    Uri.parse('http://3.122.41.188:8000/register'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
     body: jsonEncode(user),
   );
+
+  if (response.statusCode == 201) {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return const LoginScreen(message:"Please check your email to verify your account.");
+        },
+      ),
+    );
+
+    //return response.body;
+    return "";
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception(json.decode(response.body)['errormessage']);
+  }
 }
+
+

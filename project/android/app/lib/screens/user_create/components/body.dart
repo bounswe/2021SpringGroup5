@@ -30,7 +30,7 @@ class Body extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              "Set your username and password" + name + surname + email,
+              "Set your username and password",
               style: const TextStyle(
                   fontWeight: FontWeight.normal, fontSize: 15.5),
             ),
