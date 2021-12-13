@@ -7,5 +7,6 @@ urlpatterns = [
          views.activate_user, name='activate'),
     path("logout_user", views.logout_user, name='logout_user'),
     path('login', views.login_user, name='login'),
-    #path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
