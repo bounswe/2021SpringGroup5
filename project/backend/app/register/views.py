@@ -4,6 +4,8 @@ import requests
 from django.shortcuts import render, redirect
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework_simplejwt.backends import TokenBackend
+
 from .models import User, InterestLevel
 from django.urls import reverse
 import hashlib
@@ -97,11 +99,14 @@ def register(request):
 
         send_mail(user, request)
 
+        skill1 = SkillLevel.objects.get(level_name=level1)
+        skill2 = SkillLevel.objects.get(level_name=level2)
+
         sport1 = Sport.objects.get(sport_name=interest1)
         sport2 = Sport.objects.get(sport_name=interest2)
 
-        interest1 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport1, skill_level=level1)
-        interest2 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport2, skill_level=level2)
+        interest1 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport1, skill_level=skill1)
+        interest2 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport2, skill_level=skill2)
 
         interest1.save()
         interest2.save()
@@ -138,12 +143,34 @@ def login_user(request):
             return JsonResponse(context)
 
         login(request, user)
+        postjson = {
+            'username': username,
+            'password': password
+        }
+        token = requests.post("3.127.142.97:8000/api/token/", json=postjson)
 
-        return Response('SUCCESS', status=status.HTTP_200_OK)
+        return Response(token.json(), status=status.HTTP_200_OK)
     else:
         return Response({"message":"You are not logged in, you can't do this request"},401)
 
+@api_view(['GET'])
+def profile(request):
+    token = request.headers['Authentication']
+    token = token[7:]
 
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
+    context = {
+        'username': user.username,
+        'name': user.name,
+        'mail': user.mail,
+        'Id': user.Id,
+        'surname': user.surname,
+        'location': user.location
+    }
+    return Response(context, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def logout_user(request):
