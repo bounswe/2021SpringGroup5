@@ -1,9 +1,9 @@
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from requests.api import post
 from .models import Application, EquipmentComment, EventComment
-from post.models import Badge,SkillLevel, Sport,EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream
+from post.models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream, Application
 from django.utils.dateparse import parse_datetime
 from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, \
     EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, ApplicationSerializer
@@ -18,6 +18,7 @@ import datetime
 from rest_framework.views import APIView
 from unidecode import unidecode
 from django.forms.models import model_to_dict
+from django.core import serializers
 # Create your views here.
 
 from django.apps import apps
@@ -34,15 +35,15 @@ def process_string(s):
 def createEventPost(request):
     if request.method=='POST':
         
-        data=request.data
-
+        data=json.loads(request.POST.get('json'))
+        
 
         post_name=data["object"]["post_name"]
         sport_category=data["object"]["sport_category"]
         longitude=data["object"]["longitude"]
         latitude=data["object"]["latitude"]
         description=data["object"]["description"]
-        image=data["object"]["pathToEventImage"]
+        #image=data["object"]["pathToEventImage"]
         date_time=data["object"]["date_time"]
         participant_limit=data["object"]["participant_limit"]
         spectator_limit=data["object"]["spectator_limit"]
@@ -100,6 +101,8 @@ def createEventPost(request):
             else:
                 current_event_date=date_time.strftime("%Y-%m-%d %H:%M:%S")
             
+            image=""
+
             event={"post_name":post_name,"owner":actor_id,"sport_category":sport_id,\
                 "created_date":created_date+datetime.timedelta(hours=3),"description":description,\
                 "longitude":longitude,"latitude":latitude,"date_time":current_event_date,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
@@ -110,6 +113,17 @@ def createEventPost(request):
             event_ser=EventPostSerializer(data=event)
             if event_ser.is_valid():
                 event_ser.save()
+                try:
+                    img=request.FILES["image"]
+                    url="https://nzftk20rg4.execute-api.eu-central-1.amazonaws.com/v1/lodobucket451?file="
+                    extension="EventPost_"+str(event_ser.data["id"])
+                    r = requests.post(url+extension, data = img)
+                    image=url+extension
+                    EventPost.objects.filter(id=event_ser.data["id"]).update(pathToEventImage=image)
+
+                except:
+                    pass
+
                 event_act_stream_ser=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
                 "type":data["type"],"actor":data["actor"]["Id"],"object":event_ser.data["id"]})
                 if event_act_stream_ser.is_valid():
@@ -132,6 +146,7 @@ def createEventPost(request):
         
         data["actor"]["type"]="Person"
         res=event_ser.data
+        res["pathToEventImage"]=image
         res["owner"]=actor
         res["type"]="EventPost"
         res["created_date"]= created_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -155,15 +170,15 @@ def createEventPost(request):
 @api_view(['GET','POST'])
 def createEquipmentPost(request):
     if request.method=='POST':
-        data=request.data
-
+        #data=request.data
+        data=json.loads(request.POST.get('json'))
         owner_id=data["object"]["owner_id"]
         equipment_post_name=data["object"]["post_name"]
         sport_category=data["object"]["sport_category"]
         longitude=data["object"]["longitude"]
         latitude=data["object"]["latitude"]
         description=data["object"]["description"]
-        image=data["object"]["pathToEquipmentPostImage"]
+        #image=data["object"]["pathToEquipmentPostImage"]
         link=data["object"]["link"]
 
         try:
@@ -190,11 +205,21 @@ def createEquipmentPost(request):
 
         active=True
         created_date=datetime.datetime.now()
+        image=""
         equipment_post_ser=EquipmentPostSerializer(data={"post_name":equipment_post_name,"owner":owner_id,"sport_category":sport_id,"created_date":created_date+datetime.timedelta(hours=3),\
             "description":description,"longitude":longitude,"latitude":latitude,"link":link,"active":active,"pathToEquipmentPostImage":image})
 
         if equipment_post_ser.is_valid():
             equipment_post_ser.save()
+            try:
+                img=request.FILES["image"]
+                url="https://nzftk20rg4.execute-api.eu-central-1.amazonaws.com/v1/lodobucket451?file="
+                extension="EquipmentPost_"+str(equipment_post_ser.data["id"])
+                r = requests.post(url+extension, data = img)
+                image=url+extension
+                EquipmentPost.objects.filter(id=equipment_post_ser.data["id"]).update(pathToEquipmentPostImage=image)
+            except:
+                pass
         else:
             return Response({"message":"there was an error while deleting the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
         
@@ -207,6 +232,7 @@ def createEquipmentPost(request):
             return Response({"message":"there was an error while deleting the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
         res=equipment_post_ser.data
+        res["pathToEquipmentPostImage"]=image
         res["owner"]=actor
         res["sport_category"]=sport_name
         res["created_date"]=created_date.strftime("%Y-%m-%d %H:%M:%S")
@@ -339,7 +365,7 @@ def applyToEvent(request):
 
     applicationStatus = "waiting"
     if not isAdequate:
-        applicationStatus = "inadequate"
+        applicationStatus = "inadeq"
 
 
     application_ser=ApplicationSerializer(data={"user":actor_id, "event_post":event_post.id, "status":applicationStatus, "applicant_type":"player"})
@@ -523,6 +549,51 @@ def changeEventInfo(request):
     event_post_updated["badges"]=list(BadgeOfferedByEventPost.objects.filter(post=post_id).values('badge__id','badge__name','badge__description','badge__pathToBadgeImage'))
     res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":event_post_updated}
     return Response(res,200)
+
+
+@login_required()
+@api_view(['GET'])
+def getWaitingApplications(request):
+    eventId = request.query_params["eventId"]
+    applicationList = list(Application.objects.filter(status="waiting", applicant_type="player", event_post_id=eventId).values())
+    if applicationList != []:
+        return JsonResponse(applicationList, safe=False)
+    else:
+        return Response({"message": "Waiting applications are not found"},404)
+
+
+@login_required()
+@api_view(['GET'])
+def getRejectedApplications(request):
+    eventId = request.query_params["eventId"]
+    applicationList = list(Application.objects.filter(status="rejected", applicant_type="player", event_post_id=eventId).values())
+    if applicationList != []:
+        return JsonResponse(applicationList, safe=False)
+    else:
+        return Response({"message": "Rejected applications are not found"},404)
+
+
+@login_required()
+@api_view(['GET'])
+def getAcceptedApplications(request):
+    eventId = request.query_params["eventId"]
+    applicationList = list(Application.objects.filter(status="accepted", applicant_type="player", event_post_id=eventId).values())
+    if applicationList != []:
+        return JsonResponse(applicationList, safe=False)
+    else:
+        return Response({"message": "Accepted applications are not found"},404)
+
+
+@login_required()
+@api_view(['GET'])
+def getInadequateApplications(request):
+    eventId = request.query_params["eventId"]
+    applicationList = list(Application.objects.filter(status="inadeq", applicant_type="player", event_post_id=eventId).values())
+    if applicationList != []:
+        return JsonResponse(applicationList, safe=False)
+    else:
+        return Response({"message": "Inadequate applications are not found"},404)
+
 
 @login_required()
 @api_view(['POST'])

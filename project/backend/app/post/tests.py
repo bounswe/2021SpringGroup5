@@ -1,5 +1,5 @@
 from django.test import TestCase
-from register.models import User  # will be changed after custom User is implemented
+from register.models import User, InterestLevel  # will be changed after custom User is implemented
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 from post.models import Badge, BadgeOfferedByEventPost, EquipmentPost, SkillLevel, Sport ,EventPost, Application
@@ -17,7 +17,7 @@ class PostTests(APITestCase):
         Sport.objects.create(id=24,sport_name="Handball",is_custom=False)
         Badge.objects.create(id=5,name="surprised",description="You are a friendly player",pathToBadgeImage="....com")
         SkillLevel.objects.create(id=1,level_name="beginner")
-        data={
+        data={"image":"","json":json.dumps({
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "Sally is creating an event post",
             "type": "Create",
@@ -47,7 +47,8 @@ class PostTests(APITestCase):
                 "badges": [ {"id":5,"name":"surprised","description":"You are a friendly player","pathToBadgeImage":"....com"}]
             
             }
-            }
+            })
+        }
         client=APIClient()
         client.login(username="crazy_girl", password="123")
         response = client.post("/post/create_event_post/",data,format='json')
@@ -75,7 +76,7 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        data={
+        data={"image":"","json":json.dumps({
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "Sally is creating an equipment post",
             "type": "Create",
@@ -97,6 +98,7 @@ class PostTests(APITestCase):
                  "pathToEquipmentPostImage": None,
                 "link": "https://www.adidas.com.tr/tr",
             }
+            })
             }
         client=APIClient()
         client.login(username="crazy_girl", password="123")
@@ -813,3 +815,172 @@ class PostTests(APITestCase):
         response = client.post("/post/get_equipment_post_details/",data,format='json')
         print(response.data)
         self.assertEqual(response.status_code, 201)
+
+
+    def test_get_waiting_applications_valid(self):
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
+        s = Sport.objects.get(sport_name='Football')
+        date_string = "2021-12-12 10:10"
+        dt=datetime.fromisoformat(date_string)
+        SkillLevel.objects.create(id=1, level_name="beginner")
+        skill = SkillLevel.objects.get(level_name='beginner')
+
+        event = EventPost.objects.create(id=3, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
+                                 description="blabla", \
+                                 longitude=20.444,
+                                 latitude=18.555, date_time=dt, participant_limit=20, \
+                                 spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
+                                 capacity="full", \
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
+                                 skill_requirement=skill, current_player=0, current_spectator=0)
+
+
+
+        ## there is no spectator in this event so it gives an error
+        Application.objects.create(user_id=321, event_post=event, status="waiting", applicant_type="player")
+
+
+
+        client = APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.get("/post/get_waiting_applications/?eventId=3", format='json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_waiting_applications_invalid(self):
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
+        s = Sport.objects.get(sport_name='Football')
+        date_string = "2021-12-12 10:10"
+        dt=datetime.fromisoformat(date_string)
+        SkillLevel.objects.create(id=1, level_name="beginner")
+        skill = SkillLevel.objects.get(level_name='beginner')
+
+        event = EventPost.objects.create(id=3, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
+                                 description="blabla", \
+                                 longitude=20.444,
+                                 latitude=18.555, date_time=dt, participant_limit=20, \
+                                 spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
+                                 capacity="full", \
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
+                                 skill_requirement=skill, current_player=0, current_spectator=0)
+
+
+
+        ## there is no spectator in this event so it gives an error
+        #Application.objects.create(user_id=321, event_post=event, status="waiting", applicant_type="player")
+        ## now there is no application for this event so empty list will be returned and status will be 404
+
+
+        client = APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.get("/post/get_waiting_applications/?eventId=3", format='json')
+        self.assertEqual(response.status_code, 404)
+
+
+##
+    def test_get_accepted_applications_valid(self):
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
+        s = Sport.objects.get(sport_name='Football')
+        date_string = "2021-12-12 10:10"
+        dt=datetime.fromisoformat(date_string)
+        SkillLevel.objects.create(id=1, level_name="beginner")
+        skill = SkillLevel.objects.get(level_name='beginner')
+
+        event = EventPost.objects.create(id=3, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
+                                 description="blabla", \
+                                 longitude=20.444,
+                                 latitude=18.555, date_time=dt, participant_limit=20, \
+                                 spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
+                                 capacity="full", \
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
+                                 skill_requirement=skill, current_player=0, current_spectator=0)
+
+
+
+        ## there is no spectator in this event so it gives an error
+        Application.objects.create(user_id=321, event_post=event, status="accepted", applicant_type="player")
+
+
+
+        client = APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.get("/post/get_accepted_applications/?eventId=3", format='json')
+        self.assertEqual(response.status_code, 200)
+##
+
+    def test_get_rejected_applications_valid(self):
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
+        s = Sport.objects.get(sport_name='Football')
+        date_string = "2021-12-12 10:10"
+        dt=datetime.fromisoformat(date_string)
+        SkillLevel.objects.create(id=1, level_name="beginner")
+        skill = SkillLevel.objects.get(level_name='beginner')
+
+        event = EventPost.objects.create(id=3, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
+                                 description="blabla", \
+                                 longitude=20.444,
+                                 latitude=18.555, date_time=dt, participant_limit=20, \
+                                 spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
+                                 capacity="full", \
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
+                                 skill_requirement=skill, current_player=0, current_spectator=0)
+
+
+
+        ## there is no spectator in this event so it gives an error
+        Application.objects.create(user_id=321, event_post=event, status="rejected", applicant_type="player")
+
+
+
+        client = APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.get("/post/get_rejected_applications/?eventId=3", format='json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_inadequate_applications_valid(self):
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        u = User.objects.get(username='crazy_girl')
+        u.set_password('123')
+        u.save()
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
+        s = Sport.objects.get(sport_name='Football')
+        date_string = "2021-12-12 10:10"
+        dt=datetime.fromisoformat(date_string)
+        SkillLevel.objects.create(id=1, level_name="beginner")
+        skill = SkillLevel.objects.get(level_name='beginner')
+
+        event = EventPost.objects.create(id=3, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
+                                 description="blabla", \
+                                 longitude=20.444,
+                                 latitude=18.555, date_time=dt, participant_limit=20, \
+                                 spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
+                                 capacity="full", \
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
+                                 skill_requirement=skill, current_player=0, current_spectator=0)
+
+
+
+        ## there is no spectator in this event so it gives an error
+        Application.objects.create(user_id=321, event_post=event, status="inadeq", applicant_type="player")
+
+
+
+        client = APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.get("/post/get_inadequate_applications/?eventId=3", format='json')
+        self.assertEqual(response.status_code, 200)
