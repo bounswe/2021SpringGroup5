@@ -59,7 +59,7 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
         circleId: CircleId(pressedPoint.toString()),
         center: LatLng(collectionMarkers[0].position.latitude,
             collectionMarkers[0].position.longitude),
-        radius: 98760 * //actually this would be 110574 as 1 degree is 110574 km
+        radius: 97000 * //actually this would be 110574 as 1 degree is 110574 km
             sqrt((((pressedPoint.longitude -
                             collectionMarkers[0].position.longitude) *
                         (pressedPoint.longitude -

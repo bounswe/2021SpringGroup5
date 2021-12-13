@@ -20,84 +20,67 @@ class _MainEventScreenState extends State<MainEventScreen> {
   final List<Map<String, dynamic>> eventList = [
     {
       "id": 1,
-      "name": "1v1 Voleybol Maçı",
-      "description": 'Rekabetli Olacak',
-      "image": "assets/images/basketball_event.png",
-      "location": "etiler merkez",
-      "datetime": "2021-11-24 20:10"
+      "name": "Tek Pota Basket Maçı",
+      "description": 'Güzel bir maç olması dileğiyle!',
+      "image": "assets/images/basketball-sport.jpg",
+      "location": "Uçaksavar Stadyumu",
+      "datetime": "2021-12-19 20:00"
     },
     {
       "id": 2,
-      "name": "1v1 Frizbi Maçı",
-      "description": 'Rekabetli Olacak',
-      "image": "assets/images/ludo_logo.png",
-      "location": "etiler merkez",
-      "datetime": "2021-11-24 15:20"
+      "name": "Cumartesi Frizbi'si",
+      "description": 'Çimlerde frizbi fırlatacak arkadaşlar buraya!',
+      "image": "assets/images/frisbee-sport.jpg",
+      "location": "Boğaziçi Güney Çimler",
+      "datetime": "2021-12-17 15:00"
     },
     {
       "id": 3,
-      "name": "1v1 Basketbol Maçı",
-      "description":
-          'Rekabetli Olkmdfksmd skmfsdkmfskdmfskd mfks dmfsk dmfks dmfks mfdk acak',
-      "image": "assets/images/basketball_event.png",
-      "location": "etiler merkez",
-      "datetime": "2021-11-29 11:20"
+      "name": " Çift Kale Futbol Maçı",
+      "description": 'Genç yeetenekleri bekliyorum!',
+      "image": "assets/images/football-sport.jpg",
+      "location": "Etiler Naturel Park",
+      "datetime": "2021-12-25 23:30"
     },
     {
       "id": 4,
-      "name": "1v1 Kriket Maçı",
-      "description": 'Rekabetli Olacak',
-      "image": "assets/images/squash-sport.jpg",
-      "location": "etiler merkez",
-      "datetime": "2021-11-24 11:11"
+      "name": "Boğaz'a Karşı Yüzelim",
+      "description": 'Haydi, bu sıcak günün tadını çıkaralım!',
+      "image": "assets/images/swimming-sport.jpg",
+      "location": "Bebek Havuzu",
+      "datetime": "2021-12-19 12:00"
     },
     {
       "id": 5,
-      "name": "1v1 Futbol Maçı",
-      "description": 'Rekabetli Olacak',
-      "image": "assets/images/basketball_event.png",
-      "location": "etiler merkez",
-      "datetime": "2021-11-24 22:20"
+      "name": "Namaste!",
+      "description": 'Bugünki Meditasyonunu yaptın mı?',
+      "image": "assets/images/yoga-sport.jpg",
+      "location": "Etiler Sanatçılar Parkı",
+      "datetime": "2021-12-20 14:35"
     },
     {
       "id": 6,
-      "name": "1v1 Boks Maçı",
-      "description": 'Rekabetli Olacak',
-      "image": "assets/images/basketball_event.png",
-      "location": "etiler merkez",
-      "datetime": "2021-11-24 09:20"
+      "name": "Squash Oynayacak Sporcuları Arıyorum",
+      "description": 'Rekabetli bir oyun olsun!',
+      "image": "assets/images/squash-sport.jpg",
+      "location": "HillSide Spor Kompleksi",
+      "datetime": "2021-12-17 09:30"
     },
     {
       "id": 7,
-      "name": "1v1 Bisiklet Maçı",
-      "description": 'Rekabetli Olacak',
-      "image": "assets/images/basketball_event.png",
-      "location": "etiler merkez",
-      "datetime": "2021-11-24 06:40"
+      "name": "Sahilde Bisiklet Etkinliği",
+      "description": 'Boğaza karşı bisiklet sürelim!',
+      "image": "assets/images/bicycle-sport.jpg",
+      "location": "Bebek İskele",
+      "datetime": "2021-12-16 09:30"
     },
     {
       "id": 8,
-      "name": "1v1 Aikido Maçı",
-      "description": 'Rekabetli Olacak',
-      "image": "assets/images/basketball_event.png",
-      "location": "etiler merkez",
-      "datetime": "2021-11-24 16:20"
-    },
-    {
-      "id": 9,
-      "name": "1v1 Yoga Maçı",
-      "description": 'Rekabetli Olacak',
-      "image": "assets/images/basketball_event.png",
-      "location": "etiler merkez",
-      "datetime": "2021-11-24 16:20"
-    },
-    {
-      "id": 10,
-      "name": "1v1 Yüzme Maçı",
-      "description": 'Rekabetli Olacak',
-      "image": "assets/images/squash-sport.jpg",
-      "location": "etiler merkez",
-      "datetime": "2021-11-24 06:20"
+      "name": "Doğa Yürüyüşüne Var Mısın?",
+      "description": 'Atatürk Arberatumunda Eşşiz Bir Rotada!',
+      "image": "assets/images/walking-sport.jpg",
+      "location": "Atatürk Arberatumunu",
+      "datetime": "2021-12-25 15:00"
     },
   ];
 
@@ -110,8 +93,16 @@ class _MainEventScreenState extends State<MainEventScreen> {
   }
 
   void sortByDate() {
-    List<Map<String, dynamic>> results = [];
     eventList.sort((a, b) => a['datetime'].compareTo(b['datetime']));
+    setState(() {
+      //girdiden sonra sonuçları yansıtma
+      afterSearchActionEvents = eventList;
+    });
+    print("$eventList");
+  }
+
+  void sortByName() {
+    eventList.sort((a, b) => a['name'].compareTo(b['name']));
     setState(() {
       //girdiden sonra sonuçları yansıtma
       afterSearchActionEvents = eventList;
@@ -158,9 +149,16 @@ class _MainEventScreenState extends State<MainEventScreen> {
                 ),
                 IconButton(
                     onPressed: () {
+                      sortByName();
+                    },
+                    icon: const Icon(Icons.sort_by_alpha,
+                        size: 25, color: Colors.blue)),
+                IconButton(
+                    onPressed: () {
                       sortByDate();
                     },
-                    icon: const Icon(Icons.calendar_today, color: Colors.blue)),
+                    icon: const Icon(Icons.calendar_today,
+                        size: 25, color: Colors.blue)),
                 IconButton(
                   onPressed: () {
                     Navigator.of(context)
@@ -171,6 +169,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
                   icon: const Icon(
                     Icons.filter_list,
                     color: Colors.blue,
+                    size: 25,
                   ),
                 ),
               ],
@@ -184,63 +183,48 @@ class _MainEventScreenState extends State<MainEventScreen> {
                         key: ValueKey(afterSearchActionEvents[index]["id"]),
                         color: Colors.white,
                         margin: const EdgeInsets.symmetric(vertical: 10),
-                        child: ListTile(
-                          onTap: () {
-                            Navigator.of(context)
-                                .push(PopupCardEffect(builder: (context) {
-                              return PopupEventDetails();
-                            }));
-                          },
-                          leading: Image(
-                            fit: BoxFit.cover,
-                            image: AssetImage(
-                                afterSearchActionEvents[index]['image']),
+                        child: Padding(
+                          padding: const EdgeInsets.all(13.0),
+                          child: ListTile(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .push(PopupCardEffect(builder: (context) {
+                                return PopupEventDetails();
+                              }));
+                            },
+                            leading: Image(
+                              fit: BoxFit.cover,
+                              image: AssetImage(
+                                  afterSearchActionEvents[index]['image']),
+                            ),
+                            title: Text(afterSearchActionEvents[index]['name']),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    '${afterSearchActionEvents[index]["location"]}'),
+                                Text(
+                                    '${afterSearchActionEvents[index]["datetime"].toString()}'),
+                              ],
+                            ),
+                            trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  FloatingActionButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return GoogleMapsScreen();
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    child: Text('JOIN'),
+                                  ),
+                                ]),
                           ),
-                          title: Text(afterSearchActionEvents[index]['name']),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                  '${afterSearchActionEvents[index]["location"]}'),
-                              Text(
-                                  '${afterSearchActionEvents[index]["datetime"].toString()}'),
-                            ],
-                          ),
-                          trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                FloatingActionButton(
-                                  backgroundColor: Colors.amber,
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) {
-                                          return GoogleMapsScreen();
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  child: Text('MAP'),
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                  width: 5,
-                                ),
-                                FloatingActionButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) {
-                                          return GoogleMapsScreen();
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  child: Text('JOIN'),
-                                ),
-                              ]),
                         ),
                       ),
                     )

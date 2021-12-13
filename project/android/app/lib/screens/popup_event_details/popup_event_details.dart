@@ -40,7 +40,7 @@ class PopupEventDetails extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    "18:00-22 May: event.datetime",
+                    "18:00",
                     style: TextStyle(fontSize: 16),
                   )
                 ],
