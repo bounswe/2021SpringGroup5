@@ -4,15 +4,20 @@ import threading
 import requests
 from django.shortcuts import render, redirect
 from oauthlib.oauth2.rfc6749.tokens import random_token_generator
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.backends import TokenBackend
+
 from .models import User, InterestLevel
 from django.urls import reverse
 import hashlib
-from oauth2_provider.models import AccessToken, Application, RefreshToken
+# from oauth2_provider.models import AccessToken, Application, RefreshToken
 from django.http import JsonResponse
 from django.contrib import messages
 from django.template.loader import render_to_string
+from rest_framework_simplejwt import authentication
 from .utils import generate_token
 from django.core.mail import EmailMessage
 from django.contrib.auth import authenticate, login, logout
@@ -104,11 +109,14 @@ def register(request):
 
         send_mail(user, request)
 
+        skill1 = SkillLevel.objects.create(level_name=level1)
+        skill2 = SkillLevel.objects.create(level_name=level2)
+
         sport1 = Sport.objects.get(sport_name=interest1)
         sport2 = Sport.objects.get(sport_name=interest2)
 
-        interest1 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport1, skill_level=level1)
-        interest2 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport2, skill_level=level2)
+        interest1 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport1, skill_level=skill1)
+        interest2 = InterestLevel.objects.create(owner_of_interest=user, sport_name=sport2, skill_level=skill2)
 
         interest1.save()
         interest2.save()
@@ -137,49 +145,34 @@ def login_user(request):
         if user and not user.is_email_verified:
             context['errormessage'] = 'Please check your email inbox, your email is not verified'
             context['has_error'] = True
-            return JsonResponse(context)
+            return Response(context, status=401)
 
         if not user:
             context['errormessage'] = 'You entered invalid credentials, try again please'
             context['has_error'] = True
-            return JsonResponse(context)
+            return Response(context, status=401)
 
         login(request, user)
-        expire_seconds = settings.user_settings['ACCESS_TOKEN_EXPIRE_SECONDS']
-        scopes = settings.user_settings['SCOPES']
-        application = Application.objects.get(name="Ludo")
-        expires = timezone.now() + datetime.timedelta(seconds=expire_seconds)
-        access_token = AccessToken.objects.create(
-            user=user,
-            application=application,
-            token=random_token_generator(request),
-            expires=expires,
-            scope=scopes
-        )
-        refresh_token = RefreshToken.objects.create(
-            user=user,
-            token=random_token_generator(request),
-            access_token=access_token,
-            application=application
-        )
-        token = {
-            'access_token': access_token.token,
-            'token_type': 'Bearer',
-            'expires_in': expire_seconds,
-            'refresh_token': refresh_token.token,
-            'scope': scopes}
 
-        return Response(token, status=status.HTTP_200_OK)
+        postjson = {
+            'username': username,
+            'password': password
+        }
+        token = requests.post("http://127.0.0.1:8000/api/token/", json=postjson)
+        return Response(token.json(), status=status.HTTP_200_OK)
     else:
         return Response({"message": "You are not logged in, you can't do this request"}, 401)
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 def profile(request):
-    body_unicode = request.body.decode('utf-8')
-    body = json.loads(body_unicode)
-    token = body['token']
-    user = AccessToken.objects.get(token=token).user
+    token = request.headers['Authentication']
+    token = token[7:]
+
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
     context = {
         'username': user.username,
         'name': user.name,

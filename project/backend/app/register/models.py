@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from post.models import Sport
+
 
 
 class User(AbstractUser):
@@ -16,5 +16,5 @@ class User(AbstractUser):
 
 class InterestLevel(models.Model):
     owner_of_interest = models.ForeignKey(User, on_delete=models.CASCADE)
-    skill_level = models.CharField(max_length=30, null=True)
+    skill_level = models.ForeignKey('post.SkillLevel', null=True, on_delete=models.CASCADE)
     sport_name = models.ForeignKey('post.Sport', on_delete=models.CASCADE)
