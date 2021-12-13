@@ -16,7 +16,7 @@ class PostTests(APITestCase):
         Sport.objects.create(id=24,sport_name="Handball",is_custom=False)
         Badge.objects.create(id=5,name="surprised",description="You are a friendly player",pathToBadgeImage="....com")
         SkillLevel.objects.create(id=1,level_name="beginner")
-        data={
+        data={"image":"","json":json.dumps({
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "Sally is creating an event post",
             "type": "Create",
@@ -46,7 +46,8 @@ class PostTests(APITestCase):
                 "badges": [ {"id":5,"name":"surprised","description":"You are a friendly player","pathToBadgeImage":"....com"}]
             
             }
-            }
+            })
+        }
         client=APIClient()
         client.login(username="crazy_girl", password="123")
         response = client.post("/post/create_event_post/",data,format='json')
@@ -74,7 +75,7 @@ class PostTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        data={
+        data={"image":"","json":json.dumps({
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "Sally is creating an equipment post",
             "type": "Create",
@@ -96,6 +97,7 @@ class PostTests(APITestCase):
                  "pathToEquipmentPostImage": None,
                 "link": "https://www.adidas.com.tr/tr",
             }
+            })
             }
         client=APIClient()
         client.login(username="crazy_girl", password="123")
