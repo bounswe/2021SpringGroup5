@@ -7,7 +7,7 @@ import 'package:ludo_app/components/rounded_password_field.dart';
 import 'package:ludo_app/constants.dart';
 import 'package:ludo_app/screens/change_password/change_password_screen.dart';
 import 'package:ludo_app/screens/login/components/background.dart';
-import 'package:ludo_app/screens/main_page/main_screen.dart';
+import 'package:ludo_app/screens/main_events/main_event_screen.dart';
 import 'package:ludo_app/screens/signup/signup_screen.dart';
 
 class Body extends StatelessWidget {
@@ -47,7 +47,7 @@ class Body extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return MainScreen();
+                      return MainEventScreen();
                     },
                   ),
                 );
