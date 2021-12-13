@@ -1,9 +1,9 @@
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from requests.api import post
 from .models import Application, EquipmentComment, EventComment
-from post.models import Badge,SkillLevel, Sport,EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream
+from post.models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream, Application
 from django.utils.dateparse import parse_datetime
 from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, \
     EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, ApplicationSerializer
@@ -18,6 +18,7 @@ import datetime
 from rest_framework.views import APIView
 from unidecode import unidecode
 from django.forms.models import model_to_dict
+from django.core import serializers
 # Create your views here.
 
 from django.apps import apps
@@ -364,7 +365,7 @@ def applyToEvent(request):
 
     applicationStatus = "waiting"
     if not isAdequate:
-        applicationStatus = "inadequate"
+        applicationStatus = "inadeq"
 
 
     application_ser=ApplicationSerializer(data={"user":actor_id, "event_post":event_post.id, "status":applicationStatus, "applicant_type":"player"})
@@ -548,6 +549,51 @@ def changeEventInfo(request):
     event_post_updated["badges"]=list(BadgeOfferedByEventPost.objects.filter(post=post_id).values('badge__id','badge__name','badge__description','badge__pathToBadgeImage'))
     res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":event_post_updated}
     return Response(res,200)
+
+
+@login_required()
+@api_view(['GET'])
+def getWaitingApplications(request):
+    eventId = request.query_params["eventId"]
+    applicationList = list(Application.objects.filter(status="waiting", applicant_type="player", event_post_id=eventId).values())
+    if applicationList != []:
+        return JsonResponse(applicationList, safe=False)
+    else:
+        return Response({"message": "Waiting applications are not found"},404)
+
+
+@login_required()
+@api_view(['GET'])
+def getRejectedApplications(request):
+    eventId = request.query_params["eventId"]
+    applicationList = list(Application.objects.filter(status="rejected", applicant_type="player", event_post_id=eventId).values())
+    if applicationList != []:
+        return JsonResponse(applicationList, safe=False)
+    else:
+        return Response({"message": "Rejected applications are not found"},404)
+
+
+@login_required()
+@api_view(['GET'])
+def getAcceptedApplications(request):
+    eventId = request.query_params["eventId"]
+    applicationList = list(Application.objects.filter(status="accepted", applicant_type="player", event_post_id=eventId).values())
+    if applicationList != []:
+        return JsonResponse(applicationList, safe=False)
+    else:
+        return Response({"message": "Accepted applications are not found"},404)
+
+
+@login_required()
+@api_view(['GET'])
+def getInadequateApplications(request):
+    eventId = request.query_params["eventId"]
+    applicationList = list(Application.objects.filter(status="inadeq", applicant_type="player", event_post_id=eventId).values())
+    if applicationList != []:
+        return JsonResponse(applicationList, safe=False)
+    else:
+        return Response({"message": "Inadequate applications are not found"},404)
+
 
 @login_required()
 @api_view(['POST'])
