@@ -1,12 +1,15 @@
+import datetime
 import threading
 
 import requests
 from django.shortcuts import render, redirect
+from oauthlib.oauth2.rfc6749.tokens import random_token_generator
 from rest_framework.response import Response
 from rest_framework import status
 from .models import User, InterestLevel
 from django.urls import reverse
 import hashlib
+from oauth2_provider.models import AccessToken, Application, RefreshToken
 from django.http import JsonResponse
 from django.contrib import messages
 from django.template.loader import render_to_string
@@ -20,10 +23,12 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.conf import settings
 from rest_framework.decorators import api_view
-
+from django.utils import timezone
 from django.apps import apps
+
 Sport = apps.get_model('post', 'Sport')
-SkillLevel=apps.get_model('post','SkillLevel')
+SkillLevel = apps.get_model('post', 'SkillLevel')
+
 
 class EmailThread(threading.Thread):
 
@@ -33,6 +38,7 @@ class EmailThread(threading.Thread):
 
     def run(self):
         self.email.send()
+
 
 def send_mail(user, request):
     current_site = get_current_site(request)
@@ -50,7 +56,7 @@ def send_mail(user, request):
     email.send(fail_silently=False)
 
 
-@api_view(['GET','POST'])
+@api_view(['GET', 'POST'])
 @csrf_exempt
 def register(request):
     if request.method == 'POST':
@@ -109,13 +115,13 @@ def register(request):
 
         return Response('SUCCESS', status=status.HTTP_200_OK)
     else:
-        sports=list(Sport.objects.filter(is_custom=False).values('id',"sport_name"))
-        skill_levels=list(SkillLevel.objects.values())
-        res={"sports":sports,"skill_levels":skill_levels}
-        return Response(res,status=status.HTTP_200_OK)
+        sports = list(Sport.objects.filter(is_custom=False).values('id', "sport_name"))
+        skill_levels = list(SkillLevel.objects.values())
+        res = {"sports": sports, "skill_levels": skill_levels}
+        return Response(res, status=status.HTTP_200_OK)
 
 
-@api_view(['GET','POST'])
+@api_view(['GET', 'POST'])
 @csrf_exempt
 def login_user(request):
     if request.method == 'POST':
@@ -139,11 +145,50 @@ def login_user(request):
             return JsonResponse(context)
 
         login(request, user)
+        expire_seconds = settings.user_settings['ACCESS_TOKEN_EXPIRE_SECONDS']
+        scopes = settings.user_settings['SCOPES']
+        application = Application.objects.get(name="Ludo")
+        expires = timezone.now() + datetime.timedelta(seconds=expire_seconds)
+        access_token = AccessToken.objects.create(
+            user=user,
+            application=application,
+            token=random_token_generator(request),
+            expires=expires,
+            scope=scopes
+        )
+        refresh_token = RefreshToken.objects.create(
+            user=user,
+            token=random_token_generator(request),
+            access_token=access_token,
+            application=application
+        )
+        token = {
+            'access_token': access_token.token,
+            'token_type': 'Bearer',
+            'expires_in': expire_seconds,
+            'refresh_token': refresh_token.token,
+            'scope': scopes}
 
-        return Response('SUCCESS', status=status.HTTP_200_OK)
+        return Response(token, status=status.HTTP_200_OK)
     else:
-        return Response({"message":"You are not logged in, you can't do this request"},401)
+        return Response({"message": "You are not logged in, you can't do this request"}, 401)
 
+
+@api_view(['POST'])
+def profile(request):
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    token = body['token']
+    user = AccessToken.objects.get(token=token).user
+    context = {
+        'username': user.username,
+        'name': user.name,
+        'mail': user.mail,
+        'Id': user.Id,
+        'surname': user.surname,
+        'location': user.location
+    }
+    return Response(context, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])

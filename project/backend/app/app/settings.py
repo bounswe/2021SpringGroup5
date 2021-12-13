@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'post',
     'register',
+    'provider',
+    'provider.oauth2',
 ]
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -111,7 +113,10 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
+OAUTH2_PROVIDER = {
+'SCOPES': {'read': 'Read scope'},
+'ACCESS_TOKEN_EXPIRE_SECONDS': 36000,
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
