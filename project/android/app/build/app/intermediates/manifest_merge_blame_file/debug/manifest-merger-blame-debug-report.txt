@@ -98,11 +98,11 @@
 67            android:value="2" />
 67-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:39:17-34
 68        <meta-data
-68-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:40:9-41:50
+68-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:40:9-41:77
 69            android:name="com.google.android.geo.API_KEY"
 69-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:40:20-65
-70            android:value="API KEY HERE" />
-70-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:41:20-48
+70            android:value="AIzaSyAoVq3Fe83Y3G2fG3sWaSxfAHOA56oHKRM" />
+70-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:41:20-75
 71        <!-- Needs to be explicitly declared on P+ -->
 72        <uses-library
 72-->[com.google.android.gms:play-services-maps:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:33:9-35:40

@@ -160,7 +160,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
                     onPressed: () {
                       sortByDate();
                     },
-                    icon: const Icon(Icons.sort_by_alpha, color: Colors.blue)),
+                    icon: const Icon(Icons.calendar_today, color: Colors.blue)),
                 IconButton(
                   onPressed: () {
                     Navigator.of(context)

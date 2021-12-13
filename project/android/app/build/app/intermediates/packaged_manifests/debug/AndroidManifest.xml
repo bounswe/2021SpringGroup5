@@ -67,7 +67,7 @@
             android:value="2" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="API KEY HERE" />
+            android:value="AIzaSyAoVq3Fe83Y3G2fG3sWaSxfAHOA56oHKRM" />
         <!-- Needs to be explicitly declared on P+ -->
         <uses-library
             android:name="org.apache.http.legacy"
