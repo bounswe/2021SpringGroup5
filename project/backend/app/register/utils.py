@@ -2,16 +2,14 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 import hashlib
 from datetime import datetime
 from .models import User
+import six
 
 
 class TokenGenerator(PasswordResetTokenGenerator):
 
-    def _make_hash_value(self, User, timestamp):
-
-        date_time_string = datetime.fromtimestamp(timestamp)
-        string_to_hash = str(User.mail) + str(date_time_string)
-        encoded = string_to_hash.encode()
-        return hashlib.sha256(encoded)
+    def _make_hash_value(self, user, timestamp):
+        return six.text_type(user.pk) + six.text_type(timestamp) + six.text_type(user.is_email_verified)
 
 
 generate_token = TokenGenerator()
+

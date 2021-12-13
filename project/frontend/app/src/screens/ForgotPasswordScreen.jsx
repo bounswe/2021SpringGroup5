@@ -42,6 +42,7 @@ function ForgotPasswordScreen() {
                   variant="standard"
                   label="Email"
                   required={true}
+                  data-testId="email"
                   {...field}
                 />
               )}

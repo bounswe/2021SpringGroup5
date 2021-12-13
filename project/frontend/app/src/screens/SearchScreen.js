@@ -75,7 +75,7 @@ function CustomCard({ data }) {
 }
 
 const Alert = forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 const styleModal = {
@@ -92,6 +92,7 @@ const styleModal = {
 
 
 function SearchScreen(props) {
+
     const [searchQuery, setSearchQuery] = useState("")
     const [position, setPosition] = useState()
     const [isSortedByLocation, setIsSortedByLocation] = useState(false)
@@ -131,6 +132,7 @@ function SearchScreen(props) {
 
         toggleFilterDrawer()
     }
+  };
 
     const [showPosts, setShowPosts] = useState(false)
     const handleSearch = () => {
@@ -168,6 +170,7 @@ function SearchScreen(props) {
         setError(error)
         setOpenNotification(true)
     }
+
 
     const handleCloseNotification = (event, reason) => {
         if (reason === 'clickaway') {
