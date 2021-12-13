@@ -8,10 +8,10 @@ import EventScreen from './screens/EventScreen';
 import EventDetailScreen from './screens/EventDetailScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
-import CreateEvent from './screens/CreateEventScreen';
 import Profile from './screens/Profile';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
+import SearchScreen from './screens/SearchScreen';
 
 function App() {
   const [user, setUser] = useState(true);
@@ -24,9 +24,7 @@ function App() {
           <>
             <Header user={user} />
             <Switch>
-              <Route path="/event/:id" component={EventScreen} />
-              <Route path="/createEvent" component={CreateEvent} />
-              <Route path="/eventDetail/:id" component={EventDetailScreen} />
+            <Route path="/event/:id" component={EventScreen} />
               <Route path="/profile" component={Profile} />
               <Route path="/search" component={SearchScreen} />
               <Route path="/" component={HomeScreen} />
