@@ -1,11 +1,11 @@
-import { Alert, Button, Checkbox, FormControlLabel, MenuItem, TextField } from '@mui/material';
-import './LandingPage.css';
-import { register } from '../services/AuthService';
+import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useMutation, useQuery } from 'react-query';
-import { useState } from 'react';
+import { Alert, Button, MenuItem, TextField } from '@mui/material';
+import './LandingPage.css';
+import { register } from '../services/AuthService';
 import { getSports } from '../services/SportsService';
-import { toTitleCase } from '../helpers/functions';
+import { toTitleCase, validateEmail, validatePassword, validateUsername } from '../helpers/functions';
 import { Link } from 'react-router-dom';
 
 function RegisterScreen() {
@@ -21,7 +21,7 @@ function RegisterScreen() {
       setAlert({ type: 'success', message: 'Please check your email' });
     },
     onError: () => {
-      setAlert(null);
+      setAlert({ type: 'error', message: 'Some error occurred' });
     },
     onMutate: () => {
       setAlert(null);
@@ -29,7 +29,32 @@ function RegisterScreen() {
   });
 
   const onRegister = registerData => {
-    mutation.mutate(registerData);
+    if (getValues().username === undefined) {
+      setAlert({ type: 'error', message: 'Username required' });
+    } else if (!validateUsername(getValues().username)) {
+      setAlert({
+        type: 'error',
+        message: 'The username shall be at least 4 characters long and containing only alphanumeric characters.',
+      });
+    } else if (getValues().email === undefined) {
+      setAlert({ type: 'error', message: 'Email required' });
+    } else if (!validateEmail(getValues().email)) {
+      setAlert({ type: 'error', message: 'Please enter a valid email' });
+    } else if (getValues().name === undefined || getValues().surname === undefined) {
+      setAlert({ type: 'error', message: 'Name and surname are required' });
+    } else if (getValues().password === undefined || getValues().password_confirm === undefined) {
+      setAlert({ type: 'error', message: 'Please enter the password twice' });
+    } else if (getValues().password !== getValues().password_confirm) {
+      setAlert({ type: 'error', message: 'Passwords do not match' });
+    } else if (!validatePassword(getValues().password)) {
+      setAlert({
+        type: 'error',
+        message:
+          'Password shall be at least 6 characters long, containing at least one number and one letter and containing only alphanumeric characters.',
+      });
+    } else {
+      mutation.mutate(registerData);
+    }
   };
 
   const handleChange = event => {
@@ -52,6 +77,7 @@ function RegisterScreen() {
                     color="success"
                     variant="standard"
                     label="Username"
+                    data-testId="username"
                     required={true}
                     {...field}
                   />
@@ -67,6 +93,7 @@ function RegisterScreen() {
                     color="success"
                     variant="standard"
                     label="Email"
+                    data-testId="email"
                     required={true}
                     {...field}
                   />
@@ -82,6 +109,7 @@ function RegisterScreen() {
                       color="success"
                       variant="standard"
                       label="Name"
+                      data-testId="name"
                       required={true}
                       {...field}
                     />
@@ -96,6 +124,7 @@ function RegisterScreen() {
                       color="success"
                       variant="standard"
                       label="Surname"
+                      data-testId="surname"
                       required={true}
                       {...field}
                     />
@@ -114,6 +143,7 @@ function RegisterScreen() {
                       variant="standard"
                       type="password"
                       label="Password"
+                      data-testId="password"
                       required={true}
                       {...field}
                     />
@@ -129,6 +159,7 @@ function RegisterScreen() {
                       variant="standard"
                       type="password"
                       label="Password Confirm"
+                      data-testId="password confirm"
                       required={true}
                       {...field}
                     />
@@ -150,6 +181,7 @@ function RegisterScreen() {
                       color="success"
                       variant="standard"
                       label="Sport"
+                      data-testId="sport 1"
                       required={true}
                       {...field}
                     >
@@ -173,6 +205,7 @@ function RegisterScreen() {
                       color="success"
                       variant="standard"
                       label="Level"
+                      data-testId="level 1"
                       required={true}
                       {...field}
                     >
@@ -198,6 +231,7 @@ function RegisterScreen() {
                       color="success"
                       variant="standard"
                       label="Sport"
+                      data-testId="sport 2"
                       required={true}
                       {...field}
                     >
@@ -221,6 +255,7 @@ function RegisterScreen() {
                       color="success"
                       variant="standard"
                       label="Level"
+                      data-testId="level 2"
                       required={true}
                       {...field}
                     >
@@ -254,17 +289,27 @@ function RegisterScreen() {
           )}
 
           <div className="landing-page-form-submit">
-            {formStep === 1 ? (
+            {formStep === 0 ? (
+              <Button
+                color="success"
+                variant="outlined"
+                onClick={e => {
+                  e.preventDefault();
+                  setFormStep(1);
+                }}
+              >
+                Next
+              </Button>
+            ) : (
               <>
                 <Button color="success" type="submit" variant="contained">
                   Register
                 </Button>
-                {alert && <Alert severity="success">{alert.message}</Alert>}
+                <Button color="success" variant="outlined" onClick={() => setFormStep(0)}>
+                  Previous Step
+                </Button>
+                {alert && <Alert severity={alert.type}>{alert.message}</Alert>}
               </>
-            ) : (
-              <Button color="success" variant="contained" onClick={() => setFormStep(1)}>
-                Next
-              </Button>
             )}
           </div>
         </form>
