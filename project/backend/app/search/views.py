@@ -98,7 +98,10 @@ def searchEvent(request):
 
 
     result = serializers.serialize('json', eventList)
-    return HttpResponse(result, content_type="application/json", status=200)
+    if result == '[]':
+        return HttpResponse(result, content_type="application/json", status=404)
+    else:
+        return HttpResponse(result, content_type="application/json", status=200)
 
 
 @login_required()
@@ -129,7 +132,7 @@ def searchEquipment(request):
         start_date_time_obj = datetime.strptime(filter_start_date, '%d/%m/%Y:%H')
         end_date_time_obj = datetime.strptime(filter_end_date, '%d/%m/%Y:%H')
 
-        equipmentList = equipmentList.filter(date_time__gte=start_date_time_obj, date_time__lte=end_date_time_obj)
+        equipmentList = equipmentList.filter(created_date__gte=start_date_time_obj, created_date__lte=end_date_time_obj)
 
 
     isFilteredByLocation = False if (data["filter_func"]["location"]==None or data["filter_func"]["location"]=="" or data["filter_func"]["location"]==False)  else True
@@ -155,8 +158,11 @@ def searchEquipment(request):
             delta=ExpressionWrapper(((F('latitude') - location_lat) ** 2) + ((F('longitude') - location_lng) ** 2),
                                     output_field=FloatField())).order_by('delta')
     else:  ## else the data must be sorted by date
-        equipmentList = equipmentList.order_by('date_time')
+        equipmentList = equipmentList.order_by('created_date')
 
 
     result = serializers.serialize('json', equipmentList)
-    return HttpResponse(result, content_type="application/json", status=200)
+    if result == '[]':
+        return HttpResponse(result, content_type="application/json", status=404)
+    else:
+        return HttpResponse(result, content_type="application/json", status=200)
