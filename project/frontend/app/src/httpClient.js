@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = ''; // todo add API_URL
+const API_URL = 'http://3.127.142.97:8000';
 
 export const httpClient = axios.create({
     baseURL: API_URL,

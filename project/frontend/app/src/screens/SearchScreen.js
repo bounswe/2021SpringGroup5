@@ -36,7 +36,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import trLocale from 'date-fns/locale/tr';
 
-
+import { searchRequest } from '../services/SearchService';
 
 
 function CustomCard({ data }) {
@@ -94,28 +94,46 @@ function SearchScreen(props) {
     const [isSortedByLocation, setIsSortedByLocation] = useState(false)
     const [sportType, setSportType] = useState("")
     const [capacity, setCapacity] = useState("open_to_application")
-    const [date, setDate] = useState("")
     const [radiusKm, setRadiusKm] = useState(2)
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()));
 
+    const [sports, setSports] = useState()
+    const [error, setError] = useState("")
+
+    const handleSearchRequest = async () => {
+        try {
+            const sports = await searchRequest({
+                searchQuery: searchQuery,
+                position: position,
+                isSortedByLocation: isSortedByLocation,
+                sportType: sportType,
+                capacity: capacity,
+                radiusKm: radiusKm,
+                startDate: startDate,
+                endDate: endDate
+            })
+
+            setSports(sports)
+        } catch (e) {
+            handleOpenNotification("Internal server error")
+        }
+    }
+
     const handleFilter = () => {
         if (startDate === "Invalid Date" || endDate === "Invalid Date" || endDate < startDate)
-            return handleOpenNotification()
+            return handleOpenNotification("End date cannot be earlier than start date!")
 
-
-
+        handleSearchRequest()
 
         toggleFilterDrawer()
     }
 
     const [showPosts, setShowPosts] = useState(false)
     const handleSearch = () => {
-        if (searchQuery === "basketball") {
-            setShowPosts(true)
-        } else {
-            setShowPosts(false)
-        }
+        setShowPosts(true)
+
+        handleSearchRequest()
     }
 
     const formatDate = (date) => {
@@ -133,7 +151,8 @@ function SearchScreen(props) {
 
     const [openNotification, setOpenNotification] = useState(false)
 
-    const handleOpenNotification = () => {
+    const handleOpenNotification = (error) => {
+        setError(error)
         setOpenNotification(true)
     }
 
@@ -171,42 +190,6 @@ function SearchScreen(props) {
     const [openDate, setOpenDate] = useState(false)
     const [mode, setMode] = useState("events")
 
-
-
-    const sports = [
-        {
-            src: "https://cdnuploads.aa.com.tr/uploads/Contents/2021/08/20/thumbs_b_c_7d185fadd9e4918ce231278823901488.jpg?v=155228",
-            title: "Basketball Game 1",
-            type: "Basketball",
-            location: "Uskudar",
-            date: "17 Nov",
-            time: "13:00"
-        },
-        {
-            src: "https://iaftm.tmgrup.com.tr/251c2a/633/358/0/0/707/400?u=https://iftm.tmgrup.com.tr/2021/09/17/basketbol-super-liginde-2021-22-sezonu-heyecani-basliyor-1631887007257.jpeg",
-            title: "Basketball Game 2",
-            type: "Basketball",
-            location: "Kadikoy",
-            date: "18 Nov",
-            time: "17:00"
-        },
-        {
-            src: "https://www.istanbulsporenvanteri.com/uploads/resim/1050-1/wfbne3ck.c3d.png",
-            title: "Basketball Game 3",
-            type: "Basketball",
-            location: "Besiktas",
-            date: "19 Nov",
-            time: "18:00"
-        },
-        {
-            src: "https://trthaberstatic.cdn.wp.trt.com.tr/resimler/1500000/basketbol-thy-avrupa-ligi-1501700_2.jpg",
-            title: "Basketball Game 4",
-            type: "Basketball",
-            location: "Hisarustu",
-            date: "23 Nov",
-            time: "18:30"
-        }
-    ]
 
     return (
         <div className="container">
@@ -267,11 +250,11 @@ function SearchScreen(props) {
                 </div>
             </div>
             {
-                showPosts &&
+                showPosts && sports &&
                 <div className="row justify-content-center align-items-center mt-5">
                     <div className="row col-9">
                         {sports.map((sport) =>
-                            <div onClick={handleOpenNotification} className='col-12 col-md-6 col-lg-4 mb-4'>
+                            <div className='col-12 col-md-6 col-lg-4 mb-4'>
                                 <CustomCard data={sport} />
                             </div>
                         )}
@@ -280,7 +263,7 @@ function SearchScreen(props) {
             }
             <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={openNotification} autoHideDuration={2000} onClose={handleCloseNotification}>
                 <Alert onClose={handleCloseNotification} severity="error" sx={{ width: '100%' }}>
-                    End date cannot be earlier than start date!
+                    {error}
                 </Alert>
             </Snackbar>
             <Modal
