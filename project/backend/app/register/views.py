@@ -116,6 +116,7 @@ def register(request):
 
 @api_view(['GET','POST'])
 def login_user(request):
+    
     if request.method == 'POST':
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
