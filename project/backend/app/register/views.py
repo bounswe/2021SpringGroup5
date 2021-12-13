@@ -106,7 +106,7 @@ def register(request):
         interest1.save()
         interest2.save()
 
-        return Response('SUCCESS', status=status.HTTP_200_OK)
+        return Response('SUCCESS', status=status.HTTP_201_CREATED)
     else:
         sports=list(Sport.objects.filter(is_custom=False).values('id',"sport_name"))
         skill_levels=list(SkillLevel.objects.values())
@@ -139,7 +139,7 @@ def login_user(request):
 
         login(request, user)
 
-        return Response('SUCCESS', status=status.HTTP_201_CREATED)
+        return Response('SUCCESS', status=status.HTTP_200_OK)
     else:
         return Response({"message":"You are not logged in, you can't do this request"},401)
 
