@@ -91,8 +91,8 @@ DATABASES = {
         'NAME': 'group5db_451',
         'USER': 'postgres',
         'PASSWORD': 'group5',
-        'HOST': 'db',
-        'PORT': 5432,
+        'HOST': 'localhost',
+        'PORT': '',
     }
 
 }
@@ -130,7 +130,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-REST_FRAMEWORK={ 
+"""REST_FRAMEWORK={ 
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication'
     ]}
@@ -139,7 +139,8 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'ROTATE_REFRESH_TOKENS': True,
     'REFRESH_TOKEN_LIFETIME': timedelta(days=2)
-}
+}"""
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
