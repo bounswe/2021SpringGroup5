@@ -217,7 +217,7 @@ def createEquipmentPost(request):
 
     # GET request
     else:
-        sports=list(Sport.objects.filet(is_custom=False).values("id","sport_name"))
+        sports=list(Sport.objects.filter(is_custom=False).values("id","sport_name"))
         res={"sports":sports}
         return Response(res,status=status.HTTP_200_OK)
 
@@ -267,6 +267,7 @@ def deleteEventPost(request):
         actor = User.objects.get(Id=actor_id)
     except:
         return Response({"message": "There is no such user in the system"}, 404)
+
 
 
     try:
@@ -342,7 +343,7 @@ def applyToEvent(request):
         applicationStatus = "inadeq"
 
 
-    application_ser=ApplicationSerializer(data={"user":actor_id, "event_post":event_post.id, "status":applicationStatus, "applicant_type":"user"})
+    application_ser=ApplicationSerializer(data={"user":actor_id, "event_post":event_post.id, "status":applicationStatus, "applicant_type":"player"})
 
     if application_ser.is_valid():
         try:
@@ -355,6 +356,46 @@ def applyToEvent(request):
 
     return Response({"message":"Application is successfully created"},status=status.HTTP_201_CREATED)
 
+
+@login_required()
+@api_view(['POST'])
+def acceptApplicant(request):
+    data = request.data
+
+    applicant_id = data["applicant_Id"]
+    event_id = data["event_Id"]
+
+    # Try if the user is valid
+    try:
+        actor = User.objects.get(Id=applicant_id)
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+    # Try if event is in the database
+    try:
+        event_post=EventPost.objects.get(id=event_id)
+    except:
+        return Response({"message":"There is no such event in the database, deletion operation is aborted"},status=status.HTTP_404_NOT_FOUND)
+
+
+    try:
+        application = Application.objects.filter(event_post_id=event_id)
+        event_post = EventPost.objects.get(id=event_id)
+    except:
+        return Response({"message": "There is no such application in the database, operation is aborted"}, status=status.HTTP_404_NOT_FOUND)
+
+
+    if event_post.participant_limit > event_post.current_player and event_post.status == "upcoming" and event_post.capacity == "open to applications":
+        new_part = event_post.current_player+1
+        if new_part == event_post.participant_limit:
+            EventPost.objects.filter(pk=event_id).update(capacity="full", current_player=new_part)
+        else:
+            EventPost.objects.filter(pk=event_id).update(current_player=new_part)
+    else:
+        return Response({"message": "The event is not available to accept the application. Full or maybe past"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    application = application.update(status="accepted")
+    return Response({"message":"Application is accepted"},status=status.HTTP_200_OK)
 
 @login_required()  
 @api_view(['PATCH'])
@@ -577,6 +618,10 @@ def getEventPostDetails(request):
     except:
         spectators=[]
     
+    waiting_players=[]
+    rejected_players=[]
+    inadequate_player_applications=[]
+
     if actor_id==event_post_details.owner_id:
         try:
             waiting_players=list(Application.objects.filter(event_post=post_id,status="waiting",applicant_type="player").order_by('id').values('user__Id',\
@@ -588,6 +633,11 @@ def getEventPostDetails(request):
         'user__name','user__surname','user__username'))
         except:
             rejected_players=[]
+        try:
+            inadequate_player_applications=list(Application.objects.filter(event_post=post_id,status="inadequate",applicant_type="player").values('user__Id',\
+        'user__name','user__surname','user__username'))
+        except:
+            inadequate_player_applications=[]
 
     del data["actor"]["type"]
     del data["object"]["type"]
@@ -605,6 +655,7 @@ def getEventPostDetails(request):
     event_post_details["sport_category"]=sport
     event_post_details["comments"]=comments
     event_post_details["spectators"]=spectators
+    event_post_details["inadequate_player_applications"]=inadequate_player_applications
     event_post_details["waiting_players"]=waiting_players
     event_post_details["accepted_players"]=accepted_players
     event_post_details["rejected_players"]=rejected_players
@@ -669,6 +720,72 @@ def getEquipmentPostDetails(request):
     equipment_post_details["owner"]=list(User.objects.filter(Id=equipment_post_details["owner"]).values('Id','name','surname','username'))[0]
     res={"@context":data["@context"],"summary":data["summary"],"type":data["type"],"actor":data["actor"],"object":equipment_post_details}
     return Response(res,201)
+
+
+@login_required()
+@api_view(['POST'])
+def spectateToEvent(request):
+    data = request.data
+
+    actor_id = data["actor"]["Id"]
+    event_id = data["event_id"]
+
+    # Try if the user is valid
+    try:
+        actor = User.objects.get(Id=actor_id)
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+    # Try if event is in the database
+    try:
+        event_post = EventPost.objects.get(id=event_id)
+    except:
+        return Response({"message": "There is no such event in the database, spectate operation is aborted"},
+                        status=status.HTTP_404_NOT_FOUND)
+
+
+    if  event_post.current_spectator >= event_post.spectator_limit:
+        return Response({"message": "Spectator limit is full"}, status=400)
+
+    if event_post.status != "upcoming":
+        return Response({"message": "This is not an upcoming event. Maybe it is cancelled or passed."}, status=400)
+
+
+
+    ## Increase spectator by 1
+    cur_spec = event_post.current_spectator
+    EventPost.objects.filter(id=event_id).update(current_spectator = cur_spec+1)
+
+
+    applicationStatus = "accepted"
+    application_ser = ApplicationSerializer(
+        data={"user": actor_id, "event_post": event_post.id, "status": applicationStatus, "applicant_type": "spectator"})
+
+
+    if application_ser.is_valid():
+        try:
+            application_ser.save()
+        except:
+            return Response(
+                {"message": "There was an error about application serializer. You may have already applied."},
+                status=status.HTTP_406_NOT_ACCEPTABLE)
+    else:
+        return Response({"message": "There was an error about application serializer"},
+                        status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    return Response({"message": "Spectate application is successfully created"}, status=status.HTTP_201_CREATED)
+
+
+
+@login_required()
+@api_view(['GET'])
+def getSpectators(request):
+    eventId = request.query_params["eventId"]
+    applicationList = list(Application.objects.filter(applicant_type="spectator", event_post_id=eventId).values())
+    if applicationList != []:
+        return JsonResponse(applicationList, safe=False)
+    else:
+        return Response({"message": "Spectators are not found"},404)
+
 
 
 # It is a script for only one time run. It can only be run by Superadmin to avoid possible security bug

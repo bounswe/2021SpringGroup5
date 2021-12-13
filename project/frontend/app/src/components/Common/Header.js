@@ -55,7 +55,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
-
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
@@ -119,82 +118,84 @@ export default function MiniDrawer() {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar position="fixed" open={open} className="bg-white">
-        <Toolbar>
-          <IconButton
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: '36px',
-              ...(open && { display: 'none' }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography style={{ color: "black" }} variant="h6" component="div" className="fs-4 fw-bolder" sx={{ flexGrow: 1 }}>
-            Ludo
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
-          <ListItem button key={1} onClick={() => history.push("/")}>
-            <ListItemIcon>
-              <Home />
-            </ListItemIcon>
-            <ListItemText primary={"Home"} />
-          </ListItem>
-          <ListItem button key={2} onClick={() => history.push("/search")}>
-            <ListItemIcon>
-              <Search />
-            </ListItemIcon>
-            <ListItemText primary={"Search"} />
-          </ListItem>
-          <ListItem button key={3} onClick={handleOpenCreateMenu}>
-            <ListItemIcon>
-              <Add />
-            </ListItemIcon>
-            <ListItemText primary={"Create"} />
-          </ListItem>
-          <Menu
-            id="basic-menu"
-            anchorEl={anchorEl}
-            open={openCreateMenu}
-            onClose={handleCloseCreateMenu}
-            MenuListProps={{
-              'aria-labelledby': 'basic-button',
-            }}
-          >
-            <MenuItem onClick={() => history.push("/createEvent") && handleCloseCreateMenu}>Create Event Post</MenuItem>
-            <MenuItem onClick={() => history.push("/createEquipment") && handleCloseCreateMenu}>Create Equipment Post</MenuItem>
-          </Menu>
-          <ListItem button key={3} onClick={() => history.push("/profile")}>
-            <ListItemIcon>
-              <AccountCircle />
-            </ListItemIcon>
-            <ListItemText primary={"Profile"} />
-          </ListItem>
-        </List>
-        <Divider />
-        <List>
-          <ListItem button key={1} onClick={handleLogout}>
-            <ListItemIcon>
-              <Logout />
-            </ListItemIcon>
-            <ListItemText primary={"Log out"} />
-          </ListItem>
-        </List>
-      </Drawer>
-      <DrawerHeader />
-    </Box>
+    <>
+      <Box sx={{ display: 'flex' }}>
+        <CssBaseline />
+        <AppBar position="fixed" open={open} className="bg-white">
+          <Toolbar>
+            <IconButton
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                marginRight: '36px',
+                ...(open && { display: 'none' }),
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography style={{ color: "black" }} variant="h6" component="div" className="fs-4 fw-bolder" sx={{ flexGrow: 1 }}>
+              Ludo
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Drawer variant="permanent" open={open}>
+          <DrawerHeader>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            </IconButton>
+          </DrawerHeader>
+          <Divider />
+          <List>
+            <ListItem button key={1} onClick={() => history.push("/")}>
+              <ListItemIcon>
+                <Home />
+              </ListItemIcon>
+              <ListItemText primary={"Home"} />
+            </ListItem>
+            <ListItem button key={2} onClick={() => history.push("/search")}>
+              <ListItemIcon>
+                <Search />
+              </ListItemIcon>
+              <ListItemText primary={"Search"} />
+            </ListItem>
+            <ListItem button key={3} onClick={handleOpenCreateMenu}>
+              <ListItemIcon>
+                <Add />
+              </ListItemIcon>
+              <ListItemText primary={"Create"} />
+            </ListItem>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={openCreateMenu}
+              onClose={handleCloseCreateMenu}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button',
+              }}
+            >
+              <MenuItem onClick={() => history.push("/createEvent") && handleCloseCreateMenu}>Create Event Post</MenuItem>
+              <MenuItem onClick={() => history.push("/createEquipment") && handleCloseCreateMenu}>Create Equipment Post</MenuItem>
+            </Menu>
+            <ListItem button key={3} onClick={() => history.push("/profile")}>
+              <ListItemIcon>
+                <AccountCircle />
+              </ListItemIcon>
+              <ListItemText primary={"Profile"} />
+            </ListItem>
+          </List>
+          <Divider />
+          <List>
+            <ListItem button key={1} onClick={handleLogout}>
+              <ListItemIcon>
+                <Logout />
+              </ListItemIcon>
+              <ListItemText primary={"Log out"} />
+            </ListItem>
+          </List>
+        </Drawer>
+        <DrawerHeader />
+      </Box>
+    </>
   );
 }
