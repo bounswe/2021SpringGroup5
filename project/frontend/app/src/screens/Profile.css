@@ -1,0 +1,92 @@
+.profile-wrapper{
+    margin-left: 80px;
+    padding: 60px;
+    display: grid;
+    grid-template-columns: 1.5fr 5fr;
+    grid-template-rows: 3fr 3fr;
+    grid-gap: 16px;
+    height: 90%;
+    align-items: center;
+}
+
+.profile-information{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    grid-row: 1 / span 2;
+    background: var(--gradient-background);
+    padding: 10px;
+    border-radius: 10px;
+    margin: 5px;
+    height: 95%;
+    box-shadow: var(--color-ludo-green) 0 0 5px, rgba(0, 0, 0, 0.22) 0 5px 5px;
+
+}
+
+.profile-information div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 10px;
+}
+.profile-information img{
+    height: 120px;
+    border-radius: 50%;
+}
+
+.profile-horizontal-slider{
+    padding: 10px;
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    justify-content: space-evenly;
+    background: var(--color-ludo-green);
+    border-radius: 0 10px 10px 10px;
+    margin-bottom: 10px;
+    box-shadow: var(--color-ludo-green) 0 0 5px, rgba(0, 0, 0, 0.22) 0 5px 5px;
+}
+
+
+
+.profile-sport-card div{
+    font-size: 16px;
+}
+
+.profile-sport-card{
+    width: 20%;
+}
+
+
+.profile-badge-card{
+    width: 12%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.profile-horizontal-arrow-icon{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 24px;
+}
+
+.profile-event-card:not(:last-child){
+    margin-right: 15px;
+}
+
+.profile-event-card{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-slider-header{
+    display: inline-block;
+    border-radius: 5px 5px 0 0;
+    padding: 1px 10px;
+    background: var(--color-ludo-green);
+}

@@ -39,40 +39,43 @@ import trLocale from 'date-fns/locale/tr';
 
 
 
-function CustomCard({ data }) {
-    return (
-        <Card sx={{ maxWidth: 345 }} className="text-start">
-            <CardActionArea>
-                <CardMedia
-                    component="img"
-                    height="140"
-                    image={data.src}
-                />
-                <CardContent>
-                    <div className='row mb-2'>
-                        <div className='col-8 fw-bold fs-6'>
-                            {data.title}
-                        </div>
-                        <div style={{ fontSize: 14 }} className='col-4 text-end d-flex align-items-center justify-content-end text-muted'>
-                            {data.type}
-                        </div>
-                    </div>
-                    <div className='row'>
-                        <div style={{ fontSize: 14 }} className='col-6 text-end d-flex align-items-center justify-content-start text-muted'>
-                            {data.location}
-                        </div>
-                        <div style={{ fontSize: 12 }} className='col-6 text-end d-flex align-items-center justify-content-end text-muted'>
-                            {data.date} / {data.time}
-                        </div>
-                    </div>
-                </CardContent>
-            </CardActionArea>
-        </Card>
-    );
+export function CustomCard({ data }) {
+  return (
+    <Card sx={{ maxWidth: 345 }} className="text-start">
+      <CardActionArea>
+        <CardMedia component="img" height="140" image={data.src} />
+        <CardContent>
+          <div className="row mb-2">
+            <div className="col-8 fw-bold fs-6">{data.title}</div>
+            <div
+              style={{ fontSize: 14 }}
+              className="col-4 text-end d-flex align-items-center justify-content-end text-muted"
+            >
+              {data.type}
+            </div>
+          </div>
+          <div className="row">
+            <div
+              style={{ fontSize: 14 }}
+              className="col-6 text-end d-flex align-items-center justify-content-start text-muted"
+            >
+              {data.location}
+            </div>
+            <div
+              style={{ fontSize: 12 }}
+              className="col-6 text-end d-flex align-items-center justify-content-end text-muted"
+            >
+              {data.date} / {data.time}
+            </div>
+          </div>
+        </CardContent>
+      </CardActionArea>
+    </Card>
+  );
 }
 
 const Alert = forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 const styleModal = {
@@ -89,6 +92,7 @@ const styleModal = {
 
 
 function SearchScreen(props) {
+
     const [searchQuery, setSearchQuery] = useState("")
     const [position, setPosition] = useState()
     const [isSortedByLocation, setIsSortedByLocation] = useState(false)
@@ -108,6 +112,7 @@ function SearchScreen(props) {
 
         toggleFilterDrawer()
     }
+  };
 
     const [showPosts, setShowPosts] = useState(false)
     const handleSearch = () => {
@@ -133,9 +138,11 @@ function SearchScreen(props) {
 
     const [openNotification, setOpenNotification] = useState(false)
 
-    const handleOpenNotification = () => {
-        setOpenNotification(true)
+  const handleCloseNotification = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
     }
+
 
     const handleCloseNotification = (event, reason) => {
         if (reason === 'clickaway') {
