@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useMutation, useQuery } from 'react-query';
-import { Alert, Button, MenuItem, TextField } from '@mui/material';
+import { Alert, Button, Checkbox, FormControlLabel, MenuItem, TextField } from '@mui/material';
 import './LandingPage.css';
 import { register } from '../services/AuthService';
 import { getSports } from '../services/SportsService';
@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 function RegisterScreen() {
   const [alert, setAlert] = useState(null);
   const [formStep, setFormStep] = useState(0);
-  const { handleSubmit, control } = useForm();
+  const { handleSubmit, control, getValues } = useForm();
   const [checked, setChecked] = useState(false);
 
   const { data: sports_and_levels } = useQuery('sports_and_levels', getSports);
