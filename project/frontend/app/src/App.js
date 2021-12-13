@@ -7,11 +7,14 @@ import HomeScreen from './screens/HomeScreen';
 import EventScreen from './screens/EventScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
+import Profile from './screens/Profile';
+
 import { QueryClient, QueryClientProvider } from 'react-query';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
+import SearchScreen from './screens/SearchScreen';
 
 function App() {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(true);
   const queryClient = new QueryClient();
 
   return (
@@ -22,6 +25,8 @@ function App() {
             <Header user={user} />
             <Switch>
               <Route path="/event/:id" component={EventScreen} />
+              <Route path="/profile" component={Profile} />
+              <Route path="/search" component={SearchScreen} />
               <Route path="/" component={HomeScreen} />
             </Switch>
           </>
@@ -36,6 +41,9 @@ function App() {
             </Route>
             <Route path="/register">
               <RegisterScreen />
+            </Route>
+            <Route path="/profile">
+              <Profile />
             </Route>
             <Redirect exact from="/" to="/login" />
           </Switch>

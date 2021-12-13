@@ -1,24 +1,25 @@
+import uuid
 from typing import Callable
 from django.db import models
 from django.contrib import admin
 from django.db.models.deletion import CASCADE
-
+from django.utils import timezone
 
 # Create your models here.
 
 class Sport(models.Model):
     sport_name=models.CharField(max_length=70,null=False,unique=True)
+    is_custom=models.BooleanField(null=False,blank=False)
 
 
 class EquipmentPost(models.Model):
     post_name=models.CharField(null=False,blank=False,max_length=30)
     owner=models.ForeignKey('register.User',on_delete=models.CASCADE)
     sport_category=models.ForeignKey(Sport,on_delete=models.CASCADE)
-    created_date=models.DateTimeField(null=False,blank=False)
+    created_date=models.DateTimeField(null=False,blank=False,default=timezone.now)
     description=models.TextField(max_length=300,null=False,blank=False)
-    country=models.CharField(null=True,blank=True,max_length=100)
-    city=models.CharField(null=True,blank=True,max_length=100)
-    neighborhood=models.CharField(null=True,blank=True,max_length=100)
+    longitude=models.FloatField(null=True,blank=True)
+    latitude=models.FloatField(null=True,blank=True)
     link=models.URLField(null=True,blank=True)
     active=models.BooleanField(null=False,blank=False)
     pathToEquipmentPostImage=models.URLField(null=True,blank=True)
@@ -31,11 +32,10 @@ class EventPost(models.Model):
     post_name=models.CharField(null=False,blank=False,max_length=30)
     owner=models.ForeignKey('register.User',on_delete=models.CASCADE,to_field='Id')
     sport_category=models.ForeignKey(Sport,on_delete=models.CASCADE)
-    created_date=models.DateTimeField(null=False,blank=False)
+    created_date=models.DateTimeField(null=False,blank=False,default=timezone.now)
     description=models.TextField(max_length=300,null=False,blank=False)
-    country=models.CharField(null=True,blank=True,max_length=100)
-    city=models.CharField(null=True,blank=True,max_length=100)
-    neighborhood=models.CharField(null=True,blank=True,max_length=100)
+    longitude=models.FloatField(null=True,blank=True)
+    latitude=models.FloatField(null=True,blank=True)
     date_time=models.DateTimeField(null=False,blank=False)
     participant_limit=models.IntegerField(null=False,blank=False)
     spectator_limit=models.IntegerField(null=False,blank=False)
@@ -45,20 +45,22 @@ class EventPost(models.Model):
     capacity=models.CharField(null=False,blank=False,max_length=25)
     location_requirement=models.CharField(null=True,blank=True,max_length=30)
     contact_info=models.CharField(null=True,blank=True,max_length=50)
-    repeating_frequency=models.IntegerField(null=False,blank=False)
     pathToEventImage=models.URLField(null=True,blank=True)
     skill_requirement=models.ForeignKey(SkillLevel,on_delete=CASCADE)
+    current_player=models.IntegerField(null=False,blank=False, default=0)
+    current_spectator=models.IntegerField(null=False,blank=False, default=0)
+
 
 
 class EventPostActivityStream(models.Model):
-    context=models.URLField(null=False,blank=False) #????????????
+    context=models.URLField(null=False,blank=False) 
     summary=models.CharField(max_length=200,null=False,blank=False)
     actor=models.ForeignKey('register.User',on_delete=CASCADE)
     type=models.CharField(max_length=20,null=False,blank=False)
     object=models.ForeignKey(EventPost,on_delete=CASCADE)
 
 class EquipmentPostActivtyStream(models.Model):
-    context=models.URLField(null=False,blank=False) #????????????
+    context=models.URLField(null=False,blank=False) 
     summary=models.CharField(max_length=200,null=False,blank=False)
     actor=models.ForeignKey('register.User',on_delete=CASCADE)
     type=models.CharField(max_length=20,null=False,blank=False)
@@ -72,14 +74,14 @@ class Application(models.Model):
         ]
     user=models.ForeignKey('register.User',null=False,blank=False,on_delete=CASCADE)
     event_post=models.ForeignKey(EventPost,null=False,blank=False,on_delete=CASCADE)
-    status=models.CharField(null=False,blank=False,max_length=8)
-    applicant_type=models.CharField(null=False,blank=False,max_length=9)
+    status=models.CharField(null=False,blank=False,max_length=10)
+    applicant_type=models.CharField(null=False,blank=False,max_length=20)
     
 
 class EventComment(models.Model):
     content=models.TextField(max_length=300)
     owner=models.ForeignKey('register.User',on_delete=models.CASCADE)
-    created_date=models.DateTimeField(null=False,blank=False)
+    created_date=models.DateTimeField(null=False,blank=False,default=timezone.now)
     event_post=models.ForeignKey(EventPost,null=True,blank=True,on_delete=models.CASCADE)
 
 class EventCommentActivtyStream(models.Model):
@@ -92,7 +94,7 @@ class EventCommentActivtyStream(models.Model):
 class EquipmentComment(models.Model):
     content=models.TextField(max_length=300)
     owner=models.ForeignKey('register.User',on_delete=models.CASCADE)
-    created_date=models.DateTimeField(null=False,blank=False)
+    created_date=models.DateTimeField(null=False,blank=False,default=timezone.now)
     equipment_post=models.ForeignKey(EquipmentPost,null=True,blank=True,on_delete=models.CASCADE)
 
 class EquipmentCommentActivtyStream(models.Model):

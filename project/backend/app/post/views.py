@@ -1,12 +1,12 @@
-
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from requests.api import post
 from .models import Application, EquipmentComment, EventComment
-from post.models import Badge,SkillLevel, Sport,EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream
-
+from post.models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream, Application
+from django.utils.dateparse import parse_datetime
 from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, \
-    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer
+    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, ApplicationSerializer
 from rest_framework.decorators import api_view
 import requests
 from django.conf import settings
@@ -18,10 +18,12 @@ import datetime
 from rest_framework.views import APIView
 from unidecode import unidecode
 from django.forms.models import model_to_dict
+from django.core import serializers
 # Create your views here.
 
 from django.apps import apps
 User = apps.get_model('register', 'User')
+InterestLevel = apps.get_model('register', 'InterestLevel')
 
 def process_string(s):
     if s != None and (type(s)==str):
@@ -33,16 +35,15 @@ def process_string(s):
 def createEventPost(request):
     if request.method=='POST':
         
-        data=request.data
-
+        data=json.loads(request.POST.get('json'))
+        
 
         post_name=data["object"]["post_name"]
         sport_category=data["object"]["sport_category"]
-        country=data["object"]["country"]
-        city=data["object"]["city"]
-        neighborhood=data["object"]["neighborhood"]
+        longitude=data["object"]["longitude"]
+        latitude=data["object"]["latitude"]
         description=data["object"]["description"]
-        image=data["object"]["pathToEventImage"]
+        #image=data["object"]["pathToEventImage"]
         date_time=data["object"]["date_time"]
         participant_limit=data["object"]["participant_limit"]
         spectator_limit=data["object"]["spectator_limit"]
@@ -54,10 +55,7 @@ def createEventPost(request):
         repeating_frequency=data["object"]["repeating_frequency"]
         badges=data["object"]["badges"]
 
-        actor_id=data["actor"]["id"]
-        country=process_string(country)
-        city=process_string(city)
-        neighborhood=process_string(neighborhood)
+        actor_id=data["actor"]["Id"]
         sport_category=process_string(sport_category)
 
         if spectator_limit==None:
@@ -82,7 +80,7 @@ def createEventPost(request):
             sport_id=sport.id
             sport_name=sport.sport_name
         except:
-            sport_ser=SportSerializer(data={"sport_name":sport_category})
+            sport_ser=SportSerializer(data={"sport_name":sport_category,"is_custom":True})
             if sport_ser.is_valid():
                 sport_ser.save()
                 sport_id=sport_ser.data["id"]
@@ -94,53 +92,76 @@ def createEventPost(request):
 
        
         skill_requirement=SkillLevel.objects.get(level_name=skill_requirement_info)
-        created_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        event={"post_name":post_name,"owner":actor_id,"sport_category":sport_id,\
-            "created_date":created_date,"description":description,\
-            "country":country,"city":city,"neighborhood":neighborhood,"date_time":date_time,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
-                "rule":rule,"equipment_requirement":equipment_requirement, "status":event_status,"capacity":capacity,\
-                    "location_requirement":location_requirement,"contact_info":contact_info,"repeating_frequency":repeating_frequency,\
-                        "pathToEventImage":image,"skill_requirement":skill_requirement.id}
+        created_date=datetime.datetime.now()
 
-        event_ser=EventPostSerializer(data=event)
-        if event_ser.is_valid():
-            event_ser.save()
-        
-        else:
-            return Response({"message":event_ser.errors},406)
+        for i in range(repeating_frequency):
+            if i!=0:
+                week=datetime.timedelta(weeks=i)
+                current_event_date=(date_time+week).strftime("%Y-%m-%d %H:%M:%S")
+            else:
+                current_event_date=date_time.strftime("%Y-%m-%d %H:%M:%S")
+            
+            image=""
+
+            event={"post_name":post_name,"owner":actor_id,"sport_category":sport_id,\
+                "created_date":created_date+datetime.timedelta(hours=3),"description":description,\
+                "longitude":longitude,"latitude":latitude,"date_time":current_event_date,"participant_limit":participant_limit,"spectator_limit":spectator_limit,\
+                    "rule":rule,"equipment_requirement":equipment_requirement, "status":event_status,"capacity":capacity,\
+                        "location_requirement":location_requirement,"contact_info":contact_info,\
+                            "pathToEventImage":image,"skill_requirement":skill_requirement.id}
+
+            event_ser=EventPostSerializer(data=event)
+            if event_ser.is_valid():
+                event_ser.save()
+                try:
+                    img=request.FILES["image"]
+                    url="https://nzftk20rg4.execute-api.eu-central-1.amazonaws.com/v1/lodobucket451?file="
+                    extension="EventPost_"+str(event_ser.data["id"])
+                    r = requests.post(url+extension, data = img)
+                    image=url+extension
+                    EventPost.objects.filter(id=event_ser.data["id"]).update(pathToEventImage=image)
+
+                except:
+                    pass
+
+                event_act_stream_ser=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
+                "type":data["type"],"actor":data["actor"]["Id"],"object":event_ser.data["id"]})
+                if event_act_stream_ser.is_valid():
+                    event_act_stream_ser.save()
+                else:
+                    continue
+                for badge_info in badges:
+                    badge_id=badge_info["id"]
+                    badge_event_ser=BadgeOfferedByEventPostSerializer(data={"post":event_ser.data["id"],"badge":badge_id})
+                    if badge_event_ser.is_valid():
+                        badge_event_ser.save()
+                        
+                
+            
+            else:
+                return Response({"message":event_ser.errors},406)
 
         del data["actor"]["type"]
         del data["object"]["type"]
         
-
-        event_act_stream_ser=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
-            "type":data["type"],"actor":data["actor"]["id"],"object":event_ser.data["id"]})
-        if event_act_stream_ser.is_valid():
-            event_act_stream_ser.save()
-        else:
-            return Response({"message":"there was an error while deleting the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
-
-        for badge_info in badges:
-            badge_id=badge_info["id"]
-            badge_event_ser=BadgeOfferedByEventPostSerializer(data={"post":event_ser.data["id"],"badge":badge_id})
-            if badge_event_ser.is_valid():
-                badge_event_ser.save()
-        
         data["actor"]["type"]="Person"
         res=event_ser.data
+        res["pathToEventImage"]=image
         res["owner"]=actor
-        res["created_date"]=created_date
+        res["type"]="EventPost"
+        res["created_date"]= created_date.strftime("%Y-%m-%d %H:%M:%S")
         res["date_time"]=str(date_time)
         res["skill_requirement"]=skill_requirement.level_name
         res["sport_category"]=sport_name
         res["type"]="EventPost"
+        res["badges"]=badges
         data["object"]=res
         return Response(data,status=status.HTTP_201_CREATED)
 
     # It is a get request, badges in the db should be returned
     else:
         badges=list(Badge.objects.values())
-        sports=list(Sport.objects.values())
+        sports=list(Sport.objects.filter(is_custom=False).values('id',"sport_name"))
         skill_levels=list(SkillLevel.objects.values())
         res={"badges":badges,"sports":sports,"skill_levels":skill_levels}
         return Response(res,status=status.HTTP_200_OK)
@@ -149,27 +170,22 @@ def createEventPost(request):
 @api_view(['GET','POST'])
 def createEquipmentPost(request):
     if request.method=='POST':
-        data=request.data
-
+        #data=request.data
+        data=json.loads(request.POST.get('json'))
         owner_id=data["object"]["owner_id"]
         equipment_post_name=data["object"]["post_name"]
         sport_category=data["object"]["sport_category"]
-        country=data["object"]["country"]
-        city=data["object"]["city"]
-        neighborhood=data["object"]["neighborhood"]
+        longitude=data["object"]["longitude"]
+        latitude=data["object"]["latitude"]
         description=data["object"]["description"]
-        image=data["object"]["pathToEquipmentPostImage"]
+        #image=data["object"]["pathToEquipmentPostImage"]
         link=data["object"]["link"]
+
         try:
             actor=list(User.objects.filter(Id=owner_id).values('Id','name','surname','username'))[0]
         except:
             return Response({"message":"There is no such user in the system"},404)
 
-        sport_category=process_string(sport_category)
-
-        country=process_string(country)
-        city=process_string(city)
-        neighborhood=process_string(neighborhood)
         sport_category=process_string(sport_category)
         
         try:
@@ -177,7 +193,7 @@ def createEquipmentPost(request):
             sport_id=sport.id
             sport_name=sport.sport_name
         except:
-            sport_ser=SportSerializer(data={"sport_name":sport_category})
+            sport_ser=SportSerializer(data={"sport_name":sport_category,"is_custom":True})
             if sport_ser.is_valid():
                 sport_ser.save()
                 sport_id=sport_ser.data["id"]
@@ -188,12 +204,22 @@ def createEquipmentPost(request):
                 return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
         active=True
-        created_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        equipment_post_ser=EquipmentPostSerializer(data={"post_name":equipment_post_name,"owner":owner_id,"sport_category":sport_id,"created_date":created_date,\
-            "description":description,"country":country,"city":city,"neighborhood":neighborhood,"link":link,"active":active,"pathToEquipmentPostImage":image})
+        created_date=datetime.datetime.now()
+        image=""
+        equipment_post_ser=EquipmentPostSerializer(data={"post_name":equipment_post_name,"owner":owner_id,"sport_category":sport_id,"created_date":created_date+datetime.timedelta(hours=3),\
+            "description":description,"longitude":longitude,"latitude":latitude,"link":link,"active":active,"pathToEquipmentPostImage":image})
 
         if equipment_post_ser.is_valid():
             equipment_post_ser.save()
+            try:
+                img=request.FILES["image"]
+                url="https://nzftk20rg4.execute-api.eu-central-1.amazonaws.com/v1/lodobucket451?file="
+                extension="EquipmentPost_"+str(equipment_post_ser.data["id"])
+                r = requests.post(url+extension, data = img)
+                image=url+extension
+                EquipmentPost.objects.filter(id=equipment_post_ser.data["id"]).update(pathToEquipmentPostImage=image)
+            except:
+                pass
         else:
             return Response({"message":"there was an error while deleting the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
         
@@ -206,16 +232,17 @@ def createEquipmentPost(request):
             return Response({"message":"there was an error while deleting the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
         res=equipment_post_ser.data
+        res["pathToEquipmentPostImage"]=image
         res["owner"]=actor
         res["sport_category"]=sport_name
-        res["created_date"]=created_date
+        res["created_date"]=created_date.strftime("%Y-%m-%d %H:%M:%S")
         res["type"]="EquipmentPost"
         result={"@context":data["@context"],"summary":data["summary"],"type":data["type"],"actor":data["actor"],"object":res}
         return Response(result,status=status.HTTP_201_CREATED)
 
     # GET request
     else:
-        sports=list(Sport.objects.values())
+        sports=list(Sport.objects.filter(is_custom=False).values("id","sport_name"))
         res={"sports":sports}
         return Response(res,status=status.HTTP_200_OK)
 
@@ -224,7 +251,7 @@ def createEquipmentPost(request):
 def deleteEquipmentPost(request):
     data=request.data
 
-    actor_id=data["actor"]["id"]
+    actor_id=data["actor"]["Id"]
     equipment_post_id=data["object"]["post_id"]
 
     try:
@@ -248,12 +275,159 @@ def deleteEquipmentPost(request):
 
     return Response({"message":"Equipment post is deleted"},status=status.HTTP_200_OK)
 
+
+
+
+
+
+@login_required()
+@api_view(['DELETE'])
+def deleteEventPost(request):
+    data = request.data
+
+    actor_id = data["actor"]["Id"]
+    event_post_id = data["object"]["post_id"]
+
+    try:
+        actor = User.objects.get(Id=actor_id)
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+
+
+
+    try:
+        EventPost.objects.filter(pk=event_post_id).update(status="cancelled", capacity="cancelled")
+        event_post = EventPost.objects.get(id=event_post_id)
+    except:
+        return Response({"message": "There is no such event in the database, deletion operation is aborted"},
+                        status=status.HTTP_404_NOT_FOUND)
+
+    event_post_ser = EventPostActivityStreamSerializer(
+        data={"context": data["@context"], "summary": data["summary"], \
+              "actor": actor_id, "type": data["type"], "object": event_post_id})
+
+    if event_post_ser.is_valid():
+        event_post_ser.save()
+    else:
+        return Response({"message": "there was an error while deleting the event post"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    return Response({"message": "Event post is deleted"}, status=status.HTTP_200_OK)
+
+
+
+
+@login_required()
+@api_view(['POST'])
+def applyToEvent(request):
+    data = request.data
+
+    actor_id = data["actor"]["Id"]
+    event_id = data["event_id"]
+
+
+    # Try if the user is valid
+    try:
+        actor = User.objects.get(Id=actor_id)
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+    # Try if event is in the database
+    try:
+        event_post=EventPost.objects.get(id=event_id)
+    except:
+        return Response({"message":"There is no such event in the database, deletion operation is aborted"},status=status.HTTP_404_NOT_FOUND)
+
+
+    if not (event_post.capacity == "open to applications" and event_post.status == "upcoming"):                     # if the event is not open to applications or event status is
+        return Response({"message": "Event is closed to applications"}, status=400)         # event is full, passed or cancelled       HTTP412 maybe??
+
+
+    event_post_sport_id = event_post.sport_category_id
+    event_skill_requirement = event_post.skill_requirement_id  # bunu dene id olarak yaziyor ama kelime olarak nasil olduguna bak
+    isAdequate = True
+
+
+    try:
+        users_skill_level = InterestLevel.objects.get(owner_of_interest_id=actor_id, sport_name_id=event_post_sport_id)     # eger actor bu spor id icin skill level kaydetmediyse error olup except'e dusuyor adequate false aliyor
+    except:
+        return Response({"message": "There was an error about getting users skill level"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        users_skill_level_id = SkillLevel.objects.get(level_name=str(users_skill_level.skill_level))
+    except:
+        return Response({"message": "There was an error about getting users skill level"}, status=status.HTTP_404_NOT_FOUND)
+
+
+    if users_skill_level_id.id >= event_skill_requirement:
+        isAdequate = True
+    elif users_skill_level.skill_level >= event_skill_requirement:
+        isAdequate = False
+
+
+    applicationStatus = "waiting"
+    if not isAdequate:
+        applicationStatus = "inadeq"
+
+
+    application_ser=ApplicationSerializer(data={"user":actor_id, "event_post":event_post.id, "status":applicationStatus, "applicant_type":"player"})
+
+    if application_ser.is_valid():
+        try:
+            application_ser.save()
+        except:
+            return Response({"message": "There was an error about application serializer. You may have already applied."}, status=status.HTTP_406_NOT_ACCEPTABLE)
+    else:
+        return Response({"message": "There was an error about application serializer"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+    return Response({"message":"Application is successfully created"},status=status.HTTP_201_CREATED)
+
+
+@login_required()
+@api_view(['POST'])
+def acceptApplicant(request):
+    data = request.data
+
+    applicant_id = data["applicant_Id"]
+    event_id = data["event_Id"]
+
+    # Try if the user is valid
+    try:
+        actor = User.objects.get(Id=applicant_id)
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+    # Try if event is in the database
+    try:
+        event_post=EventPost.objects.get(id=event_id)
+    except:
+        return Response({"message":"There is no such event in the database, deletion operation is aborted"},status=status.HTTP_404_NOT_FOUND)
+
+
+    try:
+        application = Application.objects.filter(event_post_id=event_id, user_id=applicant_id)
+        event_post = EventPost.objects.get(id=event_id)
+    except:
+        return Response({"message": "There is no such application in the database, operation is aborted"}, status=status.HTTP_404_NOT_FOUND)
+
+
+    if event_post.participant_limit > event_post.current_player and event_post.status == "upcoming" and event_post.capacity == "open to applications":
+        new_part = event_post.current_player+1
+        if new_part == event_post.participant_limit:
+            EventPost.objects.filter(pk=event_id).update(capacity="full", current_player=new_part)
+        else:
+            EventPost.objects.filter(pk=event_id).update(current_player=new_part)
+    else:
+        return Response({"message": "The event is not available to accept the application. Full, cancelled or maybe past"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    application = application.update(status="accepted")
+    return Response({"message":"Application is accepted"},status=status.HTTP_200_OK)
+
 @login_required()  
 @api_view(['PATCH'])
 def changeEquipmentInfo(request):
     data=request.data
 
-    actor_id=data["actor"]["id"]
+    actor_id=data["actor"]["Id"]
     post_id=data["object"]["post_id"]
     try:
         actor=list(User.objects.filter(Id=actor_id).values('Id','name','surname','username'))[0]
@@ -279,7 +453,7 @@ def changeEquipmentInfo(request):
                 s=Sport.objects.get(sport_name=data["modifications"]["sport_category"])
                 data["modifications"]["sport_category"]=s.id
             except:
-                sport_ser=SportSerializer(data={"sport_name":data["modifications"]["sport_category"]})
+                sport_ser=SportSerializer(data={"sport_name":data["modifications"]["sport_category"],"is_custom":True})
                 if sport_ser.is_valid():
                     s=sport_ser.save()
                     data["modifications"]["sport_category"]=s.id
@@ -300,7 +474,7 @@ def changeEquipmentInfo(request):
         return Response({"message":"There was an error while updating the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
     equipment_post_updated["owner"]=actor
-    equipment_post_updated["created_date"]=equipment_post_updated["created_date"].strftime('%Y-%m-%d %H:%M')
+    equipment_post_updated["created_date"]=equipment_post_updated["created_date"].strftime('%Y-%m-%d %H:%M:%S')
     res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":equipment_post_updated}
     return Response(res,200)
 
@@ -309,7 +483,7 @@ def changeEquipmentInfo(request):
 @api_view(['PATCH'])
 def changeEventInfo(request):
     data=request.data
-    actor_id=data["actor"]["id"]
+    actor_id=data["actor"]["Id"]
     post_id=data["object"]["post_id"]
     try:
         actor=list(User.objects.filter(Id=actor_id).values('Id','name','surname','username'))[0]
@@ -333,7 +507,7 @@ def changeEventInfo(request):
                 s=Sport.objects.get(sport_name=data["modifications"]["sport_category"])
                 data["modifications"]["sport_category"]=s.id
             except:
-                sport_ser=SportSerializer(data={"sport_name":data["modifications"]["sport_category"]})
+                sport_ser=SportSerializer(data={"sport_name":data["modifications"]["sport_category"],"is_custom":True})
                 if sport_ser.is_valid():
                     s=sport_ser.save()
                     data["modifications"]["sport_category"]=s.id
@@ -342,21 +516,25 @@ def changeEventInfo(request):
                     res={"message":"Sport name is too long"}
                     return Response(res,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
-        skill=SkillLevel.objects.get(level_name=data["modifications"]["skill_requirement"])
-        data["modifications"]["skill_requirement"]=skill.id
+        if "skill_requirement" in modifications_keys:
+            skill=SkillLevel.objects.get(level_name=data["modifications"]["skill_requirement"])
+            data["modifications"]["skill_requirement"]=skill.id
+       
 
         event_post_ser = EventPostSerializer(event_post, data=data["modifications"], partial=True)
         if event_post_ser.is_valid():
             event_post_updated=model_to_dict(event_post_ser.save())
             event_post_updated["sport_category"]=Sport.objects.get(id=event_post_updated["sport_category"]).sport_name
-            event_post_updated["skill_requirement"]=skill.level_name
-            BadgeOfferedByEventPost.objects.filter(post=event_post).delete()
-            for badge_name in data["modifications"]["badges"]:
-                badge=Badge.objects.get(name=badge_name)
-                badge_id=badge.id
-                badge_ser=BadgeOfferedByEventPostSerializer(data={"post_id":post_id,"badge_id":badge_id})
-                if badge_ser.is_valid():
-                    badge_ser.save()
+            event_post_updated["skill_requirement"]=SkillLevel.objects.get(id=event_post_updated["skill_requirement"]).level_name
+            if "badges" in modifications_keys:
+                for badge_ in data["modifications"]["badges"]:
+                    badge_id=badge_["id"]
+                    badge_ser=BadgeOfferedByEventPostSerializer(data={"post":post_id,"badge":badge_id})
+                    if badge_ser.is_valid():
+                        BadgeOfferedByEventPost.objects.filter(post=event_post).delete()
+                        badge_ser.save()
+                    else:
+                        return Response({"message":badge_ser.errors},422)
 
             event_post_act_ser.save()
         else:
@@ -365,11 +543,57 @@ def changeEventInfo(request):
     else:
         return Response({"message":"There was an error while updating the event post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
-    event_post_updated["created_date"]=event_post_updated["created_date"].strftime('%Y-%m-%d %H:%M')
-    event_post_updated["date_time"]=event_post_updated["date_time"].strftime('%Y-%m-%d %H:%M')
+    event_post_updated["created_date"]=event_post_updated["created_date"].strftime('%Y-%m-%d %H:%M:%S')
+    event_post_updated["date_time"]=event_post_updated["date_time"].strftime('%Y-%m-%d %H:%M:%S')
     event_post_updated["owner"]=actor
+    event_post_updated["badges"]=list(BadgeOfferedByEventPost.objects.filter(post=post_id).values('badge__id','badge__name','badge__description','badge__pathToBadgeImage'))
     res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":event_post_updated}
     return Response(res,200)
+
+
+@login_required()
+@api_view(['GET'])
+def getWaitingApplications(request):
+    eventId = request.query_params["eventId"]
+    applicationList = list(Application.objects.filter(status="waiting", applicant_type="player", event_post_id=eventId).values())
+    if applicationList != []:
+        return JsonResponse(applicationList, safe=False)
+    else:
+        return Response({"message": "Waiting applications are not found"},404)
+
+
+@login_required()
+@api_view(['GET'])
+def getRejectedApplications(request):
+    eventId = request.query_params["eventId"]
+    applicationList = list(Application.objects.filter(status="rejected", applicant_type="player", event_post_id=eventId).values())
+    if applicationList != []:
+        return JsonResponse(applicationList, safe=False)
+    else:
+        return Response({"message": "Rejected applications are not found"},404)
+
+
+@login_required()
+@api_view(['GET'])
+def getAcceptedApplications(request):
+    eventId = request.query_params["eventId"]
+    applicationList = list(Application.objects.filter(status="accepted", applicant_type="player", event_post_id=eventId).values())
+    if applicationList != []:
+        return JsonResponse(applicationList, safe=False)
+    else:
+        return Response({"message": "Accepted applications are not found"},404)
+
+
+@login_required()
+@api_view(['GET'])
+def getInadequateApplications(request):
+    eventId = request.query_params["eventId"]
+    applicationList = list(Application.objects.filter(status="inadeq", applicant_type="player", event_post_id=eventId).values())
+    if applicationList != []:
+        return JsonResponse(applicationList, safe=False)
+    else:
+        return Response({"message": "Inadequate applications are not found"},404)
+
 
 @login_required()
 @api_view(['POST'])
@@ -398,7 +622,7 @@ def getEventPostDetails(request):
         comments=list(EventComment.objects.filter(post=post_id).order_by('id').values('id','content','owner','created_date','owner__Id','owner__name',\
             'owner__surname','owner__username'))
         for i in range(len(comments)):
-            comments[i]["created_date"]=comments[i]["created_date"].strftime('%Y-%m-%d %H:%M')
+            comments[i]["created_date"]=comments[i]["created_date"].strftime('%Y-%m-%d %H:%M:%S')
     except:
         comments=[]
 
@@ -419,6 +643,10 @@ def getEventPostDetails(request):
     except:
         spectators=[]
     
+    waiting_players=[]
+    rejected_players=[]
+    inadequate_player_applications=[]
+
     if actor_id==event_post_details.owner_id:
         try:
             waiting_players=list(Application.objects.filter(event_post=post_id,status="waiting",applicant_type="player").order_by('id').values('user__Id',\
@@ -430,6 +658,11 @@ def getEventPostDetails(request):
         'user__name','user__surname','user__username'))
         except:
             rejected_players=[]
+        try:
+            inadequate_player_applications=list(Application.objects.filter(event_post=post_id,status="inadequate",applicant_type="player").values('user__Id',\
+        'user__name','user__surname','user__username'))
+        except:
+            inadequate_player_applications=[]
 
     del data["actor"]["type"]
     del data["object"]["type"]
@@ -438,18 +671,24 @@ def getEventPostDetails(request):
     act_str=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
             "type":data["type"],"actor":data["actor"]["Id"],"object":event_ser.data["id"]})
 
+    if act_str.is_valid():
+        act_str.save()
+    else:
+        return Response({"message":"there was an error while viewing the event post"},status=status.HTTP_406_NOT_ACCEPTABLE)
+  
     event_post_details=model_to_dict(event_post_details)
     event_post_details["sport_category"]=sport
     event_post_details["comments"]=comments
     event_post_details["spectators"]=spectators
+    event_post_details["inadequate_player_applications"]=inadequate_player_applications
     event_post_details["waiting_players"]=waiting_players
     event_post_details["accepted_players"]=accepted_players
     event_post_details["rejected_players"]=rejected_players
     event_post_details["owner"]=list(User.objects.filter(Id=event_post_details["owner"]).values('Id','name','surname','username'))[0]
     event_post_details["is_event_creator"]=is_event_creator
     event_post_details["badges"]=badges_offered
-    event_post_details["date_time"]=event_post_details["date_time"].strftime('%Y-%m-%d %H:%M')
-    event_post_details["created_date"]=event_post_details["created_date"].strftime('%Y-%m-%d %H:%M')
+    event_post_details["date_time"]=event_post_details["date_time"].strftime('%Y-%m-%d %H:%M:%S')
+    event_post_details["created_date"]=event_post_details["created_date"].strftime('%Y-%m-%d %H:%M:%S')
     data["actor"]["type"]="Person"
     event_post_details["type"]="EventPost"
     data["object"]=event_post_details
@@ -499,13 +738,79 @@ def getEquipmentPostDetails(request):
 
     equipment_post_details=model_to_dict(equipment_post_details)
     equipment_post_details["sport_category"]=sport
-    equipment_post_details["created_date"]=equipment_post_details["created_date"].strftime('%Y-%m-%d %H:%M')
+    equipment_post_details["created_date"]=equipment_post_details["created_date"].strftime('%Y-%m-%d %H:%M:%S')
     equipment_post_details["is_event_creator"]=is_event_creator
     equipment_post_details["comments"]=comments
     equipment_post_details["type"]="EventPost"
     equipment_post_details["owner"]=list(User.objects.filter(Id=equipment_post_details["owner"]).values('Id','name','surname','username'))[0]
     res={"@context":data["@context"],"summary":data["summary"],"type":data["type"],"actor":data["actor"],"object":equipment_post_details}
     return Response(res,201)
+
+
+@login_required()
+@api_view(['POST'])
+def spectateToEvent(request):
+    data = request.data
+
+    actor_id = data["actor"]["Id"]
+    event_id = data["event_id"]
+
+    # Try if the user is valid
+    try:
+        actor = User.objects.get(Id=actor_id)
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+    # Try if event is in the database
+    try:
+        event_post = EventPost.objects.get(id=event_id)
+    except:
+        return Response({"message": "There is no such event in the database, spectate operation is aborted"},
+                        status=status.HTTP_404_NOT_FOUND)
+
+
+    if  event_post.current_spectator >= event_post.spectator_limit:
+        return Response({"message": "Spectator limit is full"}, status=400)
+
+    if event_post.status != "upcoming":
+        return Response({"message": "This is not an upcoming event. Maybe it is cancelled or passed."}, status=400)
+
+
+
+    ## Increase spectator by 1
+    cur_spec = event_post.current_spectator
+    EventPost.objects.filter(id=event_id).update(current_spectator = cur_spec+1)
+
+
+    applicationStatus = "accepted"
+    application_ser = ApplicationSerializer(
+        data={"user": actor_id, "event_post": event_post.id, "status": applicationStatus, "applicant_type": "spectator"})
+
+
+    if application_ser.is_valid():
+        try:
+            application_ser.save()
+        except:
+            return Response(
+                {"message": "There was an error about application serializer. You may have already applied."},
+                status=status.HTTP_406_NOT_ACCEPTABLE)
+    else:
+        return Response({"message": "There was an error about application serializer"},
+                        status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    return Response({"message": "Spectate application is successfully created"}, status=status.HTTP_201_CREATED)
+
+
+
+@login_required()
+@api_view(['GET'])
+def getSpectators(request):
+    eventId = request.query_params["eventId"]
+    applicationList = list(Application.objects.filter(applicant_type="spectator", event_post_id=eventId).values())
+    if applicationList != []:
+        return JsonResponse(applicationList, safe=False)
+    else:
+        return Response({"message": "Spectators are not found"},404)
+
 
 
 # It is a script for only one time run. It can only be run by Superadmin to avoid possible security bug
@@ -522,7 +827,8 @@ class SaveSportListScript(APIView):
         sportlist = response.json()['data']
 
         sportlist = [{  # filter fields of sports
-            'sport_name': process_string(x['attributes']['name'])
+            'sport_name': process_string(x['attributes']['name']),
+            "is_custom":False
         } for x in sportlist]
 
         sports = []
