@@ -1,5 +1,3 @@
-
-
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
@@ -36,42 +34,44 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import trLocale from 'date-fns/locale/tr';
 
+import { searchRequest } from '../services/SearchService';
 
 
+function CustomCard({ data }) {
 
-export function CustomCard({ data }) {
-  return (
-    <Card sx={{ maxWidth: 345 }} className="text-start">
-      <CardActionArea>
-        <CardMedia component="img" height="140" image={data.src} />
-        <CardContent>
-          <div className="row mb-2">
-            <div className="col-8 fw-bold fs-6">{data.title}</div>
-            <div
-              style={{ fontSize: 14 }}
-              className="col-4 text-end d-flex align-items-center justify-content-end text-muted"
-            >
-              {data.type}
-            </div>
-          </div>
-          <div className="row">
-            <div
-              style={{ fontSize: 14 }}
-              className="col-6 text-end d-flex align-items-center justify-content-start text-muted"
-            >
-              {data.location}
-            </div>
-            <div
-              style={{ fontSize: 12 }}
-              className="col-6 text-end d-flex align-items-center justify-content-end text-muted"
-            >
-              {data.date} / {data.time}
-            </div>
-          </div>
-        </CardContent>
-      </CardActionArea>
-    </Card>
-  );
+    console.log(data);
+
+    return (
+        <Card sx={{ maxWidth: 345 }} className="text-start">
+            <CardActionArea>
+                <CardMedia
+                    component="img"
+                    height="140"
+                    image={data.fields.pathToEventImage}
+                />
+                <CardContent>
+                    <div className='row mb-2'>
+                        <div className='col-8 fw-bold fs-6'>
+                            {data.fields.post_name}
+                        </div>
+                        {/* <div style={{ fontSize: 14 }} className='col-4 text-end d-flex align-items-center justify-content-end text-muted'>
+                            {data.fields.type}
+                        </div> */}
+                    </div>
+                    <div className='row'>
+                        <div style={{ fontSize: 14 }} className='col-6 text-end d-flex align-items-center justify-content-start text-muted'>
+                            {/* {data.fields.location} */}
+                            {data.fields.capacity}
+                        </div>
+                        <div style={{ fontSize: 12 }} className='col-6 text-end d-flex align-items-center justify-content-end text-muted'>
+                            {/* {data.fields.date} / {data.fields.time} */}
+                            {data.fields.date_time}
+                        </div>
+                    </div>
+                </CardContent>
+            </CardActionArea>
+        </Card>
+    );
 }
 
 const Alert = forwardRef(function Alert(props, ref) {
@@ -97,18 +97,38 @@ function SearchScreen(props) {
     const [position, setPosition] = useState()
     const [isSortedByLocation, setIsSortedByLocation] = useState(false)
     const [sportType, setSportType] = useState("")
-    const [capacity, setCapacity] = useState("open_to_application")
-    const [date, setDate] = useState("")
+    const [capacity, setCapacity] = useState("open to applications")
     const [radiusKm, setRadiusKm] = useState(2)
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()));
 
+    const [sports, setSports] = useState()
+    const [error, setError] = useState("")
+
+    const handleSearchRequest = async () => {
+        try {
+            const response = await searchRequest({
+                searchQuery: searchQuery,
+                position: position,
+                isSortedByLocation: isSortedByLocation,
+                sportType: sportType,
+                capacity: capacity,
+                radiusKm: formatRadius(radiusKm),
+                startDate: formatDate(startDate),
+                endDate: formatDate(endDate)
+            })
+            setSports(response.data)
+        } catch (e) {
+            console.log(e);
+            handleOpenNotification("Internal server error")
+        }
+    }
+
     const handleFilter = () => {
         if (startDate === "Invalid Date" || endDate === "Invalid Date" || endDate < startDate)
-            return handleOpenNotification()
+            return handleOpenNotification("End date cannot be earlier than start date!")
 
-
-
+        handleSearchRequest()
 
         toggleFilterDrawer()
     }
@@ -116,16 +136,24 @@ function SearchScreen(props) {
 
     const [showPosts, setShowPosts] = useState(false)
     const handleSearch = () => {
-        if (searchQuery === "basketball") {
-            setShowPosts(true)
-        } else {
-            setShowPosts(false)
-        }
+        setShowPosts(true)
+
+        handleSearchRequest()
     }
 
     const formatDate = (date) => {
-        const temp = date.toLocaleString().split(',')
-        return temp[0] + ":" + temp[1].split(':')[0].trim()
+        var year = date.getFullYear();
+
+        var month = (1 + date.getMonth()).toString();
+        month = month.length > 1 ? month : '0' + month;
+
+        var day = date.getDate().toString();
+        day = day.length > 1 ? day : '0' + day;
+
+        var hours = date.getHours().toString();
+        hours = hours.length > 1 ? hours : '0' + hours;
+
+        return day + '/' + month + '/' + year + ':' + hours;
     }
 
     const formatRadius = radius => (radius / 90) // km to lat-lng
@@ -138,9 +166,9 @@ function SearchScreen(props) {
 
     const [openNotification, setOpenNotification] = useState(false)
 
-  const handleCloseNotification = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
+    const handleOpenNotification = (error) => {
+        setError(error)
+        setOpenNotification(true)
     }
 
 
@@ -178,42 +206,6 @@ function SearchScreen(props) {
     const [openDate, setOpenDate] = useState(false)
     const [mode, setMode] = useState("events")
 
-
-
-    const sports = [
-        {
-            src: "https://cdnuploads.aa.com.tr/uploads/Contents/2021/08/20/thumbs_b_c_7d185fadd9e4918ce231278823901488.jpg?v=155228",
-            title: "Basketball Game 1",
-            type: "Basketball",
-            location: "Uskudar",
-            date: "17 Nov",
-            time: "13:00"
-        },
-        {
-            src: "https://iaftm.tmgrup.com.tr/251c2a/633/358/0/0/707/400?u=https://iftm.tmgrup.com.tr/2021/09/17/basketbol-super-liginde-2021-22-sezonu-heyecani-basliyor-1631887007257.jpeg",
-            title: "Basketball Game 2",
-            type: "Basketball",
-            location: "Kadikoy",
-            date: "18 Nov",
-            time: "17:00"
-        },
-        {
-            src: "https://www.istanbulsporenvanteri.com/uploads/resim/1050-1/wfbne3ck.c3d.png",
-            title: "Basketball Game 3",
-            type: "Basketball",
-            location: "Besiktas",
-            date: "19 Nov",
-            time: "18:00"
-        },
-        {
-            src: "https://trthaberstatic.cdn.wp.trt.com.tr/resimler/1500000/basketbol-thy-avrupa-ligi-1501700_2.jpg",
-            title: "Basketball Game 4",
-            type: "Basketball",
-            location: "Hisarustu",
-            date: "23 Nov",
-            time: "18:30"
-        }
-    ]
 
     return (
         <div className="container">
@@ -274,11 +266,11 @@ function SearchScreen(props) {
                 </div>
             </div>
             {
-                showPosts &&
+                showPosts && sports &&
                 <div className="row justify-content-center align-items-center mt-5">
                     <div className="row col-9">
                         {sports.map((sport) =>
-                            <div onClick={handleOpenNotification} className='col-12 col-md-6 col-lg-4 mb-4'>
+                            <div className='col-12 col-md-6 col-lg-4 mb-4'>
                                 <CustomCard data={sport} />
                             </div>
                         )}
@@ -287,7 +279,7 @@ function SearchScreen(props) {
             }
             <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={openNotification} autoHideDuration={2000} onClose={handleCloseNotification}>
                 <Alert onClose={handleCloseNotification} severity="error" sx={{ width: '100%' }}>
-                    End date cannot be earlier than start date!
+                    {error}
                 </Alert>
             </Snackbar>
             <Modal
@@ -340,7 +332,7 @@ function SearchScreen(props) {
                         <Collapse in={openCapacity} timeout="auto" unmountOnExit>
                             <List component="div" className="mt-2">
                                 <RadioGroup sx={{ ml: 4 }} value={capacity} onChange={(e) => setCapacity(e.target.value)} name="row-radio-buttons-group">
-                                    <FormControlLabel value="open_to_application" control={<Radio />} label="Open to application" />
+                                    <FormControlLabel value="open to applications" control={<Radio />} label="Open to applications" />
                                     <FormControlLabel value="full" control={<Radio />} label="Full" />
                                     <FormControlLabel value="cancelled" control={<Radio />} label="Cancelled" />
                                 </RadioGroup>
