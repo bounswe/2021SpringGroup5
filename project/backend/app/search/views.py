@@ -98,10 +98,8 @@ def searchEvent(request):
 
 
     result = serializers.serialize('json', eventList)
-    if result == '[]':
-        return HttpResponse(result, content_type="application/json", status=404)
-    else:
-        return HttpResponse(result, content_type="application/json", status=200)
+    return HttpResponse(result, content_type="application/json", status=200)
+
 
 
 
@@ -162,7 +160,4 @@ def searchEquipment(request):
 
 
     result = serializers.serialize('json', equipmentList)
-    if result == '[]':
-        return HttpResponse(result, content_type="application/json", status=404)
-    else:
-        return HttpResponse(result, content_type="application/json", status=200)
+    return HttpResponse(result, content_type="application/json", status=200)
