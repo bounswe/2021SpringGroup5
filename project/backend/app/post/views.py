@@ -116,7 +116,7 @@ def createEventPost(request):
                 try:
                     img=request.FILES["image"]
                     url="https://nzftk20rg4.execute-api.eu-central-1.amazonaws.com/v1/lodobucket451?file="
-                    extension="EventPost_"+str(event_ser.data["id"])
+                    extension="EventPost_"+str(event_ser.data["id"])+".jpg"
                     r = requests.post(url+extension, data = img)
                     image=url+extension
                     EventPost.objects.filter(id=event_ser.data["id"]).update(pathToEventImage=image)
@@ -214,7 +214,7 @@ def createEquipmentPost(request):
             try:
                 img=request.FILES["image"]
                 url="https://nzftk20rg4.execute-api.eu-central-1.amazonaws.com/v1/lodobucket451?file="
-                extension="EquipmentPost_"+str(equipment_post_ser.data["id"])
+                extension="EquipmentPost_"+str(equipment_post_ser.data["id"])+".jpg"
                 r = requests.post(url+extension, data = img)
                 image=url+extension
                 EquipmentPost.objects.filter(id=equipment_post_ser.data["id"]).update(pathToEquipmentPostImage=image)
