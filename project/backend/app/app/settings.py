@@ -42,8 +42,6 @@ INSTALLED_APPS = [
     'post',
     'register',
     'rest_framework_simplejwt'
-    #'provider',
-    #'provider.oauth2',
 ]
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
