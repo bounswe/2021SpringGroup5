@@ -139,7 +139,7 @@ def login_user(request):
 
         login(request, user)
 
-        return Response('SUCCESS', status=status.HTTP_200_OK)
+        return Response('SUCCESS', status=status.HTTP_201_CREATED)
     else:
         return Response({"message":"You are not logged in, you can't do this request"},401)
 
