@@ -6,11 +6,11 @@ from post.models import Sport
 class AuthenticationTests(APITestCase):
 
     def test_wrong_password(self):
-        Sport.objects.create(id=1,sport_name="football")
-        Sport.objects.create(id=2,sport_name="volleyball")
+        Sport.objects.create(id=1,sport_name="football", is_custom=False)
+        Sport.objects.create(id=2,sport_name="volleyball", is_custom=False)
         self.data = {
             "actor": {
-                "username": "e63hdk",
+                "username": "e6333hdk",
                 "name": "hasan",
                 "surname": "ali kurt",
                 "password1": "123456",
@@ -37,11 +37,11 @@ class AuthenticationTests(APITestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_existing_username(self):
-        Sport.objects.create(id=1,sport_name="football")
-        Sport.objects.create(id=2,sport_name="volleyball")
+        Sport.objects.create(id=1,sport_name="football", is_custom=False)
+        Sport.objects.create(id=2,sport_name="volleyball", is_custom=False)
         self.data = {
             "actor": {
-                "username": "e632hdk",
+                "username": "e6323hdk",
                 "name": "hasan",
                 "surname": "ali kurt",
                 "password1": "1234567",
@@ -68,11 +68,11 @@ class AuthenticationTests(APITestCase):
         self.assertEqual(response.status_code, 409)
 
     def test_existing_mail(self):
-        Sport.objects.create(id=1,sport_name="football")
-        Sport.objects.create(id=2,sport_name="volleyball")
+        Sport.objects.create(id=1,sport_name="football", is_custom=False)
+        Sport.objects.create(id=2,sport_name="volleyball", is_custom=False)
         self.data2 = {
             "actor": {
-                "username": "e632hdk",
+                "username": "e6321hdk",
                 "name": "hasan",
                 "surname": "ali kurt",
                 "password1": "1234567",
@@ -95,7 +95,7 @@ class AuthenticationTests(APITestCase):
         }
         self.data = {
             "actor": {
-                "username": "e571hdk",
+                "username": "e5711hdk",
                 "name": "hasan",
                 "surname": "ali kurt",
                 "password1": "1234567",
@@ -121,8 +121,8 @@ class AuthenticationTests(APITestCase):
         self.assertEqual(response.status_code, 409)
 
     def test_register(self):
-        Sport.objects.create(id=1,sport_name="football")
-        Sport.objects.create(id=2,sport_name="volleyball")
+        Sport.objects.create(id=1,sport_name="football", is_custom=False)
+        Sport.objects.create(id=2,sport_name="volleyball", is_custom=False)
         self.data = {
             "actor": {
                 "username": "e1453hdk",
@@ -151,11 +151,11 @@ class AuthenticationTests(APITestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_login(self):
-        Sport.objects.create(id=1,sport_name="football")
-        Sport.objects.create(id=2,sport_name="volleyball")
+        Sport.objects.create(id=1,sport_name="football", is_custom=False)
+        Sport.objects.create(id=2,sport_name="volleyball", is_custom=False)
         self.data = {
             "actor": {
-                "username": "e751hdk",
+                "username": "e75112hdk",
                 "name": "SERHAT",
                 "surname": "BAYRAKTAR",
                 "password1": "hisimım",
@@ -178,7 +178,7 @@ class AuthenticationTests(APITestCase):
         }
         self.data2 = {
             "actor": {
-                "username": "e751hdk",
+                "username": "e75112hdk",
                 "surname": "BAYRAKTAR",
                 "password": "hisimım",
 
