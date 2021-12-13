@@ -5,10 +5,46 @@ import { Button, Card, CardContent, Typography } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import './Profile.css';
-import { CustomCard } from './SearchScreen';
 import { useAuth } from '../auth/Auth';
 import { toTitleCase } from '../helpers/functions';
 import { getUserInfo } from '../services/UserService';
+import CardMedia from '@mui/material/CardMedia';
+import CardActionArea from '@mui/material/CardActionArea';
+
+function CustomCard({ data }) {
+  return (
+    <Card sx={{ maxWidth: 345 }} className="text-start">
+      <CardActionArea>
+        <CardMedia component="img" height="140" image={data.src} />
+        <CardContent>
+          <div className="row mb-2">
+            <div className="col-8 fw-bold fs-6">{data.title}</div>
+            <div
+              style={{ fontSize: 14 }}
+              className="col-4 text-end d-flex align-items-center justify-content-end text-muted"
+            >
+              {data.type}
+            </div>
+          </div>
+          <div className="row">
+            <div
+              style={{ fontSize: 14 }}
+              className="col-6 text-end d-flex align-items-center justify-content-start text-muted"
+            >
+              {data.location}
+            </div>
+            <div
+              style={{ fontSize: 12 }}
+              className="col-6 text-end d-flex align-items-center justify-content-end text-muted"
+            >
+              {data.date} / {data.time}
+            </div>
+          </div>
+        </CardContent>
+      </CardActionArea>
+    </Card>
+  );
+}
 
 const Profile = () => {
   const { me, logout, login, refresh, isAuthenticated, loading } = useAuth();
