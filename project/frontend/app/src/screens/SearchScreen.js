@@ -1,5 +1,3 @@
-
-
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
@@ -40,29 +38,34 @@ import { searchRequest } from '../services/SearchService';
 
 
 function CustomCard({ data }) {
+
+    console.log(data);
+
     return (
         <Card sx={{ maxWidth: 345 }} className="text-start">
             <CardActionArea>
                 <CardMedia
                     component="img"
                     height="140"
-                    image={data.src}
+                    image={data.fields.pathToEventImage}
                 />
                 <CardContent>
                     <div className='row mb-2'>
                         <div className='col-8 fw-bold fs-6'>
-                            {data.title}
+                            {data.fields.post_name}
                         </div>
-                        <div style={{ fontSize: 14 }} className='col-4 text-end d-flex align-items-center justify-content-end text-muted'>
-                            {data.type}
-                        </div>
+                        {/* <div style={{ fontSize: 14 }} className='col-4 text-end d-flex align-items-center justify-content-end text-muted'>
+                            {data.fields.type}
+                        </div> */}
                     </div>
                     <div className='row'>
                         <div style={{ fontSize: 14 }} className='col-6 text-end d-flex align-items-center justify-content-start text-muted'>
-                            {data.location}
+                            {/* {data.fields.location} */}
+                            {data.fields.capacity}
                         </div>
                         <div style={{ fontSize: 12 }} className='col-6 text-end d-flex align-items-center justify-content-end text-muted'>
-                            {data.date} / {data.time}
+                            {/* {data.fields.date} / {data.fields.time} */}
+                            {data.fields.date_time}
                         </div>
                     </div>
                 </CardContent>
@@ -93,7 +96,7 @@ function SearchScreen(props) {
     const [position, setPosition] = useState()
     const [isSortedByLocation, setIsSortedByLocation] = useState(false)
     const [sportType, setSportType] = useState("")
-    const [capacity, setCapacity] = useState("open_to_application")
+    const [capacity, setCapacity] = useState("open to applications")
     const [radiusKm, setRadiusKm] = useState(2)
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()));
@@ -103,19 +106,19 @@ function SearchScreen(props) {
 
     const handleSearchRequest = async () => {
         try {
-            const sports = await searchRequest({
+            const response = await searchRequest({
                 searchQuery: searchQuery,
                 position: position,
                 isSortedByLocation: isSortedByLocation,
                 sportType: sportType,
                 capacity: capacity,
-                radiusKm: radiusKm,
-                startDate: startDate,
-                endDate: endDate
+                radiusKm: formatRadius(radiusKm),
+                startDate: formatDate(startDate),
+                endDate: formatDate(endDate)
             })
-
-            setSports(sports)
+            setSports(response.data)
         } catch (e) {
+            console.log(e);
             handleOpenNotification("Internal server error")
         }
     }
@@ -137,8 +140,18 @@ function SearchScreen(props) {
     }
 
     const formatDate = (date) => {
-        const temp = date.toLocaleString().split(',')
-        return temp[0] + ":" + temp[1].split(':')[0].trim()
+        var year = date.getFullYear();
+
+        var month = (1 + date.getMonth()).toString();
+        month = month.length > 1 ? month : '0' + month;
+
+        var day = date.getDate().toString();
+        day = day.length > 1 ? day : '0' + day;
+
+        var hours = date.getHours().toString();
+        hours = hours.length > 1 ? hours : '0' + hours;
+
+        return day + '/' + month + '/' + year + ':' + hours;
     }
 
     const formatRadius = radius => (radius / 90) // km to lat-lng
@@ -316,7 +329,7 @@ function SearchScreen(props) {
                         <Collapse in={openCapacity} timeout="auto" unmountOnExit>
                             <List component="div" className="mt-2">
                                 <RadioGroup sx={{ ml: 4 }} value={capacity} onChange={(e) => setCapacity(e.target.value)} name="row-radio-buttons-group">
-                                    <FormControlLabel value="open_to_application" control={<Radio />} label="Open to application" />
+                                    <FormControlLabel value="open to applications" control={<Radio />} label="Open to applications" />
                                     <FormControlLabel value="full" control={<Radio />} label="Full" />
                                     <FormControlLabel value="cancelled" control={<Radio />} label="Cancelled" />
                                 </RadioGroup>
