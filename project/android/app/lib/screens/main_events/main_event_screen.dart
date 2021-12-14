@@ -37,7 +37,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
     },
     {
       "id": 3,
-      "name": " Çift Kale Futbol Maçı",
+      "name": " Cift Kale Futbol Maçı",
       "description": 'Genç yeetenekleri bekliyorum!',
       "image": "assets/images/football-sport.jpg",
       "location": "Etiler Naturel Park",
