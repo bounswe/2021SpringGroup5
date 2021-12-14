@@ -2,7 +2,6 @@ import './General.css';
 
 function CreateEvent() {
 
-
   function onSubmitClick(e) {
 
     var splitLocation = (document.getElementById("LongitudeLatitude").value).split(",");
@@ -55,20 +54,35 @@ function CreateEvent() {
         if (!form.checkValidity()) {
 
           console.log("required inputs");
+          
+          alert('You should enter necessary inputs.');
 
           e.preventDefault()
           e.stopPropagation()
         } else {
 
           console.log("submited");
+          alert('The post published successfully. You will redirect to the detail page of the post.');
+          window.location.href = '/eventDetail/5';
 
-          e.preventDefault()
-          e.stopPropagation()
+          e.preventDefault();
+          e.stopPropagation();
         }
 
         form.classList.add('was-validated')
 
       })
+  };
+
+  function sporCategoryChange() {
+    var sporCategory = document.getElementById("sportCategory").value;
+    if(sporCategory == 'Other') {
+      var element = document.getElementById('spor-category-other');
+      element.classList.add('d-block');
+    } else {
+      var element = document.getElementById('spor-category-other');
+      element.classList.remove('d-block');
+    }
   };
 
 
@@ -92,7 +106,7 @@ function CreateEvent() {
             <div className="col-md-8 row">
               <div className="col-md-8 form-group has-validation">
                 <label htmlFor="sportCategory">Sport Category</label>
-                <select className="form-control" id="sportCategory" name="sportCategory" required>
+                <select className="form-control" id="sportCategory" name="sportCategory" onChange={sporCategoryChange} required>
                   <option value="">Choose</option>
                   <option value="Handball">Handball</option>
                   <option value="Football">Football</option>
@@ -104,7 +118,7 @@ function CreateEvent() {
                 </div>
               </div>
 
-              <div className="col-md-4 form-group has-validation">
+              <div className="col-md-4 form-group has-validation" id="spor-category-other">
                 <label htmlFor="sporCategoryOther">Spor Category (Other)</label>
                 <input type="text" className="form-control" id="sporCategoryOther" name="sporCategoryOther" placeholder="Enter spor category" />
               </div>
@@ -135,17 +149,17 @@ function CreateEvent() {
               </div>
             </div>
 
-            <div className="col-md-6 row">
+            <div className="col-md-8 row">
               <div className="col-md-6 form-group has-validation">
                 <label htmlFor="LongitudeLatitude">Longitude, Latitude</label>
-                <input type="text" className="form-control" id="LongitudeLatitude" name="LongitudeLatitude" placeholder="Click the button" required />
+                <input type="text" className="form-control" id="LongitudeLatitude" name="LongitudeLatitude" placeholder="Enter longtitude and latitude" required />
                 <div className="invalid-feedback">
                   Please enter longitude and latitude.
                 </div>
               </div>
               <div className="col-md-6">
                 <label className="col-md-12" htmlFor=""></label>
-                <button className="btn">Click for the google map</button>
+                <a className="btn">Choose from the map (under maintenance)</a>
               </div>
             </div>
 
