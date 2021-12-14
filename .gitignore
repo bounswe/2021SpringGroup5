@@ -6,3 +6,5 @@
 __pycache__
 /practice-app/group5_api/data/
 /node_modules
+.dart_tool
+build
