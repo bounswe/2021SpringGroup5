@@ -1,6 +1,4 @@
 import './App.css';
-import { useState } from 'react';
-import Header from './components/Common/Header';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
 import HomeScreen from './screens/HomeScreen';
@@ -14,31 +12,20 @@ import Profile from './screens/Profile';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import SearchScreen from './screens/SearchScreen';
+import AuthenticatedRoute from './auth/AuthenticatedRoute';
+import { Auth, useAuth } from './auth/Auth';
 
 function App() {
-  const [user, setUser] = useState(true);
+  const { me } = useAuth();
   const queryClient = new QueryClient();
 
   return (
     <div className="App">
       <QueryClientProvider client={queryClient}>
-        {user && (
-          <>
-            <Header user={user} />
-            <Switch>
-              <Route path="/event/:id" component={EventScreen} />
-              <Route path="/profile" component={Profile} />
-              <Route path="/search" component={SearchScreen} />
-              <Route path="/createEvent" component={CreateEventScreen} />
-              <Route path="/eventDetail/:id" component={EventDetailScreen} />
-              <Route path="/" component={HomeScreen} />
-            </Switch>
-          </>
-        )}
-        {!user && (
+        <Auth>
           <Switch>
             <Route path="/login">
-              <LoginScreen setUser={setUser} />
+              <LoginScreen />
             </Route>
             <Route path="/forgot-password">
               <ForgotPasswordScreen />
@@ -46,12 +33,17 @@ function App() {
             <Route path="/register">
               <RegisterScreen />
             </Route>
-            <Route path="/profile">
-              <Profile />
-            </Route>
+
+            <AuthenticatedRoute path="/event/:id" component={EventScreen} />
+            <AuthenticatedRoute path="/profile" component={Profile} />
+            <AuthenticatedRoute path="/search" exact component={SearchScreen} />
+            <AuthenticatedRoute path="/createEvent" component={CreateEventScreen} />
+            <AuthenticatedRoute path="/eventDetail/:id" component={EventDetailScreen} />
+            <AuthenticatedRoute path="/" exact component={HomeScreen} />
+
             <Redirect exact from="/" to="/login" />
           </Switch>
-        )}
+        </Auth>
       </QueryClientProvider>
     </div>
   );
