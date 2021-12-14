@@ -57,7 +57,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     Container(
                         decoration:
                             BoxDecoration(color: Colors.blue.withOpacity(0.4)),
-                        child: Text("Type Your Event Description",
+                        child: const Text("Type Your Event Description",
                             style: TextStyle(fontSize: 16)))
                   ],
                 ),

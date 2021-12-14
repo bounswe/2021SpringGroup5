@@ -229,9 +229,9 @@ class _MainEventScreenState extends State<MainEventScreen> {
                         ),
                       ),
                     )
-                  : Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: const Text(
+                  : const Padding(
+                      padding: EdgeInsets.only(top: 20),
+                      child: Text(
                         'Event is not found!',
                         style: TextStyle(fontSize: 20),
                       ),
@@ -254,7 +254,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
                   ),
                 );
               },
-              child: Text(
+              child: const Text(
                 'CREATE EVENT',
                 style: TextStyle(fontSize: 15),
               )),
