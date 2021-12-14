@@ -175,8 +175,12 @@ def createEquipmentPost(request):
         owner_id=data["object"]["owner_id"]
         equipment_post_name=data["object"]["post_name"]
         sport_category=data["object"]["sport_category"]
-        longitude=data["object"]["longitude"]
-        latitude=data["object"]["latitude"]
+        try:
+            longitude=data["object"]["longitude"]
+            latitude=data["object"]["latitude"]
+        except:
+            longitude=None
+            latitude=None
         description=data["object"]["description"]
         #image=data["object"]["pathToEquipmentPostImage"]
         link=data["object"]["link"]
