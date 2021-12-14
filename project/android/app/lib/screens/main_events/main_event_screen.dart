@@ -21,7 +21,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
   final List<Map<String, dynamic>> eventList = [
     {
       "id": 1,
-      "name": "Tek Pota Basket Maçı",
+      "name": "Basket Maçı",
       "description": 'Güzel bir maç olması dileğiyle!',
       "image": "assets/images/basketball-sport.jpg",
       "location": "Uçaksavar Stadyumu",
