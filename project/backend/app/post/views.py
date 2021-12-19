@@ -2,6 +2,8 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from requests.api import post
+
+from register.models import Follow
 from .models import Application, EquipmentComment, EventComment
 from post.models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream, Application
 from django.utils.dateparse import parse_datetime
@@ -631,6 +633,7 @@ def getEventPostDetails(request):
     except:
         sport=event_post_details.sport_category_id
 
+    skill_requirement=SkillLevel.objects.get(level_name=event_post_details.skill_requirement).level_name
     try:
         accepted_players=list(Application.objects.filter(event_post=post_id,status="accepted",applicant_type="player").values('user__Id',\
         'user__name','user__surname','user__username'))
@@ -677,6 +680,7 @@ def getEventPostDetails(request):
         return Response({"message":"there was an error while viewing the event post"},status=status.HTTP_406_NOT_ACCEPTABLE)
   
     event_post_details=model_to_dict(event_post_details)
+    event_post_details["skill_requirement"]=skill_requirement
     event_post_details["sport_category"]=sport
     event_post_details["comments"]=comments
     event_post_details["spectators"]=spectators
@@ -852,8 +856,34 @@ def getSpectators(request):
     else:
         return Response({"message": "Spectators are not found"},404)
 
+@login_required
+@api_view(['POST'])
+def homePageEvents(request):
+    data=request.data
+    actor_id=data["actor"]["Id"]
 
+    try:
+        actor=model_to_dict(User.objects.get(Id=actor_id))
+    except:
+        return Response({"message":"There is no such user in the system"},404)
 
+    following_user_ids=list(Follow.objects.filter(follower=actor_id).values('following__Id'))
+
+    if len(following_user_ids)==0:
+        return Response({"message":"No record found"},404)
+
+    result_events=[]
+    for i in range(len(following_user_ids)):
+        try:
+            event=model_to_dict(EventPost.objects.filter(owner=following_user_ids[i]["following__Id"],status='upcoming').last())
+            sport_name=Sport.objects.get(id=event["sport_category"]).sport_name
+            event["sport_category"]=sport_name
+            event["skill_requirement"]=SkillLevel.objects.get(level_name=event["skill_requirement"]).level_name
+            result_events.append(event)
+        except:
+            continue
+
+    
 # It is a script for only one time run. It can only be run by Superadmin to avoid possible security bug
 # It will fill the database with sports which are fetched from Decathlon API, with necessary fields.
 class SaveSportListScript(APIView):

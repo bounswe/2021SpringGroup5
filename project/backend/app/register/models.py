@@ -18,3 +18,11 @@ class InterestLevel(models.Model):
     owner_of_interest = models.ForeignKey(User, on_delete=models.CASCADE)
     skill_level = models.ForeignKey('post.SkillLevel', null=True, on_delete=models.CASCADE)
     sport_name = models.ForeignKey('post.Sport', on_delete=models.CASCADE)
+
+class Follow(models.Model):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['follower', 'following'], name='a user follows another user')
+        ]
+    follower=models.ForeignKey(User,null=False,blank=False,on_delete=models.CASCADE)
+    following=models.ForeignKey(User,null=False,blank=False,on_delete=models.CASCADE)
