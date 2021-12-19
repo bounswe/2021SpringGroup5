@@ -697,6 +697,47 @@ def getEventPostDetails(request):
 
 @login_required()
 @api_view(['POST'])
+def getEventPostAnalytics(request):
+    data=request.data
+    actor_id = data["actor"]["Id"]
+    event_post_id = data["object"]["post_id"]
+
+    try:
+        actor = User.objects.get(Id=actor_id)
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+
+    eventPost=EventPost.objects.filter(id=event_post_id)
+    owner_of_the_event=list(eventPost.values('owner__Id'))[0]["owner__Id"]
+    if owner_of_the_event!=actor_id:
+        return Response({"message":"You are not the creator of this event you can't see the analytics"},405)
+    
+    accepted_users_ids=list(Application.objects.filter(event_post=event_post_id).values('user__Id'))
+
+    if len(accepted_users_ids)==0:
+        avg=0
+    else:
+        total_applied_event_count=0
+        for i in range(len(accepted_users_ids)):
+            user_id=accepted_users_ids[i]["user__Id"]
+            total_applied_event_count+=len(list(Application.objects.filter(user=user_id,status='accepted',applicant_type='player')))
+
+        avg=total_applied_event_count/len(accepted_users_ids)
+
+    # returning average number of events that accepted users have been accepted to other events
+    data["object"]["avg_accepted_event_count_of_accepted_users"]=avg
+    event_post_act_ser=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
+    "actor":actor_id,"type":data["type"],"object":eventPost.values('id')[0]['id']})
+
+    if event_post_act_ser.is_valid():
+        event_post_act_ser.save()
+    else:
+        return Response({"Your request is not executed",405})
+
+    return Response(data,201)
+
+@login_required()
+@api_view(['POST'])
 def getEquipmentPostDetails(request):
     data=request.data
     actor_id=data["actor"]["Id"]
@@ -850,7 +891,7 @@ class SaveBadgesScript(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def post(self, request):
-        badges=[{"name":"friendly","description":"You are a friendly player","pathToBadgeImage":""},\
+        badges=[{"name":"enthusiastic","description":"the trait of being overly enthusiastic","pathToBadgeImage":"https://image.shutterstock.com/image-photo/happy-enthusiastic-bearded-dad-stylish-260nw-721916131.jpg","wikiId":"Q107261265"},\
             {"name":"team player","description":"You are such a team player","pathToBadgeImage":""},\
                 {"name":"fair player","description":"You are a fair player","pathToBadgeImage":""},\
                     {"name":"good server","description":"You are a good server","pathToBadgeImage":""},\
