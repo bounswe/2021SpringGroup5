@@ -24,5 +24,5 @@ class Follow(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['follower', 'following'], name='a user follows another user')
         ]
-    follower=models.ForeignKey(User,null=False,blank=False,on_delete=models.CASCADE)
-    following=models.ForeignKey(User,null=False,blank=False,on_delete=models.CASCADE)
+    follower=models.ForeignKey(User,null=False,blank=False,on_delete=models.CASCADE,related_name='follower')
+    following=models.ForeignKey(User,null=False,blank=False,on_delete=models.CASCADE,related_name='following')

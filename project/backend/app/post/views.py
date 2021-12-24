@@ -2,7 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from requests.api import post
-
+from rest_framework_simplejwt.backends import TokenBackend
 from register.models import Follow
 from .models import Application, EquipmentComment, EventComment
 from post.models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream, Application
@@ -57,7 +57,14 @@ def createEventPost(request):
         repeating_frequency=data["object"]["repeating_frequency"]
         badges=data["object"]["badges"]
 
-        actor_id=data["actor"]["Id"]
+        token = request.headers['Authentication']
+        token = token[7:]
+        valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+        userId = valid_data['Id']
+
+        user = User.objects.get(Id=userId)
+
+        actor_id=user.Id
         sport_category=process_string(sport_category)
 
         if spectator_limit==None:
@@ -174,7 +181,14 @@ def createEquipmentPost(request):
     if request.method=='POST':
         #data=request.data
         data=json.loads(request.POST.get('json'))
-        owner_id=data["object"]["owner_id"]
+        token = request.headers['Authentication']
+        token = token[7:]
+        valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+        userId = valid_data['Id']
+
+        user = User.objects.get(Id=userId)
+
+        owner_id=user.Id
         equipment_post_name=data["object"]["post_name"]
         sport_category=data["object"]["sport_category"]
         longitude=data["object"]["longitude"]
@@ -253,7 +267,14 @@ def createEquipmentPost(request):
 def deleteEquipmentPost(request):
     data=request.data
 
-    actor_id=data["actor"]["Id"]
+    token = request.headers['Authentication']
+    token = token[7:]
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
+
+    actor_id=user.Id
     equipment_post_id=data["object"]["post_id"]
 
     try:
@@ -429,7 +450,14 @@ def acceptApplicant(request):
 def changeEquipmentInfo(request):
     data=request.data
 
-    actor_id=data["actor"]["Id"]
+    token = request.headers['Authentication']
+    token = token[7:]
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
+
+    actor_id=user.Id
     post_id=data["object"]["post_id"]
     try:
         actor=list(User.objects.filter(Id=actor_id).values('Id','name','surname','username'))[0]
@@ -485,7 +513,14 @@ def changeEquipmentInfo(request):
 @api_view(['PATCH'])
 def changeEventInfo(request):
     data=request.data
-    actor_id=data["actor"]["Id"]
+    token = request.headers['Authentication']
+    token = token[7:]
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
+
+    actor_id=user.Id
     post_id=data["object"]["post_id"]
     try:
         actor=list(User.objects.filter(Id=actor_id).values('Id','name','surname','username'))[0]
@@ -601,7 +636,14 @@ def getInadequateApplications(request):
 @api_view(['POST'])
 def getEventPostDetails(request):
     data=request.data
-    actor_id=data["actor"]["Id"]
+    token = request.headers['Authentication']
+    token = token[7:]
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
+
+    actor_id=user.Id
     post_id=data["object"]["post_id"]
     is_event_creator=False
     try:
@@ -703,7 +745,14 @@ def getEventPostDetails(request):
 @api_view(['POST'])
 def getEventPostAnalytics(request):
     data=request.data
-    actor_id = data["actor"]["Id"]
+    token = request.headers['Authentication']
+    token = token[7:]
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
+
+    actor_id=user.Id
     event_post_id = data["object"]["post_id"]
 
     try:
@@ -744,7 +793,14 @@ def getEventPostAnalytics(request):
 @api_view(['POST'])
 def getEquipmentPostDetails(request):
     data=request.data
-    actor_id=data["actor"]["Id"]
+    token = request.headers['Authentication']
+    token = token[7:]
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
+
+    actor_id=user.Id
     post_id=data["object"]["post_id"]
     is_event_creator=False
     try:
@@ -855,33 +911,6 @@ def getSpectators(request):
         return JsonResponse(applicationList, safe=False)
     else:
         return Response({"message": "Spectators are not found"},404)
-
-@login_required
-@api_view(['POST'])
-def homePageEvents(request):
-    data=request.data
-    actor_id=data["actor"]["Id"]
-
-    try:
-        actor=model_to_dict(User.objects.get(Id=actor_id))
-    except:
-        return Response({"message":"There is no such user in the system"},404)
-
-    following_user_ids=list(Follow.objects.filter(follower=actor_id).values('following__Id'))
-
-    if len(following_user_ids)==0:
-        return Response({"message":"No record found"},404)
-
-    result_events=[]
-    for i in range(len(following_user_ids)):
-        try:
-            event=model_to_dict(EventPost.objects.filter(owner=following_user_ids[i]["following__Id"],status='upcoming').last())
-            sport_name=Sport.objects.get(id=event["sport_category"]).sport_name
-            event["sport_category"]=sport_name
-            event["skill_requirement"]=SkillLevel.objects.get(level_name=event["skill_requirement"]).level_name
-            result_events.append(event)
-        except:
-            continue
 
     
 # It is a script for only one time run. It can only be run by Superadmin to avoid possible security bug
