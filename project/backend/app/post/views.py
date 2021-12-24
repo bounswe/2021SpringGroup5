@@ -421,7 +421,7 @@ def acceptApplicant(request):
     application = application.update(status="accepted")
 
 
-    accept_act_stream_ser = AcceptActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":data["actor"]["Id"], "object":data["object"]["Id"]})
+    accept_act_stream_ser = EventPostActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":data["actor"]["Id"], "object":data["object"]["Id"]})
     if accept_act_stream_ser.is_valid():
         accept_act_stream_ser.save()
 
