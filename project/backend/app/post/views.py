@@ -62,17 +62,13 @@ def createEventPost(request):
         valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
         userId = valid_data['Id']
 
-        user = User.objects.get(Id=userId)
+        user =list(User.objects.filter(Id=userId).values('Id','name','username','surname'))[0]
 
-        actor_id=user.Id
+        actor_id=User.objects.get(Id=userId).Id
         sport_category=process_string(sport_category)
 
         if spectator_limit==None:
             spectator_limit=0
-        try:
-            actor=list(User.objects.filter(Id=actor_id).values('Id','name','username','surname'))[0]
-        except:
-            return Response({"message":"There is no such user in the system"},404)
 
         event_status="upcoming"
         capacity="open to applications"
@@ -134,7 +130,7 @@ def createEventPost(request):
                     pass
 
                 event_act_stream_ser=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
-                "type":data["type"],"actor":data["actor"]["Id"],"object":event_ser.data["id"]})
+                "type":data["type"],"actor":actor_id,"object":event_ser.data["id"]})
                 if event_act_stream_ser.is_valid():
                     event_act_stream_ser.save()
                 else:
@@ -156,7 +152,7 @@ def createEventPost(request):
         data["actor"]["type"]="Person"
         res=event_ser.data
         res["pathToEventImage"]=image
-        res["owner"]=actor
+        res["owner"]=user
         res["type"]="EventPost"
         res["created_date"]= created_date.strftime("%Y-%m-%d %H:%M:%S")
         res["date_time"]=str(date_time)
@@ -646,10 +642,6 @@ def getEventPostDetails(request):
     actor_id=user.Id
     post_id=data["object"]["post_id"]
     is_event_creator=False
-    try:
-        actor=model_to_dict(User.objects.get(Id=actor_id))
-    except:
-        return Response({"message":"There is no such user in the system"},404)
 
     try:
         event_post_details=EventPost.objects.get(id=post_id)
@@ -714,7 +706,7 @@ def getEventPostDetails(request):
 
     event_ser=EventPostSerializer(event_post_details)
     act_str=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
-            "type":data["type"],"actor":data["actor"]["Id"],"object":event_ser.data["id"]})
+            "type":data["type"],"actor":actor_id,"object":event_ser.data["id"]})
 
     if act_str.is_valid():
         act_str.save()
@@ -803,10 +795,7 @@ def getEquipmentPostDetails(request):
     actor_id=user.Id
     post_id=data["object"]["post_id"]
     is_event_creator=False
-    try:
-        actor=User.objects.get(Id=actor_id)
-    except:
-        return Response({"message":"There is no such user in the system"},404)
+    
 
     try:
         equipment_post_details=EquipmentPost.objects.get(id=post_id)
@@ -831,7 +820,7 @@ def getEquipmentPostDetails(request):
 
     equipment_post_ser=EquipmentPostSerializer(equipment_post_details)
     act_str=EquipmentPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
-            "actor":data["actor"]["Id"],"type":data["type"],"object":equipment_post_ser.data["id"]})
+            "actor":actor_id,"type":data["type"],"object":equipment_post_ser.data["id"]})
     if act_str.is_valid():
         act_str.save()
     else:
