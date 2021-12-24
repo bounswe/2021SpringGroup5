@@ -373,7 +373,6 @@ def applyToEvent(request):
     if application_ser.is_valid():
         try:
             application_ser.save()
-            print("asdasd")
         except:
             return Response({"message": "There was an error about application serializer. You may have already applied."}, status=status.HTTP_406_NOT_ACCEPTABLE)
     else:
