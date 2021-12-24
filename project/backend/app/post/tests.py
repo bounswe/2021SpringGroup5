@@ -985,5 +985,5 @@ class PostTests(APITestCase):
         response = client.get("/post/get_inadequate_applications/?eventId=3", format='json')
         self.assertEqual(response.status_code, 200)
 
-    def test_get_event_analytics(self):
-        
+    def test_event_analytics(self):
+        pass
