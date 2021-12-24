@@ -129,9 +129,3 @@ class BadgeOwnedByUser(models.Model):
     isGivenBySystem=models.BooleanField()
 
 
-class AcceptActivityStream(models.Model):
-    context = models.URLField(null=False, blank=False)
-    summary = models.CharField(max_length=200, null=False, blank=False)
-    type = models.CharField(max_length=20, null=False, blank=False)
-    actor=models.ForeignKey('register.User',on_delete=CASCADE)
-    object=models.ForeignKey(EventPost,on_delete=CASCADE)
