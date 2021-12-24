@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=100)),
                 ('description', models.TextField(blank=True, max_length=300, null=True)),
-                ('pathToBadgeImage', models.URLField(blank=True, null=True)),
+                ('wikiId', models.CharField(blank=True, max_length=20, null=True)),
             ],
         ),
         migrations.CreateModel(

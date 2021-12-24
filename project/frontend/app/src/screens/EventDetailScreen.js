@@ -3,35 +3,40 @@ import Comment from './../components/Common/Comment';
 function EventDetailScreen() {
 
     const state = {
-        "@context": "https://www.w3.org/ns/activitystreams",
-        "summary": "Sally is creating an event post",
-        "type": "Create",
-        "actor": {
-            "type": "Person",
-            "name": "Umut",
-            "surname": "Gün",
-            "username":"umutgun17",
-            "Id":1
-        },
-        "object": {
-            "type": "Event_Post",
-            "owner_id": 1,
-            "post_name": "Event Detail Title Will Be Here Here Here Here",
-            "sport_category": "FOOTBALL",
-            "longitude":12.345,
-            "latitude":34.5678,
-            "description": "Aenean eleifend ante maecenas pulvinar montes lorem et pede dis dolor pretium donec dictum. Vici consequat justo enim. Venenatis eget adipiscing luctus lorem. Adipiscing veni amet luctus enim sem libero tellus viverra venenatis aliquam. Commodo natoque quam pulvinar elit.",
-            "pathToEventImage": "https://media.istockphoto.com/photos/foot-on-a-football-closeup-picture-id1175653469", 
-            "date_time": "2021-02-10 10:30",
-            "participant_limit": 14,
-            "spectator_limit": 150,
-            "rule": "Aenean eleifend ante maecenas pulvinar montes lorem et pede dis dolor pretium donec dictum. Vici consequat justo enim. Venenatis eget adipiscing luctus lorem. Adipiscing veni amet luctus enim sem libero tellus viverra venenatis aliquam. Commodo natoque quam pulvinar elit.",
-            "equipment_requirement": "Aenean eleifend ante maecenas pulvinar montes lorem et pede dis dolor pretium donec dictum. Vici consequat justo enim. Venenatis eget adipiscing luctus lorem. Adipiscing veni amet luctus enim sem libero tellus viverra venenatis aliquam. Commodo natoque quam pulvinar elit.",           
-            "location_requirement": "Aenean eleifend ante maecenas pulvinar montes lorem et pede dis dolor pretium donec dictum. Vici consequat justo enim. Venenatis eget adipiscing luctus lorem. Adipiscing veni amet luctus enim sem libero tellus viverra venenatis aliquam. Commodo natoque quam pulvinar elit.",
-            "contact_info": "+90541 555 55 55",
-            "skill_requirement": "beginner",
-            "repeating_frequency": 1,
-            "badges": [ {"id":1,"name":"friendly","description":"You are a friendly player","pathToBadgeImage":""}]
+        "image": "",
+        "json": {
+            "@context": "https://www.w3.org/ns/activitystreams",
+            "summary": "reading an event post deatil",
+            "type": "Create",
+            "actor": {
+                "type": "Person",
+                "name": "Umut",
+                "surname": "Gün",
+                "username":"umutgun17",
+                "Id":1
+            },
+            "object": {
+                "type": "Event_Post",
+                "owner_id": 1,
+                "post_name": "Professional Tennis Match",
+                "sport_category": "Tennis",
+                "longitude":41.06314391161562,
+                "latitude":28.913763761603146,
+                "description": "I want a partner to play with me tennis as a professional.",
+                "pathToEventImage": "https://media.istockphoto.com/photos/tennis-players-playing-a-match-on-the-court-picture-id817164728", 
+                "date_time": "21.12.2021 13:00",
+                "participant_limit": 2,
+                "spectator_limit": 10,
+                "rule": "The general rules are the same with general tennis match.",
+                "equipment_requirement": "Tennis racket and minimum 3 tennis balls",           
+                "location_requirement": "Tennis shoes is requirement to enter the court.",
+                "contact_info": "+90 543 528 56 00",
+                "skill_requirement": "expert",
+                "repeating_frequency": 0,
+                "badges": [ 
+                    {"id":1,"name":"friendly"}, 
+                    {"id":2,"name":"polite"}]
+            }
         }
     }
     return (
@@ -41,37 +46,37 @@ function EventDetailScreen() {
                 <div className="col-lg-12 m-15px-tb">
                     <article className="event">
                         <div className="event-img">
-                            <img src={state.object.pathToEventImage} title="" alt="" />
+                            <img src={state.json.object.pathToEventImage} title="" alt="" />
                         </div>
                         <div className="event-title">
-                            <h6>Category: <a href="#">{state.object.sport_category}</a></h6>
-                            <h2>{state.object.post_name}</h2>
+                            <h6>Category: <a href="#">{state.json.object.sport_category}</a></h6>
+                            <h2>{state.json.object.post_name}</h2>
                             <div className="media">
                                 <div className="media-body">
-                                    <label>Creator: {state.actor.name} {state.actor.surname}</label>
+                                    <label>Creator: {state.json.actor.name} {state.json.actor.surname}</label>
                                     <span></span>
-                                    <label>Event Time: {state.object.date_time}</label>
+                                    <label>Event Time: {state.json.object.date_time}</label>
                                     <span></span>
-                                    <label>Contact Information: {state.object.contact_info}</label>
+                                    <label>Contact Information: {state.json.object.contact_info}</label>
                                     <span></span>
-                                    <label>Skill Requirement: {state.object.skill_requirement}</label>
+                                    <label>Skill Requirement: {state.json.object.skill_requirement}</label>
                                     <p></p>
-                                    <label>Participation Limit: {state.object.participant_limit}</label> - <label>Spectator Limit: {state.object.spectator_limit}</label>
+                                    <label>Participation Limit: {state.json.object.participant_limit}</label> - <label>Spectator Limit: {state.json.object.spectator_limit}</label>
                                 </div>
                             </div>
                         </div>
                         <div className="event-content">
                             <h4>Event Description</h4>
-                            <p>{state.object.description}</p>
+                            <p>{state.json.object.description}</p>
 
                             <h4>General Rules</h4>
-                            <p>{state.object.rule}</p>
+                            <p>{state.json.object.rule}</p>
 
                             <h4>Equipment Requirements</h4>
-                            <p>{state.object.equipment_requirement}</p>
+                            <p>{state.json.object.equipment_requirement}</p>
 
                             <h4>Location Requirements</h4>
-                            <p>{state.object.location_requirement}</p>
+                            <p>{state.json.object.location_requirement}</p>
 
                         </div>
 

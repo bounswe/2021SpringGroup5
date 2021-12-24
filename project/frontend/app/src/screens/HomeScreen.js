@@ -2,7 +2,7 @@ function HomeScreen() {
 
     return (
         <div style={{ marginTop: 250 }}>
-            Home Screen
+            Homepage (Under Maintenance)
         </div>
     );
 }
