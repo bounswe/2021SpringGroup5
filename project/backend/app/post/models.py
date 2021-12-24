@@ -127,3 +127,11 @@ class BadgeOwnedByUser(models.Model):
     owner=models.ForeignKey('register.User', on_delete=models.CASCADE)
     date_time=models.DateTimeField(auto_now_add=True)
     isGivenBySystem=models.BooleanField()
+
+
+class ApplicationActivityStream(models.Model):
+    context = models.URLField(null=False, blank=False)
+    summary = models.CharField(max_length=200, null=False, blank=False)
+    type = models.CharField(max_length=20, null=False, blank=False)
+    actor=models.ForeignKey('register.User',on_delete=CASCADE)
+    object=models.ForeignKey(EventPost,on_delete=CASCADE)

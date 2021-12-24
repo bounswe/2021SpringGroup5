@@ -6,7 +6,7 @@ from .models import Application, EquipmentComment, EventComment
 from post.models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream, Application
 from django.utils.dateparse import parse_datetime
 from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, \
-    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, ApplicationSerializer
+    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, ApplicationSerializer, ApplicationActivityStreamSerializer
 from rest_framework.decorators import api_view
 import requests
 from django.conf import settings
@@ -326,7 +326,7 @@ def applyToEvent(request):
     data = request.data
 
     actor_id = data["actor"]["Id"]
-    event_id = data["event_id"]
+    event_id = data["object"]["Id"]
 
 
     # Try if the user is valid
@@ -351,20 +351,16 @@ def applyToEvent(request):
 
 
     try:
-        users_skill_level = InterestLevel.objects.get(owner_of_interest_id=actor_id, sport_name_id=event_post_sport_id)     # eger actor bu spor id icin skill level kaydetmediyse error olup except'e dusuyor adequate false aliyor
+        users_skill_level = InterestLevel.objects.get(owner_of_interest_id=actor_id, sport_name_id=event_post_sport_id)
     except:
-        return Response({"message": "There was an error about getting users skill level"}, status=status.HTTP_404_NOT_FOUND)
-
-    try:
-        users_skill_level_id = SkillLevel.objects.get(level_name=str(users_skill_level.skill_level))
-    except:
-        return Response({"message": "There was an error about getting users skill level"}, status=status.HTTP_404_NOT_FOUND)
-
-
-    if users_skill_level_id.id >= event_skill_requirement:
-        isAdequate = True
-    elif users_skill_level.skill_level >= event_skill_requirement:
         isAdequate = False
+
+
+    if isAdequate:
+        if users_skill_level.skill_level_id >= event_skill_requirement:
+            isAdequate = True
+        else:
+            isAdequate = False
 
 
     applicationStatus = "waiting"
@@ -382,6 +378,10 @@ def applyToEvent(request):
     else:
         return Response({"message": "There was an error about application serializer"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
+
+    application_act_stream_ser = ApplicationActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":data["actor"]["Id"], "object":data["object"]["Id"]})
+    if application_act_stream_ser.is_valid():
+        application_act_stream_ser.save()
 
     return Response({"message":"Application is successfully created"},status=status.HTTP_201_CREATED)
 
