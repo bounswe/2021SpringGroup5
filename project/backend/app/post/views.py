@@ -2,6 +2,8 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from requests.api import post
+from rest_framework_simplejwt.backends import TokenBackend
+from register.models import Follow
 from .models import Application, EquipmentComment, EventComment
 from post.models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream, Application
 from django.utils.dateparse import parse_datetime
@@ -55,15 +57,18 @@ def createEventPost(request):
         repeating_frequency=data["object"]["repeating_frequency"]+1
         badges=data["object"]["badges"]
 
-        actor_id=data["actor"]["Id"]
+        token = request.headers['Authentication']
+        token = token[7:]
+        valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+        userId = valid_data['Id']
+
+        user =list(User.objects.filter(Id=userId).values('Id','name','username','surname'))[0]
+
+        actor_id=User.objects.get(Id=userId).Id
         sport_category=process_string(sport_category)
 
         if spectator_limit==None:
             spectator_limit=0
-        try:
-            actor=list(User.objects.filter(Id=actor_id).values('Id','name','username','surname'))[0]
-        except:
-            return Response({"message":"There is no such user in the system"},404)
 
         event_status="upcoming"
         capacity="open to applications"
@@ -125,7 +130,7 @@ def createEventPost(request):
                     pass
 
                 event_act_stream_ser=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
-                "type":data["type"],"actor":data["actor"]["Id"],"object":event_ser.data["id"]})
+                "type":data["type"],"actor":actor_id,"object":event_ser.data["id"]})
                 if event_act_stream_ser.is_valid():
                     event_act_stream_ser.save()
                 else:
@@ -147,7 +152,7 @@ def createEventPost(request):
         data["actor"]["type"]="Person"
         res=event_ser.data
         res["pathToEventImage"]=image
-        res["owner"]=actor
+        res["owner"]=user
         res["type"]="EventPost"
         res["created_date"]= created_date.strftime("%Y-%m-%d %H:%M:%S")
         res["date_time"]=str(date_time)
@@ -172,7 +177,14 @@ def createEquipmentPost(request):
     if request.method=='POST':
         #data=request.data
         data=json.loads(request.POST.get('json'))
-        owner_id=data["object"]["owner_id"]
+        token = request.headers['Authentication']
+        token = token[7:]
+        valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+        userId = valid_data['Id']
+
+        user = User.objects.get(Id=userId)
+
+        owner_id=user.Id
         equipment_post_name=data["object"]["post_name"]
         sport_category=data["object"]["sport_category"]
         try:
@@ -255,7 +267,14 @@ def createEquipmentPost(request):
 def deleteEquipmentPost(request):
     data=request.data
 
-    actor_id=data["actor"]["Id"]
+    token = request.headers['Authentication']
+    token = token[7:]
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
+
+    actor_id=user.Id
     equipment_post_id=data["object"]["post_id"]
 
     try:
@@ -431,7 +450,14 @@ def acceptApplicant(request):
 def changeEquipmentInfo(request):
     data=request.data
 
-    actor_id=data["actor"]["Id"]
+    token = request.headers['Authentication']
+    token = token[7:]
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
+
+    actor_id=user.Id
     post_id=data["object"]["post_id"]
     try:
         actor=list(User.objects.filter(Id=actor_id).values('Id','name','surname','username'))[0]
@@ -487,7 +513,14 @@ def changeEquipmentInfo(request):
 @api_view(['PATCH'])
 def changeEventInfo(request):
     data=request.data
-    actor_id=data["actor"]["Id"]
+    token = request.headers['Authentication']
+    token = token[7:]
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
+
+    actor_id=user.Id
     post_id=data["object"]["post_id"]
     try:
         actor=list(User.objects.filter(Id=actor_id).values('Id','name','surname','username'))[0]
@@ -603,13 +636,16 @@ def getInadequateApplications(request):
 @api_view(['POST'])
 def getEventPostDetails(request):
     data=request.data
-    actor_id=data["actor"]["Id"]
+    token = request.headers['Authentication']
+    token = token[7:]
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
+
+    actor_id=user.Id
     post_id=data["object"]["post_id"]
     is_event_creator=False
-    try:
-        actor=model_to_dict(User.objects.get(Id=actor_id))
-    except:
-        return Response({"message":"There is no such user in the system"},404)
 
     try:
         event_post_details=EventPost.objects.get(id=post_id)
@@ -635,6 +671,7 @@ def getEventPostDetails(request):
     except:
         sport=event_post_details.sport_category_id
 
+    skill_requirement=SkillLevel.objects.get(level_name=event_post_details.skill_requirement).level_name
     try:
         accepted_players=list(Application.objects.filter(event_post=post_id,status="accepted",applicant_type="player").values('user__Id',\
         'user__name','user__surname','user__username'))
@@ -673,7 +710,7 @@ def getEventPostDetails(request):
 
     event_ser=EventPostSerializer(event_post_details)
     act_str=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
-            "type":data["type"],"actor":data["actor"]["Id"],"object":event_ser.data["id"]})
+            "type":data["type"],"actor":actor_id,"object":event_ser.data["id"]})
 
     if act_str.is_valid():
         act_str.save()
@@ -681,6 +718,7 @@ def getEventPostDetails(request):
         return Response({"message":"there was an error while viewing the event post"},status=status.HTTP_406_NOT_ACCEPTABLE)
   
     event_post_details=model_to_dict(event_post_details)
+    event_post_details["skill_requirement"]=skill_requirement
     event_post_details["sport_category"]=sport
     event_post_details["comments"]=comments
     event_post_details["spectators"]=spectators
@@ -703,7 +741,14 @@ def getEventPostDetails(request):
 @api_view(['POST'])
 def getEventPostAnalytics(request):
     data=request.data
-    actor_id = data["actor"]["Id"]
+    token = request.headers['Authentication']
+    token = token[7:]
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
+
+    actor_id=user.Id
     event_post_id = data["object"]["post_id"]
 
     try:
@@ -744,13 +789,17 @@ def getEventPostAnalytics(request):
 @api_view(['POST'])
 def getEquipmentPostDetails(request):
     data=request.data
-    actor_id=data["actor"]["Id"]
+    token = request.headers['Authentication']
+    token = token[7:]
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
+
+    actor_id=user.Id
     post_id=data["object"]["post_id"]
     is_event_creator=False
-    try:
-        actor=User.objects.get(Id=actor_id)
-    except:
-        return Response({"message":"There is no such user in the system"},404)
+    
 
     try:
         equipment_post_details=EquipmentPost.objects.get(id=post_id)
@@ -775,7 +824,7 @@ def getEquipmentPostDetails(request):
 
     equipment_post_ser=EquipmentPostSerializer(equipment_post_details)
     act_str=EquipmentPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
-            "actor":data["actor"]["Id"],"type":data["type"],"object":equipment_post_ser.data["id"]})
+            "actor":actor_id,"type":data["type"],"object":equipment_post_ser.data["id"]})
     if act_str.is_valid():
         act_str.save()
     else:
@@ -856,8 +905,7 @@ def getSpectators(request):
     else:
         return Response({"message": "Spectators are not found"},404)
 
-
-
+    
 # It is a script for only one time run. It can only be run by Superadmin to avoid possible security bug
 # It will fill the database with sports which are fetched from Decathlon API, with necessary fields.
 class SaveSportListScript(APIView):

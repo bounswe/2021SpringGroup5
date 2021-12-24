@@ -1,12 +1,13 @@
 import threading
-
+from django.forms.models import model_to_dict
 import requests
 from django.shortcuts import render, redirect
+from requests import api
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.backends import TokenBackend
-
-from .models import User, InterestLevel
+from django.contrib.auth.decorators import login_required
+from .models import User, InterestLevel,Follow
 from django.urls import reverse
 import hashlib
 from django.http import JsonResponse
@@ -22,7 +23,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.conf import settings
 from rest_framework.decorators import api_view
-
+from post.models import EventPost,BadgeOwnedByUser
 from django.apps import apps
 Sport = apps.get_model('post', 'Sport')
 SkillLevel=apps.get_model('post','SkillLevel')
@@ -51,6 +52,53 @@ def send_mail(user, request):
                          to=[user.mail])
     email.send(fail_silently=False)
 
+@login_required
+@api_view(['GET'])
+def homePageEvents(request):
+    token = request.headers['Authentication']
+    token = token[7:]
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
+
+    actor_id=user.Id
+
+    following_user_ids=list(Follow.objects.filter(follower=actor_id).values('following__Id'))
+
+    if len(following_user_ids)==0:
+        return Response({"message":"No record found"},404)
+        
+    result_events=[]
+    for i in range(len(following_user_ids)):
+        try:
+            event=model_to_dict(EventPost.objects.filter(owner=following_user_ids[i]["following__Id"],status='upcoming').last())
+
+            sport_name=Sport.objects.get(id=event["sport_category"]).sport_name
+            event["sport_category"]=sport_name
+            event["skill_requirement"]=SkillLevel.objects.get(pk=event["skill_requirement"]).level_name
+            result_events.append(event)
+        except:
+            continue
+
+    return Response({"posts":result_events},202)
+
+@login_required
+@api_view(['GET'])
+def getBadgesOwnedByUser(request):
+    token = request.headers['Authentication']
+    token = token[7:]
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
+
+    actor_id=user.Id
+    try:
+        badges=list(BadgeOwnedByUser.objects.filter(owner=actor_id).values('badge__id','badge__name','badge__description','badge__wikiId')) 
+        return Response({"badges":badges},200)
+    except:
+        return Response({"message":"This user has not received any badges"},404)
 
 @api_view(['GET','POST'])
 def register(request):
