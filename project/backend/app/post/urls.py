@@ -10,9 +10,9 @@ urlpatterns=[
     path('change_event_post/',views.changeEventInfo,name='update event post information'),
     path('get_event_post_details/',views.getEventPostDetails,name='get event post details'),
     path('get_waiting_applications/',views.getWaitingApplications,name='get waiting applications'),
-    path('get_rejected_applications/',views.getRejectedApplications,name='get waiting applications'),
-    path('get_accepted_applications/',views.getAcceptedApplications,name='get waiting applications'),
-    path('get_inadequate_applications/',views.getInadequateApplications,name='get waiting applications'),
+    path('get_rejected_applications/',views.getRejectedApplications,name='get rejected applications'),
+    path('get_accepted_applications/',views.getAcceptedApplications,name='get accepted applications'),
+    path('get_inadequate_applications/',views.getInadequateApplications,name='get inadequate applications'),
     path('get_equipment_post_details/',views.getEquipmentPostDetails,name='get equipment post details'),
     path('save_sports/',views.SaveSportListScript.as_view(),
          name="save sports"),
@@ -22,4 +22,5 @@ urlpatterns=[
     path('spectate_to_event/',views.spectateToEvent,name='spectate to event'),
     path('get_spectators/',views.getSpectators,name='get spectators of an event'),
     path('accept_application/',views.acceptApplicant,name='accept an application'),
+    path('get_event_post_analytics/',views.getEventPostAnalytics,name='get event post analytics'),
 ]

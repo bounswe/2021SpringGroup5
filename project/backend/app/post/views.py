@@ -550,7 +550,7 @@ def changeEventInfo(request):
     event_post_updated["created_date"]=event_post_updated["created_date"].strftime('%Y-%m-%d %H:%M:%S')
     event_post_updated["date_time"]=event_post_updated["date_time"].strftime('%Y-%m-%d %H:%M:%S')
     event_post_updated["owner"]=actor
-    event_post_updated["badges"]=list(BadgeOfferedByEventPost.objects.filter(post=post_id).values('badge__id','badge__name','badge__description','badge__pathToBadgeImage'))
+    event_post_updated["badges"]=list(BadgeOfferedByEventPost.objects.filter(post=post_id).values('badge__id','badge__name','badge__description','badge__wikiId'))
     res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":event_post_updated}
     return Response(res,200)
 
@@ -620,7 +620,7 @@ def getEventPostDetails(request):
     if actor_id==event_post_details.owner_id:
         is_event_creator=True
     
-    badges_offered=list(BadgeOfferedByEventPost.objects.filter(post=post_id).values('badge__id','badge__name','badge__description','badge__pathToBadgeImage'))
+    badges_offered=list(BadgeOfferedByEventPost.objects.filter(post=post_id).values('badge__id','badge__name','badge__description','badge__wikiId'))
 
     try:
         comments=list(EventComment.objects.filter(post=post_id).order_by('id').values('id','content','owner','created_date','owner__Id','owner__name',\
@@ -696,6 +696,47 @@ def getEventPostDetails(request):
     data["actor"]["type"]="Person"
     event_post_details["type"]="EventPost"
     data["object"]=event_post_details
+
+    return Response(data,201)
+
+@login_required()
+@api_view(['POST'])
+def getEventPostAnalytics(request):
+    data=request.data
+    actor_id = data["actor"]["Id"]
+    event_post_id = data["object"]["post_id"]
+
+    try:
+        actor = User.objects.get(Id=actor_id)
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+
+    eventPost=EventPost.objects.filter(id=event_post_id)
+    owner_of_the_event=list(eventPost.values('owner__Id'))[0]["owner__Id"]
+    if owner_of_the_event!=actor_id:
+        return Response({"message":"You are not the creator of this event you can't see the analytics"},405)
+    
+    accepted_users_ids=list(Application.objects.filter(event_post=event_post_id).values('user__Id'))
+
+    if len(accepted_users_ids)==0:
+        avg=0
+    else:
+        total_applied_event_count=0
+        for i in range(len(accepted_users_ids)):
+            user_id=accepted_users_ids[i]["user__Id"]
+            total_applied_event_count+=len(list(Application.objects.filter(user=user_id,status='accepted',applicant_type='player')))
+
+        avg=total_applied_event_count/len(accepted_users_ids)
+
+    # returning average number of events that accepted users have been accepted to other events
+    data["object"]["avg_accepted_event_count_of_accepted_users"]=avg
+    event_post_act_ser=EventPostActivityStreamSerializer(data={"context":data["@context"],"summary":data["summary"],\
+    "actor":actor_id,"type":data["type"],"object":eventPost.values('id')[0]['id']})
+
+    if event_post_act_ser.is_valid():
+        event_post_act_ser.save()
+    else:
+        return Response({"Your request is not executed",405})
 
     return Response(data,201)
 
@@ -854,11 +895,11 @@ class SaveBadgesScript(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def post(self, request):
-        badges=[{"name":"friendly","description":"You are a friendly player","pathToBadgeImage":""},\
-            {"name":"team player","description":"You are such a team player","pathToBadgeImage":""},\
-                {"name":"fair player","description":"You are a fair player","pathToBadgeImage":""},\
-                    {"name":"good server","description":"You are a good server","pathToBadgeImage":""},\
-                        {"name":"fast runner","description":"Wow! You were very fast","pathToBadgeImage":""}]
+        badges=[{"name":"enthusiastic","description":"the trait of being overly enthusiastic","wikiId":"Q107261265"},\
+            {"name":"friendly","description":"relationship between people who have mutual affection for each other","wikiId":"Q491"},\
+                {"name":"leader","description":"someone with the authority to affect the conduct of others; who have the responsibility of leading","wikiId":"Q1251441"},\
+                    {"name":"gifted","description":"intellectual ability significantly higher than average","wikiId":"Q467677"},\
+                        {"name":"loser","description":"one who loses","wikiId":"Q20861252"}]
         for badge in badges:
             serializer=BadgeSerializer(data=badge)
             if serializer.is_valid():
