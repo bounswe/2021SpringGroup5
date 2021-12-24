@@ -64,8 +64,3 @@ class BadgeOwnedByUserSerializer(serializers.ModelSerializer):
     class Meta:
         model=BadgeOwnedByUser
         fields='__all__'
-
-class AcceptActivityStreamSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=AcceptActivityStream
-        fields='__all__'
