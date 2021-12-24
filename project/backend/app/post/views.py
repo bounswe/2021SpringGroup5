@@ -52,7 +52,7 @@ def createEventPost(request):
         location_requirement=data["object"]["location_requirement"]
         contact_info=data["object"]["contact_info"]
         skill_requirement_info=data["object"]["skill_requirement"]
-        repeating_frequency=data["object"]["repeating_frequency"]
+        repeating_frequency=data["object"]["repeating_frequency"]+1
         badges=data["object"]["badges"]
 
         actor_id=data["actor"]["Id"]
