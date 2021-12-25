@@ -370,20 +370,16 @@ def applyToEvent(request):
 
 
     try:
-        users_skill_level = InterestLevel.objects.get(owner_of_interest_id=actor_id, sport_name_id=event_post_sport_id)     # eger actor bu spor id icin skill level kaydetmediyse error olup except'e dusuyor adequate false aliyor
+        users_skill_level = InterestLevel.objects.get(owner_of_interest_id=actor_id, sport_name_id=event_post_sport_id)
     except:
-        return Response({"message": "There was an error about getting users skill level"}, status=status.HTTP_404_NOT_FOUND)
-
-    try:
-        users_skill_level_id = SkillLevel.objects.get(level_name=str(users_skill_level.skill_level))
-    except:
-        return Response({"message": "There was an error about getting users skill level"}, status=status.HTTP_404_NOT_FOUND)
-
-
-    if users_skill_level_id.id >= event_skill_requirement:
-        isAdequate = True
-    elif users_skill_level.skill_level >= event_skill_requirement:
         isAdequate = False
+
+
+    if isAdequate:
+        if users_skill_level.skill_level_id >= event_skill_requirement:
+            isAdequate = True
+        else:
+            isAdequate = False
 
 
     applicationStatus = "waiting"
@@ -410,8 +406,8 @@ def applyToEvent(request):
 def acceptApplicant(request):
     data = request.data
 
-    applicant_id = data["applicant_Id"]
-    event_id = data["event_Id"]
+    applicant_id = data["actor"]["Id"]
+    event_id = data["object"]["Id"]
 
     # Try if the user is valid
     try:
@@ -441,8 +437,13 @@ def acceptApplicant(request):
     else:
         return Response({"message": "The event is not available to accept the application. Full, cancelled or maybe past"}, status=status.HTTP_400_BAD_REQUEST)
 
-
     application = application.update(status="accepted")
+
+
+    accept_act_stream_ser = EventPostActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":data["actor"]["Id"], "object":data["object"]["Id"]})
+    if accept_act_stream_ser.is_valid():
+        accept_act_stream_ser.save()
+
     return Response({"message":"Application is accepted"},status=status.HTTP_200_OK)
 
 @login_required()  
