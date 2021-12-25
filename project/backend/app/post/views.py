@@ -847,7 +847,7 @@ def spectateToEvent(request):
     data = request.data
 
     actor_id = data["actor"]["Id"]
-    event_id = data["event_id"]
+    event_id = data["object"]["Id"]
 
     # Try if the user is valid
     try:
@@ -890,6 +890,11 @@ def spectateToEvent(request):
     else:
         return Response({"message": "There was an error about application serializer"},
                         status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    application_act_stream_ser = EventPostActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":data["actor"]["Id"], "object":data["object"]["Id"]})
+    if application_act_stream_ser.is_valid():
+        application_act_stream_ser.save()
+
 
     return Response({"message": "Spectate application is successfully created"}, status=status.HTTP_201_CREATED)
 
