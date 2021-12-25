@@ -22,5 +22,6 @@ urlpatterns=[
     path('spectate_to_event/',views.spectateToEvent,name='spectate to event'),
     path('get_spectators/',views.getSpectators,name='get spectators of an event'),
     path('accept_application/',views.acceptApplicant,name='accept an application'),
+    path('reject_application/',views.rejectApplicant,name='reject an application'),
     path('get_event_post_analytics/',views.getEventPostAnalytics,name='get event post analytics'),
 ]
