@@ -8,6 +8,7 @@ urlpatterns=[
     path('delete_equipment_post/',views.deleteEquipmentPost,name='delete an equipment post'),
     path('change_equipment_post/',views.changeEquipmentInfo,name='update equipment post information'),
     path('change_event_post/',views.changeEventInfo,name='update event post information'),
+    path('postpone_event/',views.postponeEvent,name='postpone an event'),
     path('get_event_post_details/',views.getEventPostDetails,name='get event post details'),
     path('get_waiting_applications/',views.getWaitingApplications,name='get waiting applications'),
     path('get_rejected_applications/',views.getRejectedApplications,name='get rejected applications'),

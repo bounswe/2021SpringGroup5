@@ -21,6 +21,7 @@ from rest_framework.views import APIView
 from unidecode import unidecode
 from django.forms.models import model_to_dict
 from django.core import serializers
+from datetime import datetime
 # Create your views here.
 
 from django.apps import apps
@@ -586,6 +587,46 @@ def changeEventInfo(request):
     event_post_updated["badges"]=list(BadgeOfferedByEventPost.objects.filter(post=post_id).values('badge__id','badge__name','badge__description','badge__wikiId'))
     res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":event_post_updated}
     return Response(res,200)
+
+
+@login_required()
+@api_view(['PATCH'])
+def postponeEvent(request):
+
+    data = request.data
+    actor_id=request.user.Id
+
+
+    post_id = data["object"]["post_id"]
+    try:
+        actor = list(User.objects.filter(Id=actor_id).values('Id', 'name', 'surname', 'username'))[0]
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+
+    try:
+        event_post = EventPost.objects.get(id=post_id)
+    except:
+        return Response({"message": "There is no such post in the database"}, 404)
+
+
+    new_date = datetime.strptime(data["new_date"], '%d/%m/%Y:%H')
+    event_date = event_post.date_time.replace(tzinfo=None)
+
+
+    if new_date >= event_date:
+        EventPost.objects.filter(id=event_post.id).update(date_time=new_date)
+    else:
+        return Response({"message": "You entered a time that before the event date"}, 400)
+
+
+    event_post_act_ser = EventPostActivityStreamSerializer(
+        data={"context": data["@context"], "summary": data["summary"], "actor": actor_id, "type": data["type"], "object": event_post.id})
+    if event_post_act_ser.is_valid():
+        event_post_act_ser.save()
+    else:
+        return Response({"message": event_post_act_ser.errors}, 422)
+
+    return Response(200)
 
 
 @login_required()
