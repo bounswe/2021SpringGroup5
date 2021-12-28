@@ -151,11 +151,7 @@ def register(request):
             return JsonResponse(context, status=401)
 
         user = User.objects.create_user(username=username, mail=mail, name=name, surname=surname)
-        user.set_password(password)
-        user.save()
-
         send_mail(user, request)
-
         skill1 = SkillLevel.objects.get(level_name=level1)
         skill2 = SkillLevel.objects.get(level_name=level2)
 
@@ -167,6 +163,9 @@ def register(request):
 
         interest1.save()
         interest2.save()
+
+        user.set_password(password)
+        user.save()
 
         return Response('SUCCESS', status=status.HTTP_201_CREATED)
     else:
