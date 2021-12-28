@@ -92,7 +92,7 @@
 63             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java
 64        -->
 65        <meta-data
-65-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:37:9-39:37
+65-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:37:9-39:36
 66            android:name="flutterEmbedding"
 66-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:38:17-48
 67            android:value="2" />
@@ -101,7 +101,7 @@
 68-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:40:9-41:77
 69            android:name="com.google.android.geo.API_KEY"
 69-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:40:20-65
-70            android:value="AIzaSyAoVq3Fe83Y3G2fG3sWaSxfAHOA56oHKRM" />
+70            android:value="AIzaSyDE6gbH_m5Eb1th41tzIPSUX6Szwsb_e_A" />
 70-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:41:20-75
 71        <!-- Needs to be explicitly declared on P+ -->
 72        <uses-library

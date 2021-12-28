@@ -4,6 +4,7 @@ import 'package:ludo_app/screens/create_event/create_event_screen.dart';
 import 'package:ludo_app/screens/filter_popup/filter_popup_screen.dart';
 import 'package:ludo_app/screens/google_maps/google_maps_screen.dart';
 import 'package:ludo_app/screens/popup_event_details/popup_event_details.dart';
+import 'package:ludo_app/screens/user_profile/components/body.dart';
 
 class MainEventScreen extends StatefulWidget {
   const MainEventScreen({Key? key}) : super(key: key);
@@ -241,8 +242,23 @@ class _MainEventScreenState extends State<MainEventScreen> {
         ),
       ),
       bottomSheet: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return ProfileScreen();
+                    },
+                  ),
+                );
+              },
+              child: const Text(
+                'PROFILE',
+                style: TextStyle(fontSize: 15),
+              )),
           ElevatedButton(
               onPressed: () {
                 Navigator.push(

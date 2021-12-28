@@ -98,7 +98,7 @@ ADDED from /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/andro
 	android:name
 		ADDED from /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:32:27-74
 meta-data#flutterEmbedding
-ADDED from /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:37:9-39:37
+ADDED from /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:37:9-39:36
 	android:value
 		ADDED from /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:39:17-34
 	android:name

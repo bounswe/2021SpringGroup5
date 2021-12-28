@@ -216,20 +216,21 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               ),
 
               ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return const MainEventScreen();
-                        },
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    "CREATE",
-                    style: TextStyle(fontSize: 16),
-                  )) //map
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return const MainEventScreen();
+                      },
+                    ),
+                  );
+                },
+                child: const Text(
+                  "CREATE",
+                  style: TextStyle(fontSize: 16),
+                ),
+              ), //map
             ],
           ),
         ));
