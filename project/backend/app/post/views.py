@@ -897,7 +897,8 @@ class SaveBadgesScript(APIView):
             {"name":"friendly","description":"relationship between people who have mutual affection for each other","wikiId":"Q491"},\
                 {"name":"leader","description":"someone with the authority to affect the conduct of others; who have the responsibility of leading","wikiId":"Q1251441"},\
                     {"name":"gifted","description":"intellectual ability significantly higher than average","wikiId":"Q467677"},\
-                        {"name":"loser","description":"one who loses","wikiId":"Q20861252"}]
+                        {"name":"loser","description":"one who loses","wikiId":"Q20861252"},\
+                            {"name":"competetive","description":"trait of being competitive", "wikiId":"Q107289411"}]
         for badge in badges:
             serializer=BadgeSerializer(data=badge)
             if serializer.is_valid():
