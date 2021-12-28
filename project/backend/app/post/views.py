@@ -432,15 +432,7 @@ def acceptApplicant(request):
 @api_view(['PATCH'])
 def changeEquipmentInfo(request):
     data=request.data
-
-    token = request.headers['Authentication']
-    token = token[7:]
-    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
-    userId = valid_data['Id']
-
-    user = User.objects.get(Id=userId)
-
-    actor_id=user.Id
+    actor_id=request.user.Id
     post_id=data["object"]["post_id"]
     try:
         actor=list(User.objects.filter(Id=actor_id).values('Id','name','surname','username'))[0]
