@@ -56,15 +56,11 @@ def createEventPost(request):
         skill_requirement_info=data["object"]["skill_requirement"]
         repeating_frequency=data["object"]["repeating_frequency"]+1
         badges=data["object"]["badges"]
+        actor_id = request.user.Id
 
-        token = request.headers['Authentication']
-        token = token[7:]
-        valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
-        userId = valid_data['Id']
+        user =list(User.objects.filter(Id=actor_id).values('Id','name','username','surname'))[0]
 
-        user =list(User.objects.filter(Id=userId).values('Id','name','username','surname'))[0]
-
-        actor_id=User.objects.get(Id=userId).Id
+        
         sport_category=process_string(sport_category)
 
         if spectator_limit==None:
@@ -135,11 +131,12 @@ def createEventPost(request):
                     event_act_stream_ser.save()
                 else:
                     continue
-                for badge_info in badges:
-                    badge_id=badge_info["id"]
-                    badge_event_ser=BadgeOfferedByEventPostSerializer(data={"post":event_ser.data["id"],"badge":badge_id})
-                    if badge_event_ser.is_valid():
-                        badge_event_ser.save()
+                if (len(badges)>0):
+                    for badge_info in badges:
+                        badge_id=badge_info["id"]
+                        badge_event_ser=BadgeOfferedByEventPostSerializer(data={"post":event_ser.data["id"],"badge":badge_id})
+                        if badge_event_ser.is_valid():
+                            badge_event_ser.save()
                         
                 
             
@@ -177,14 +174,7 @@ def createEquipmentPost(request):
     if request.method=='POST':
         #data=request.data
         data=json.loads(request.POST.get('json'))
-        token = request.headers['Authentication']
-        token = token[7:]
-        valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
-        userId = valid_data['Id']
-
-        user = User.objects.get(Id=userId)
-
-        owner_id=user.Id
+        owner_id=request.user.Id
         equipment_post_name=data["object"]["post_name"]
         sport_category=data["object"]["sport_category"]
         try:
@@ -267,14 +257,7 @@ def createEquipmentPost(request):
 def deleteEquipmentPost(request):
     data=request.data
 
-    token = request.headers['Authentication']
-    token = token[7:]
-    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
-    userId = valid_data['Id']
-
-    user = User.objects.get(Id=userId)
-
-    actor_id=user.Id
+    actor_id=request.user.Id
     equipment_post_id=data["object"]["post_id"]
 
     try:
@@ -513,14 +496,7 @@ def changeEquipmentInfo(request):
 @api_view(['PATCH'])
 def changeEventInfo(request):
     data=request.data
-    token = request.headers['Authentication']
-    token = token[7:]
-    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
-    userId = valid_data['Id']
-
-    user = User.objects.get(Id=userId)
-
-    actor_id=user.Id
+    actor_id=request.user.Id
     post_id=data["object"]["post_id"]
     try:
         actor=list(User.objects.filter(Id=actor_id).values('Id','name','surname','username'))[0]
@@ -636,14 +612,7 @@ def getInadequateApplications(request):
 @api_view(['POST'])
 def getEventPostDetails(request):
     data=request.data
-    token = request.headers['Authentication']
-    token = token[7:]
-    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
-    userId = valid_data['Id']
-
-    user = User.objects.get(Id=userId)
-
-    actor_id=user.Id
+    actor_id=request.user.Id
     post_id=data["object"]["post_id"]
     is_event_creator=False
 
@@ -741,20 +710,8 @@ def getEventPostDetails(request):
 @api_view(['POST'])
 def getEventPostAnalytics(request):
     data=request.data
-    token = request.headers['Authentication']
-    token = token[7:]
-    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
-    userId = valid_data['Id']
-
-    user = User.objects.get(Id=userId)
-
-    actor_id=user.Id
+    actor_id=request.user.Id
     event_post_id = data["object"]["post_id"]
-
-    try:
-        actor = User.objects.get(Id=actor_id)
-    except:
-        return Response({"message": "There is no such user in the system"}, 404)
 
     eventPost=EventPost.objects.filter(id=event_post_id)
     owner_of_the_event=list(eventPost.values('owner__Id'))[0]["owner__Id"]
@@ -789,14 +746,7 @@ def getEventPostAnalytics(request):
 @api_view(['POST'])
 def getEquipmentPostDetails(request):
     data=request.data
-    token = request.headers['Authentication']
-    token = token[7:]
-    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
-    userId = valid_data['Id']
-
-    user = User.objects.get(Id=userId)
-
-    actor_id=user.Id
+    actor_id=request.user.Id
     post_id=data["object"]["post_id"]
     is_event_creator=False
     

@@ -55,14 +55,7 @@ def send_mail(user, request):
 @login_required
 @api_view(['GET'])
 def homePageEvents(request):
-    token = request.headers['Authentication']
-    token = token[7:]
-    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
-    userId = valid_data['Id']
-
-    user = User.objects.get(Id=userId)
-
-    actor_id=user.Id
+    actor_id=request.user.Id
 
     following_user_ids=list(Follow.objects.filter(follower=actor_id).values('following__Id'))
 
@@ -81,19 +74,12 @@ def homePageEvents(request):
         except:
             continue
 
-    return Response({"posts":result_events},202)
+    return Response({"posts":result_events},200)
 
 @login_required
 @api_view(['GET'])
 def getBadgesOwnedByUser(request):
-    token = request.headers['Authentication']
-    token = token[7:]
-    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
-    userId = valid_data['Id']
-
-    user = User.objects.get(Id=userId)
-
-    actor_id=user.Id
+    actor_id=request.user.Id
     try:
         badges=list(BadgeOwnedByUser.objects.filter(owner=actor_id).values('badge__id','badge__name','badge__description','badge__wikiId')) 
         return Response({"badges":badges},200)
@@ -195,6 +181,7 @@ def login_user(request):
             'username': username,
             'password': password
         }
+        
         token = requests.post("http://3.122.41.188:8000/api/token/", json=postjson)
 
         return Response(token.json(), status=status.HTTP_200_OK)
