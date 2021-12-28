@@ -1,43 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ludo_app/screens/welcome/welcome_screen.dart';
+import 'package:ludo_app/services/user_service.dart';
 
 class ProfileScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> badgeList = [
-    {
-      "id": 1,
-      "name": "Rekabetli Oyuncu",
-      "image": "assets/images/basketball-sport.jpg",
-    },
-    {
-      "id": 2,
-      "name": "Centilmen Sporcu",
-      "image": "assets/images/frisbee-sport.jpg",
-    },
-    {
-      "id": 3,
-      "name": "3 Gün Arka Arkaya",
-      "image": "assets/images/football-sport.jpg",
-    },
-  ];
-
-  final List<Map<String, dynamic>> previouslyJoinedEventsList = [
-    {
-      "id": 1,
-      "name": "Rekabetli Oyuncu",
-      "image": "assets/images/basketball-sport.jpg",
-    },
-    {
-      "id": 2,
-      "name": "Centilmen Sporcu",
-      "image": "assets/images/frisbee-sport.jpg",
-    },
-    {
-      "id": 3,
-      "name": "3 Gün Arka Arkaya",
-      "image": "assets/images/football-sport.jpg",
-    },
-  ];
-
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -98,16 +63,23 @@ class ProfileScreen extends StatelessWidget {
                                     const SizedBox(
                                       height: 18,
                                     ),
-                                    const Text(
-                                      'Kemal Cagin Sertkaya',
-                                      style: TextStyle(
+                                    Text(
+                                      userInfo[0]["name"],
+                                      style: const TextStyle(
                                         fontSize: 20,
                                       ),
                                     ),
                                     const SizedBox(
                                       height: 5,
                                     ),
-                                    const Positioned(child: Text("@kmlcgn")),
+                                    Positioned(
+                                      child: Text(
+                                        userInfo[0]["mail"],
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
                                     const SizedBox(
                                       height: 0.5,
                                     ),
@@ -116,7 +88,7 @@ class ProfileScreen extends StatelessWidget {
                                           MainAxisAlignment.center,
                                       children: [
                                         Column(
-                                          children: [
+                                          children: const [
                                             Text(
                                               'Followers',
                                               style: TextStyle(
@@ -140,13 +112,13 @@ class ProfileScreen extends StatelessWidget {
                                           child: Container(
                                             height: height * 0.065,
                                             width: width * 0.0085,
-                                            decoration: BoxDecoration(
+                                            decoration: const BoxDecoration(
                                               color: Colors.indigo,
                                             ),
                                           ),
                                         ),
                                         Column(
-                                          children: [
+                                          children: const [
                                             Text(
                                               'Followings',
                                               style: TextStyle(
@@ -198,7 +170,7 @@ class ProfileScreen extends StatelessWidget {
                           )),
                           Expanded(
                             child: ListView.builder(
-                              itemCount: badgeList.length,
+                              itemCount: userInfo[0]["badges"].length,
                               itemBuilder: (context, index) => Card(
                                 elevation: 5,
                                 key: ValueKey([index][0]),
@@ -211,10 +183,10 @@ class ProfileScreen extends StatelessWidget {
                                     onTap: () {},
                                     leading: Image(
                                       fit: BoxFit.cover,
-                                      image:
-                                          AssetImage(badgeList[index]['image']),
+                                      image: AssetImage(userInfo[0]['badges']
+                                          [index]['image']),
                                     ),
-                                    title: Text(badgeList[index]['name']),
+                                    title: Text(userInfo[0]['badges'][index]["name"]),
                                   ),
                                 ),
                               ),
@@ -224,7 +196,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                   Container(
@@ -249,7 +221,7 @@ class ProfileScreen extends StatelessWidget {
                           )),
                           Expanded(
                             child: ListView.builder(
-                              itemCount: previouslyJoinedEventsList.length,
+                              itemCount: userInfo[0]["events"].length,
                               itemBuilder: (context, index) => Card(
                                 elevation: 5,
                                 key: ValueKey([index][0]),
@@ -262,13 +234,11 @@ class ProfileScreen extends StatelessWidget {
                                     onTap: () {},
                                     leading: Image(
                                       fit: BoxFit.cover,
-                                      image: AssetImage(
-                                          previouslyJoinedEventsList[index]
-                                              ['image']),
+                                      image: AssetImage(userInfo[0]['events']
+                                          [index]['image']),
                                     ),
                                     title: Text(
-                                        previouslyJoinedEventsList[index]
-                                            ['name']),
+                                        userInfo[0]['events'][index]["name"]),
                                   ),
                                 ),
                               ),
@@ -278,7 +248,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 15,
                   ),
                   ElevatedButton(
