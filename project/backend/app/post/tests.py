@@ -6,16 +6,16 @@ from post.models import Badge, BadgeOfferedByEventPost, EquipmentPost, SkillLeve
 from register.models import InterestLevel
 import json
 from datetime import datetime
-
+from rest_framework.authtoken.models import Token
 class PostTests(APITestCase):
 # Create your tests here.
     def test_create_event_post_post(self):
-        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",mail="...com",is_email_verified=True)
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
         Sport.objects.create(id=24,sport_name="Handball",is_custom=False)
-        Badge.objects.create(id=5,name="surprised",description="You are a friendly player",pathToBadgeImage="....com")
+        Badge.objects.create(id=5,name="surprised",description="You are a friendly player",wikiId="1")
         SkillLevel.objects.create(id=1,level_name="beginner")
         data={"image":"","json":json.dumps({
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -44,7 +44,7 @@ class PostTests(APITestCase):
                 "contact_info": "054155555",
                 "skill_requirement": "beginner",
                 "repeating_frequency": 5,
-                "badges": [ {"id":5,"name":"surprised","description":"You are a friendly player","pathToBadgeImage":"....com"}]
+                "badges": [ {"id":5,"name":"surprised","description":"You are a friendly player"}]
             
             }
             })
@@ -55,15 +55,15 @@ class PostTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_event_post_get(self):
-        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",mail="...com",is_email_verified=True)
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
         Sport.objects.create(id=1,sport_name="Football",is_custom=False)
-        Badge.objects.create(id=1,name="friendly",description="You are a friendly player",pathToBadgeImage=None)
+        Badge.objects.create(id=1,name="friendly",description="You are a friendly player",wikiId="10")
         SkillLevel.objects.create(id=1,level_name="beginner")
         Sport.objects.create(id=2,sport_name="Volleyball",is_custom=False)
-        Badge.objects.create(id=2,name="bad",description="You are a bad player",pathToBadgeImage=None)
+        Badge.objects.create(id=2,name="bad",description="You are a bad player")
         SkillLevel.objects.create(id=2,level_name="expert")
 
         client=APIClient()
@@ -72,7 +72,7 @@ class PostTests(APITestCase):
         self.assertEqual(response.status_code,status.HTTP_200_OK)
 
     def test_create_equipment_post_post(self):
-        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",mail="...com",is_email_verified=True)
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
@@ -107,7 +107,7 @@ class PostTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_equipment_post_get(self):
-        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",mail="...com",is_email_verified=True)
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
@@ -117,7 +117,7 @@ class PostTests(APITestCase):
         self.assertEqual(response.status_code,status.HTTP_200_OK)
 
     def test_delete_equipment_post(self):
-        User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",mail="...com",is_email_verified=True)
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
@@ -159,7 +159,7 @@ class PostTests(APITestCase):
 
     def test_delete_event_post(self):
         User.objects.create(Id=12345, first_name="Sally", last_name="Sparrow", username="crazy_girl", password="123",
-                            email="...com")
+                            mail="...com",is_email_verified=True)
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
@@ -206,7 +206,7 @@ class PostTests(APITestCase):
 
 
     def test_change_equipment_post_invalid_info(self):
-        User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",mail="...com",is_email_verified=True)
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
@@ -251,7 +251,7 @@ class PostTests(APITestCase):
         self.assertEqual(response.status_code, 422)
     
     def test_change_equipment_post_valid_info(self):
-        User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",mail="...com",is_email_verified=True)
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
@@ -295,14 +295,14 @@ class PostTests(APITestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_change_event_post_valid_info(self):
-        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",mail="...com",is_email_verified=True)
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
         Sport.objects.create(id=10,sport_name="Swimming",is_custom=False)
         s=Sport.objects.get(sport_name='Swimming')
-        Badge.objects.create(id=1,name="awesome",description="You are an awesome player",pathToBadgeImage="....com")
-        Badge.objects.create(id=5,name="surprised",description="You are a surprised player",pathToBadgeImage="....com")
+        Badge.objects.create(id=1,name="awesome",description="You are an awesome player",wikiId="1")
+        Badge.objects.create(id=5,name="surprised",description="You are a surprised player",wikiIde="2")
         SkillLevel.objects.create(id=1,level_name="beginner")
         SkillLevel.objects.create(id=2,level_name="medium")
         skill=SkillLevel.objects.get(level_name='beginner')
@@ -338,7 +338,7 @@ class PostTests(APITestCase):
                      "rule": "Don't shout", 
                      "skill_requirement": "medium", 
                      "contact_info": "05555555555",
-                      "badges":[{"id":1,"name":"awesome","description":"You are an awesome player","pathToBadgeImage":"....com"}], 
+                      "badges":[{"id":1,"name":"awesome","description":"You are an awesome player"}], 
                       "image":None
             }
             }
@@ -687,14 +687,14 @@ class PostTests(APITestCase):
 
 
     def test_change_event_post_invalid_info(self):
-        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",mail="...com",is_email_verified=True)
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
         Sport.objects.create(id=19,sport_name="Cycling",is_custom=False)
         s=Sport.objects.get(sport_name='Cycling')
-        Badge.objects.create(id=1,name="awesome",description="You are an awesome player",pathToBadgeImage="....com")
-        Badge.objects.create(id=5,name="surprised",description="You are a surprised player",pathToBadgeImage="....com")
+        Badge.objects.create(id=1,name="awesome",description="You are an awesome player",wikiId="3")
+        Badge.objects.create(id=5,name="surprised",description="You are a surprised player",wikiId="4")
         SkillLevel.objects.create(id=1,level_name="beginner")
         SkillLevel.objects.create(id=2,level_name="medium")
         skill=SkillLevel.objects.get(level_name='beginner')
@@ -730,7 +730,7 @@ class PostTests(APITestCase):
                      "rule": "Don't shout", 
                      "skill_requirement": "medium", 
                      "contact_info": "05555555555",
-                      "badges":[{"id":1,"name":"awesome","description":"You are an awesome player","pathToBadgeImage":"....com"}], 
+                      "badges":[{"id":1,"name":"awesome","description":"You are an awesome player"}], 
                       "image":None
             }
             }
@@ -741,14 +741,14 @@ class PostTests(APITestCase):
         self.assertEqual(response.status_code, 422)
 
     def test_get_event_post_details(self):
-        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=321,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",mail="...com",is_email_verified=True)
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
         Sport.objects.create(id=10,sport_name="Swimming",is_custom=False)
         s=Sport.objects.get(sport_name='Swimming')
-        Badge.objects.create(id=1,name="awesome",description="You are an awesome player",pathToBadgeImage="....com")
-        Badge.objects.create(id=5,name="surprised",description="You are a surprised player",pathToBadgeImage="....com")
+        Badge.objects.create(id=1,name="awesome",description="You are an awesome player",wikiId="6")
+        Badge.objects.create(id=5,name="surprised",description="You are a surprised player",wikiId="7")
         b=Badge.objects.get(id=1)
         SkillLevel.objects.create(id=1,level_name="beginner")
         SkillLevel.objects.create(id=2,level_name="medium")
@@ -783,7 +783,7 @@ class PostTests(APITestCase):
         self.assertEqual(response.status_code, 201)
 
     def test_get_equipment_post_details(self):
-        User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
+        User.objects.create(Id=12345,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",mail="...com",is_email_verified=True)
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
@@ -986,6 +986,82 @@ class PostTests(APITestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_event_analytics(self):
-        pass
+        User.objects.create(Id=1,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",mail="sally1.com",is_email_verified=True)
+        u1 = User.objects.get(username='crazy_girl')
+        u1.set_password('123')
+        u1.save()
+
+        User.objects.create(Id=2,first_name="Sally",last_name="Sparrow",username="crazy_girl2",password="123",mail="crazygirl2@gmail.com",is_email_verified=True)
+        u = User.objects.get(username='crazy_girl2')
+        u.set_password('123')
+        u.save()
+
+        User.objects.create(Id=3,first_name="Sally",last_name="Sparrow",username="crazy_girl3",password="123",mail="crazygirl3@gmail.com",is_email_verified=True)
+        u3 = User.objects.get(username='crazy_girl3')
+        u3.set_password('123')
+        u3.save()
+
+        Sport.objects.create(id=10,sport_name="Swimming",is_custom=False)
+        s=Sport.objects.get(sport_name='Swimming')
+        Badge.objects.create(id=1,name="awesome",description="You are an awesome player",wikiId="12")
+        Badge.objects.create(id=5,name="surprised",description="You are a surprised player",wikiId="13")
+        b=Badge.objects.get(id=1)
+        SkillLevel.objects.create(id=1,level_name="beginner")
+        SkillLevel.objects.create(id=2,level_name="medium")
+        skill=SkillLevel.objects.get(level_name='beginner')
+        date_string = "2021-12-12 10:10"
+        dt=datetime.fromisoformat(date_string)
+        EventPost.objects.create(id=1, post_name="Ali'nin maçı", owner=u,sport_category=s,created_date=dt,description="blabla",\
+            longitude=20.444,
+                latitude=18.555,date_time=dt, participant_limit=20,\
+                spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
+                    location_requirement=None,contact_info="0555555555555",pathToEventImage=None,skill_requirement=skill)
+        e1=EventPost.objects.get(id=1)
+        BadgeOfferedByEventPost.objects.create(id=1,post=e1,badge=b)
+
+        EventPost.objects.create(id=2, post_name="Ali'nin maçı", owner=u,sport_category=s,created_date=dt,description="blabla",\
+            longitude=20.444,
+                latitude=18.555,date_time=dt, participant_limit=20,\
+                spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
+                    location_requirement=None,contact_info="0555555555555",pathToEventImage=None,skill_requirement=skill)
+        e2=EventPost.objects.get(id=2)
+        BadgeOfferedByEventPost.objects.create(id=2,post=e2,badge=b)
+
+        EventPost.objects.create(id=3, post_name="Ali'nin maçı", owner=u,sport_category=s,created_date=dt,description="blabla",\
+            longitude=20.444,
+                latitude=18.555,date_time=dt, participant_limit=20,\
+                spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
+                    location_requirement=None,contact_info="0555555555555",pathToEventImage=None,skill_requirement=skill)
+        e3=EventPost.objects.get(id=3)
+        BadgeOfferedByEventPost.objects.create(id=3,post=e3,badge=b)
+
+        Application.objects.create(user_id=1, event_post=e1, status="accepted", applicant_type="player")
+        Application.objects.create(user_id=1, event_post=e2, status="accepted", applicant_type="player")
+        Application.objects.create(user_id=1, event_post=e3, status="accepted", applicant_type="player")
+        Application.objects.create(user_id=3, event_post=e3, status="accepted", applicant_type="player")
+
+        
+        client = APIClient()
+        client.login(username="crazy_girl2", password="123")
+        data={ "@context": "https://www.w3.org/ns/activitystreams",
+            "summary": "Sally viewed event post analytics",
+            "type": "View",
+            "actor": {
+                "type": "Person",
+                "id":1,
+                "name": "Sally",
+                "surname": "Sparrow",
+                "username":"crazy_girl"
+            },
+            "object": {
+            "type":"EventPost",
+            "post_id":3
+            }
+            }
+        response = client.post("/post/get_event_post_analytics/", data,format='json')
+        print(response.data)
+        self.assertEqual(response.status_code, 201)
 
     
+
+

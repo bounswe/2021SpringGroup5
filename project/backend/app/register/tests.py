@@ -1,9 +1,10 @@
 from django.test import TestCase
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
-from post.models import Sport,Badge,EventPost,SkillLevel
+from post.models import Sport,Badge,EventPost,SkillLevel,BadgeOwnedByUser
 from .models import User,Follow
 from datetime import datetime
+import json
 class AuthenticationTests(APITestCase):
 
     def test_wrong_password(self):
@@ -203,22 +204,22 @@ class AuthenticationTests(APITestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_home_page(self):
-        User.objects.create(Id=1,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",email="...com")
-        u1 = User.objects.get(username='crazy_girl')
+        User.objects.create(Id=1,first_name="Sally",last_name="Sparrow",username="crazy_girl2",password="123",mail="sally1.com",is_email_verified=True)
+        u1 = User.objects.get(username='crazy_girl2')
         u1.set_password('123')
         u1.save()
 
-        User.objects.create(Id=2,first_name="Cindy",last_name="Sparrow",username="cindy_girl",password="123",email="...com")
+        User.objects.create(Id=2,first_name="Cindy",last_name="Sparrow",username="cindy_girl",password="123",mail="cindy.com",is_email_verified =True)
         u = User.objects.get(username='cindy_girl')
         u.set_password('123')
         u.save()
 
-        Follow.objects.create(Id=1,follower=u1,following=u)
+        Follow.objects.create(id=1,follower=u1,following=u)
 
         Sport.objects.create(id=19,sport_name="Cycling",is_custom=False)
         s=Sport.objects.get(sport_name='Cycling')
-        Badge.objects.create(id=1,name="awesome",description="You are an awesome player",pathToBadgeImage="....com")
-        Badge.objects.create(id=5,name="surprised",description="You are a surprised player",pathToBadgeImage="....com")
+        Badge.objects.create(id=1,name="awesome",description="You are an awesome player",wikiId="1")
+        Badge.objects.create(id=5,name="surprised",description="You are a surprised player",wikiId="2")
         SkillLevel.objects.create(id=1,level_name="beginner")
         SkillLevel.objects.create(id=2,level_name="medium")
         skill=SkillLevel.objects.get(level_name='beginner')
@@ -231,6 +232,27 @@ class AuthenticationTests(APITestCase):
                     location_requirement=None,contact_info="0555555555555",pathToEventImage=None,skill_requirement=skill)
 
         client = APIClient()
-        client.login(username="crazy_girl", password="123")
-        response = client.get("home/", format='json')
+        client.login(username="crazy_girl2", password="123")
+        response = client.get("/home/", format='json')
         self.assertEqual(response.status_code, 200)
+
+    def test_get_badges_owned_by_user(self):
+        User.objects.create(Id=1,first_name="Sally",last_name="Sparrow",username="crazy_girl",password="123",mail="sally1.com",is_email_verified=True)
+        u1 = User.objects.get(username='crazy_girl')
+        u1.set_password('123')
+        u1.save()
+
+        Badge.objects.create(id=1,name="awesome",description="You are an awesome player",wikiId="1")
+        b1=Badge.objects.get(id=1)
+        Badge.objects.create(id=2,name="surprised",description="You are a surprised player",wikiId="2")
+        b2=Badge.objects.get(id=2)
+        date_string = "2021-12-12 10:10"
+        dt=datetime.fromisoformat(date_string)
+        BadgeOwnedByUser.objects.create(id=1,badge=b1,owner=u1,date_time=dt,isGivenBySystem=False)
+        BadgeOwnedByUser.objects.create(id=2,badge=b2,owner=u1,date_time=dt,isGivenBySystem=False)
+
+        client = APIClient()
+        client.login(username="crazy_girl", password="123")
+        response = client.get("/getBadgesOwnedByUser/", format='json')
+        self.assertEqual(response.status_code, 200)
+
