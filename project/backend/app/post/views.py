@@ -367,9 +367,8 @@ def deleteEventPost(request):
 def applyToEvent(request):
     data = request.data
 
-    actor_id = data["actor"]["Id"]
+    actor_id = request.user.Id
     event_id = data["object"]["Id"]
-
 
     # Try if the user is valid
     try:
@@ -382,21 +381,17 @@ def applyToEvent(request):
     except:
         return Response({"message":"There is no such event in the database, deletion operation is aborted"},status=status.HTTP_404_NOT_FOUND)
 
-
     if not (event_post.capacity == "open to applications" and event_post.status == "upcoming"):                     # if the event is not open to applications or event status is
         return Response({"message": "Event is closed to applications"}, status=400)         # event is full, passed or cancelled       HTTP412 maybe??
 
-
     event_post_sport_id = event_post.sport_category_id
-    event_skill_requirement = event_post.skill_requirement_id  # bunu dene id olarak yaziyor ama kelime olarak nasil olduguna bak
+    event_skill_requirement = event_post.skill_requirement_id
     isAdequate = True
-
 
     try:
         users_skill_level = InterestLevel.objects.get(owner_of_interest_id=actor_id, sport_name_id=event_post_sport_id)
     except:
         isAdequate = False
-
 
     if isAdequate:
         if users_skill_level.skill_level_id >= event_skill_requirement:
@@ -404,11 +399,9 @@ def applyToEvent(request):
         else:
             isAdequate = False
 
-
     applicationStatus = "waiting"
     if not isAdequate:
         applicationStatus = "inadeq"
-
 
     application_ser=ApplicationSerializer(data={"user":actor_id, "event_post":event_post.id, "status":applicationStatus, "applicant_type":"player"})
 
@@ -420,8 +413,7 @@ def applyToEvent(request):
     else:
         return Response({"message": "There was an error about application serializer"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
-
-    application_act_stream_ser = EventPostActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":data["actor"]["Id"], "object":data["object"]["Id"]})
+    application_act_stream_ser = EventPostActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":actor_id, "object":data["object"]["Id"]})
     if application_act_stream_ser.is_valid():
         application_act_stream_ser.save()
 
