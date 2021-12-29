@@ -957,13 +957,12 @@ def createEventComment(request):
         return Response({"message":"There is no such post in the database"},404)
 
     created_date = datetime.datetime.now()
-    date = created_date.replace(tzinfo=None)
 
-    comment_ser = EventCommentSerializer(data={"content": data["object"]["content"], "owner": user_id, "created_date": created_date, "event_post": event_post.id})
+    comment_ser = EventCommentSerializer(data={"content": data["object"]["content"], "owner": user_id, "created_date": created_date+datetime.timedelta(hours=3), "event_post": event_post.id})
     if comment_ser.is_valid():
         comment_ser.save()
     else:
-        return Response(400)
+        return Response({"message":"There has been an error on comment creation"},400)
 
     event_comment_act_stream_ser = EventCommentActivityStreamSerializer(data={"context": data["@context"], "summary": data["summary"],"type": data["type"], "actor": user_id, "object": comment_ser.data["id"]})
     if event_comment_act_stream_ser.is_valid():
@@ -990,11 +989,11 @@ def createEquipmentComment(request):
 
     created_date = datetime.datetime.now()
 
-    comment_ser = EquipmentCommentSerializer(data={"content": data["object"]["content"], "owner": user_id, "created_date": created_date, "equipment_post": equipment_post.id})
+    comment_ser = EquipmentCommentSerializer(data={"content": data["object"]["content"], "owner": user_id, "created_date": created_date+datetime.timedelta(hours=3), "equipment_post": equipment_post.id})
     if comment_ser.is_valid():
         comment_ser.save()
     else:
-        return Response(400)
+        return Response({"message":"There has been an error on comment creation"},400)
 
     equipment_comment_act_stream_ser = EquipmentCommentActivityStreamSerializer(data={"context": data["@context"], "summary": data["summary"],"type": data["type"], "actor": user_id, "object": comment_ser.data["id"]})
     if equipment_comment_act_stream_ser.is_valid():
