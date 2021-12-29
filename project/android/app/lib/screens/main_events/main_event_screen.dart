@@ -4,6 +4,7 @@ import 'package:ludo_app/screens/create_event/create_event_screen.dart';
 import 'package:ludo_app/screens/filter_popup/filter_popup_screen.dart';
 import 'package:ludo_app/screens/google_maps/google_maps_screen.dart';
 import 'package:ludo_app/screens/popup_event_details/popup_event_details.dart';
+import 'package:ludo_app/screens/user_profile/components/body.dart';
 
 class MainEventScreen extends StatefulWidget {
   const MainEventScreen({Key? key}) : super(key: key);
@@ -13,8 +14,8 @@ class MainEventScreen extends StatefulWidget {
 }
 
 class _MainEventScreenState extends State<MainEventScreen> {
-  var now_1d = DateTime.now().subtract(Duration(days: 1));
-  var now_1w = DateTime.now().subtract(Duration(days: 7));
+  var now_1d = DateTime.now().subtract(const Duration(days: 1));
+  var now_1w = DateTime.now().subtract(const Duration(days: 7));
   var now_1m = DateTime(
       DateTime.now().year, DateTime.now().month - 1, DateTime.now().day);
 
@@ -37,7 +38,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
     },
     {
       "id": 3,
-      "name": " Çift Kale Futbol Maçı",
+      "name": " Tek Kale Futbol Maçı",
       "description": 'Genç yeetenekleri bekliyorum!',
       "image": "assets/images/football-sport.jpg",
       "location": "Etiler Naturel Park",
@@ -96,7 +97,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
   void sortByDate() {
     eventList.sort((a, b) => a['datetime'].compareTo(b['datetime']));
     setState(() {
-      //girdiden sonra sonuçları yansıtma
+      //girdiden sonra sonuçları yansıtma ve search olmuşsa yine de searched eventleri sortluyor.
       afterSearchActionEvents = eventList;
     });
     print("$eventList");
@@ -105,13 +106,13 @@ class _MainEventScreenState extends State<MainEventScreen> {
   void sortByName() {
     eventList.sort((a, b) => a['name'].compareTo(b['name']));
     setState(() {
-      //girdiden sonra sonuçları yansıtma
+      //girdiden sonra sonuçları yansıtma ve search olmuşsa yine de searched eventleri sortluyor.
       afterSearchActionEvents = eventList;
     });
     print("$eventList");
   }
 
-  void _searchAction(String userInputText) {
+  void searchAction(String userInputText) {
     List<Map<String, dynamic>> results = [];
     if (userInputText.isEmpty) {
       //girdi olmazsa tüm eventler gözükecek
@@ -142,7 +143,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
               children: [
                 Flexible(
                   child: TextField(
-                    onChanged: (value) => _searchAction(value),
+                    onChanged: (value) => searchAction(value),
                     decoration: const InputDecoration(
                         labelText: 'Search For An Event',
                         prefixIcon: Icon(Icons.search)),
@@ -229,9 +230,9 @@ class _MainEventScreenState extends State<MainEventScreen> {
                         ),
                       ),
                     )
-                  : Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: const Text(
+                  : const Padding(
+                      padding: EdgeInsets.only(top: 20),
+                      child: Text(
                         'Event is not found!',
                         style: TextStyle(fontSize: 20),
                       ),
@@ -241,8 +242,23 @@ class _MainEventScreenState extends State<MainEventScreen> {
         ),
       ),
       bottomSheet: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return ProfileScreen();
+                    },
+                  ),
+                );
+              },
+              child: const Text(
+                'PROFILE',
+                style: TextStyle(fontSize: 15),
+              )),
           ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -254,7 +270,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
                   ),
                 );
               },
-              child: Text(
+              child: const Text(
                 'CREATE EVENT',
                 style: TextStyle(fontSize: 15),
               )),
