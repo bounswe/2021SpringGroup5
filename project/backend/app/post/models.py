@@ -39,7 +39,7 @@ class EventPost(models.Model):
     date_time=models.DateTimeField(null=False,blank=False)
     participant_limit=models.IntegerField(null=False,blank=False)
     spectator_limit=models.IntegerField(null=False,blank=False)
-    rule=models.TextField(null=False,blank=False,max_length=300)
+    rule=models.TextField(null=True,blank=True,max_length=300)
     equipment_requirement=models.TextField(null=True,blank=True,max_length=300)
     status=models.CharField(null=False,blank=False,max_length=10)
     capacity=models.CharField(null=False,blank=False,max_length=25)
@@ -109,14 +109,6 @@ class Badge(models.Model):
     description=models.TextField(max_length=300, null=True, blank=True)
     wikiId=models.CharField(max_length=20,null=True,blank=True)
     
-
-class BadgeOfferedByEventPost(models.Model):
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['post', 'badge'], name='badge offered by an event post')
-        ]
-    post=models.ForeignKey(EventPost,on_delete=models.CASCADE)
-    badge=models.ForeignKey(Badge,on_delete=models.CASCADE)
 
 class BadgeOwnedByUser(models.Model):
     class Meta:

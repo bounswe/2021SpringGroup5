@@ -2,11 +2,10 @@ from django.test import TestCase
 from register.models import User, InterestLevel  # will be changed after custom User is implemented
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
-from post.models import Badge, BadgeOfferedByEventPost, EquipmentPost, SkillLevel, Sport ,EventPost, Application
+from post.models import Badge,  EquipmentPost, SkillLevel, Sport ,EventPost, Application
 from register.models import InterestLevel
 import json
 from datetime import datetime
-from rest_framework.authtoken.models import Token
 class PostTests(APITestCase):
 # Create your tests here.
     def test_create_event_post_post(self):
@@ -15,9 +14,9 @@ class PostTests(APITestCase):
         u.set_password('123')
         u.save()
         Sport.objects.create(id=24,sport_name="Handball",is_custom=False)
-        Badge.objects.create(id=5,name="surprised",description="You are a friendly player",wikiId="1")
+        
         SkillLevel.objects.create(id=1,level_name="beginner")
-        data={"image":"","json":json.dumps({
+        json_data={
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "Sally is creating an event post",
             "type": "Create",
@@ -34,20 +33,18 @@ class PostTests(APITestCase):
                 "longitude":20.444,
                 "latitude":18.555,
                 "description": "adadasdasdad",
-                "pathToEventImage": None,
                 "date_time": "2021-02-10 10:30",
                 "participant_limit": 14,
-                "spectator_limit": None,
-                "rule": "asd",
-                "equipment_requirement": None,      
+                "spectator_limit": 0,
+                "rule": "asd",     
                 "location_requirement": "asd",
                 "contact_info": "054155555",
                 "skill_requirement": "beginner",
-                "repeating_frequency": 5,
-                "badges": [ {"id":5,"name":"surprised","description":"You are a friendly player"}]
-            
+                "repeating_frequency": 5
+                
             }
-            })
+            }
+        data={"image":"","json":json.dumps(json_data)
         }
         client=APIClient()
         client.login(username="crazy_girl", password="123")
@@ -60,10 +57,10 @@ class PostTests(APITestCase):
         u.set_password('123')
         u.save()
         Sport.objects.create(id=1,sport_name="Football",is_custom=False)
-        Badge.objects.create(id=1,name="friendly",description="You are a friendly player",wikiId="10")
+        
         SkillLevel.objects.create(id=1,level_name="beginner")
         Sport.objects.create(id=2,sport_name="Volleyball",is_custom=False)
-        Badge.objects.create(id=2,name="bad",description="You are a bad player")
+        
         SkillLevel.objects.create(id=2,level_name="expert")
 
         client=APIClient()
@@ -95,7 +92,6 @@ class PostTests(APITestCase):
                 "longitude":20.444,
                 "latitude":18.555,
                 "description": "adadasdasdad",
-                 "pathToEquipmentPostImage": None,
                 "link": "https://www.adidas.com.tr/tr",
             }
             })
@@ -241,7 +237,6 @@ class PostTests(APITestCase):
                 "latitude":32.666, 
                 "longitude":12.5678,
                 "link":"https://www.adidas.com.tr/tr",
-                "pathToEquipmentPostImage":None
                 }
             }
         
@@ -284,7 +279,6 @@ class PostTests(APITestCase):
                 "sport_category":"Football", 
                 "description":"blabla", 
                 "link":"https://www.adidas.com.tr/tr",
-                "pathToEquipmentPostImage":None
                 }
             }
         
@@ -301,8 +295,6 @@ class PostTests(APITestCase):
         u.save()
         Sport.objects.create(id=10,sport_name="Swimming",is_custom=False)
         s=Sport.objects.get(sport_name='Swimming')
-        Badge.objects.create(id=1,name="awesome",description="You are an awesome player",wikiId="1")
-        Badge.objects.create(id=5,name="surprised",description="You are a surprised player",wikiIde="2")
         SkillLevel.objects.create(id=1,level_name="beginner")
         SkillLevel.objects.create(id=2,level_name="medium")
         skill=SkillLevel.objects.get(level_name='beginner')
@@ -338,8 +330,6 @@ class PostTests(APITestCase):
                      "rule": "Don't shout", 
                      "skill_requirement": "medium", 
                      "contact_info": "05555555555",
-                      "badges":[{"id":1,"name":"awesome","description":"You are an awesome player"}], 
-                      "image":None
             }
             }
 
@@ -693,8 +683,6 @@ class PostTests(APITestCase):
         u.save()
         Sport.objects.create(id=19,sport_name="Cycling",is_custom=False)
         s=Sport.objects.get(sport_name='Cycling')
-        Badge.objects.create(id=1,name="awesome",description="You are an awesome player",wikiId="3")
-        Badge.objects.create(id=5,name="surprised",description="You are a surprised player",wikiId="4")
         SkillLevel.objects.create(id=1,level_name="beginner")
         SkillLevel.objects.create(id=2,level_name="medium")
         skill=SkillLevel.objects.get(level_name='beginner')
@@ -730,8 +718,6 @@ class PostTests(APITestCase):
                      "rule": "Don't shout", 
                      "skill_requirement": "medium", 
                      "contact_info": "05555555555",
-                      "badges":[{"id":1,"name":"awesome","description":"You are an awesome player"}], 
-                      "image":None
             }
             }
 
@@ -747,9 +733,7 @@ class PostTests(APITestCase):
         u.save()
         Sport.objects.create(id=10,sport_name="Swimming",is_custom=False)
         s=Sport.objects.get(sport_name='Swimming')
-        Badge.objects.create(id=1,name="awesome",description="You are an awesome player",wikiId="6")
-        Badge.objects.create(id=5,name="surprised",description="You are a surprised player",wikiId="7")
-        b=Badge.objects.get(id=1)
+        
         SkillLevel.objects.create(id=1,level_name="beginner")
         SkillLevel.objects.create(id=2,level_name="medium")
         skill=SkillLevel.objects.get(level_name='beginner')
@@ -761,7 +745,6 @@ class PostTests(APITestCase):
                 spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
                     location_requirement=None,contact_info="0555555555555",pathToEventImage=None,skill_requirement=skill)
         e=EventPost.objects.get(id=1)
-        BadgeOfferedByEventPost.objects.create(id=1,post=e,badge=b)
         data={
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "Sally read an event post",
@@ -1003,9 +986,6 @@ class PostTests(APITestCase):
 
         Sport.objects.create(id=10,sport_name="Swimming",is_custom=False)
         s=Sport.objects.get(sport_name='Swimming')
-        Badge.objects.create(id=1,name="awesome",description="You are an awesome player",wikiId="12")
-        Badge.objects.create(id=5,name="surprised",description="You are a surprised player",wikiId="13")
-        b=Badge.objects.get(id=1)
         SkillLevel.objects.create(id=1,level_name="beginner")
         SkillLevel.objects.create(id=2,level_name="medium")
         skill=SkillLevel.objects.get(level_name='beginner')
@@ -1017,7 +997,6 @@ class PostTests(APITestCase):
                 spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
                     location_requirement=None,contact_info="0555555555555",pathToEventImage=None,skill_requirement=skill)
         e1=EventPost.objects.get(id=1)
-        BadgeOfferedByEventPost.objects.create(id=1,post=e1,badge=b)
 
         EventPost.objects.create(id=2, post_name="Ali'nin maçı", owner=u,sport_category=s,created_date=dt,description="blabla",\
             longitude=20.444,
@@ -1025,7 +1004,6 @@ class PostTests(APITestCase):
                 spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
                     location_requirement=None,contact_info="0555555555555",pathToEventImage=None,skill_requirement=skill)
         e2=EventPost.objects.get(id=2)
-        BadgeOfferedByEventPost.objects.create(id=2,post=e2,badge=b)
 
         EventPost.objects.create(id=3, post_name="Ali'nin maçı", owner=u,sport_category=s,created_date=dt,description="blabla",\
             longitude=20.444,
@@ -1033,7 +1011,6 @@ class PostTests(APITestCase):
                 spectator_limit=30,rule="don't shout",equipment_requirement=None,status="upcoming",capacity="open to applications",\
                     location_requirement=None,contact_info="0555555555555",pathToEventImage=None,skill_requirement=skill)
         e3=EventPost.objects.get(id=3)
-        BadgeOfferedByEventPost.objects.create(id=3,post=e3,badge=b)
 
         Application.objects.create(user_id=1, event_post=e1, status="accepted", applicant_type="player")
         Application.objects.create(user_id=1, event_post=e2, status="accepted", applicant_type="player")

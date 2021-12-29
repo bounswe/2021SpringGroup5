@@ -5,11 +5,11 @@ from requests.api import post
 from rest_framework_simplejwt.backends import TokenBackend
 from register.models import Follow
 from .models import Application, EquipmentComment, EventComment
-from post.models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream, Application
+from post.models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,Application
 from django.utils.dateparse import parse_datetime
-from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, \
-    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, \
-    ApplicationSerializer, EventCommentSerializer, EventCommentActivityStreamSerializer, EquipmentCommentSerializer, EquipmentCommentActivityStreamSerializer
+from post.serializers import BadgeSerializer, EquipmentPostActivityStreamSerializer, \
+    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, ApplicationSerializer
+
 from rest_framework.decorators import api_view
 import requests
 from django.conf import settings
@@ -41,23 +41,63 @@ def createEventPost(request):
         
         data=json.loads(request.POST.get('json'))
         
+        try:
+            post_name=data["object"]["post_name"]
+        except:
+            return Response({"message":"Post name should not be empty"},400)
+        
+        try:
+            sport_category=data["object"]["sport_category"]
+        except:
+            return Response({"message":"You have to choose a sport category"},400)
 
-        post_name=data["object"]["post_name"]
-        sport_category=data["object"]["sport_category"]
-        longitude=data["object"]["longitude"]
-        latitude=data["object"]["latitude"]
-        description=data["object"]["description"]
-        #image=data["object"]["pathToEventImage"]
-        date_time=data["object"]["date_time"]
-        participant_limit=data["object"]["participant_limit"]
-        spectator_limit=data["object"]["spectator_limit"]
-        rule=data["object"]["rule"]
-        equipment_requirement=data["object"]["equipment_requirement"]
-        location_requirement=data["object"]["location_requirement"]
-        contact_info=data["object"]["contact_info"]
-        skill_requirement_info=data["object"]["skill_requirement"]
-        repeating_frequency=data["object"]["repeating_frequency"]+1
-        badges=data["object"]["badges"]
+        try:
+            longitude=data["object"]["longitude"]
+            latitude=data["object"]["latitude"]
+        except:
+            longitude=None
+            latitude=None
+        try:
+            description=data["object"]["description"]
+        except:
+            return Response({"message":"You should provide a description"},400)
+        try:
+            date_time=data["object"]["date_time"]
+        except:
+            return Response({"message":"You have to spesify an event time"},400)
+        try:
+            participant_limit=data["object"]["participant_limit"]
+        except:
+            return Response({"message":"You have to spesify a participant limit"},400)
+        try:
+            spectator_limit=data["object"]["spectator_limit"]
+        except:
+            return Response({"message":"You have to spesify"},400)
+        try:
+            rule=data["object"]["rule"]
+        except:
+            rule=None
+        try:
+            equipment_requirement=data["object"]["equipment_requirement"]
+        except:
+            equipment_requirement=None
+        try:
+            location_requirement=data["object"]["location_requirement"]
+        except:
+            location_requirement=None
+        try:
+            contact_info=data["object"]["contact_info"]
+        except:
+            contact_info=None
+        try:
+            skill_requirement_info=data["object"]["skill_requirement"]
+        except:
+            return Response({"message":"You have to give a skill requirement"},400)
+        try:
+            repeating_frequency=data["object"]["repeating_frequency"]+1
+        except:
+            repeating_frequency=1
+
         actor_id = request.user.Id
 
         user =list(User.objects.filter(Id=actor_id).values('Id','name','username','surname'))[0]
@@ -133,12 +173,7 @@ def createEventPost(request):
                     event_act_stream_ser.save()
                 else:
                     continue
-                if (len(badges)>0):
-                    for badge_info in badges:
-                        badge_id=badge_info["id"]
-                        badge_event_ser=BadgeOfferedByEventPostSerializer(data={"post":event_ser.data["id"],"badge":badge_id})
-                        if badge_event_ser.is_valid():
-                            badge_event_ser.save()
+                
                         
                 
             
@@ -158,16 +193,15 @@ def createEventPost(request):
         res["skill_requirement"]=skill_requirement.level_name
         res["sport_category"]=sport_name
         res["type"]="EventPost"
-        res["badges"]=badges
         data["object"]=res
         return Response(data,status=status.HTTP_201_CREATED)
 
     # It is a get request, badges in the db should be returned
     else:
-        badges=list(Badge.objects.values())
+        
         sports=list(Sport.objects.filter(is_custom=False).values('id',"sport_name"))
         skill_levels=list(SkillLevel.objects.values())
-        res={"badges":badges,"sports":sports,"skill_levels":skill_levels}
+        res={"sports":sports,"skill_levels":skill_levels}
         return Response(res,status=status.HTTP_200_OK)
 
 @login_required()
@@ -178,16 +212,24 @@ def createEquipmentPost(request):
         data=json.loads(request.POST.get('json'))
         owner_id=request.user.Id
         equipment_post_name=data["object"]["post_name"]
-        sport_category=data["object"]["sport_category"]
+        try:
+            sport_category=data["object"]["sport_category"]
+        except:
+            return Response({"message":"You have to spesify a sport category"},400)
         try:
             longitude=data["object"]["longitude"]
             latitude=data["object"]["latitude"]
         except:
             longitude=None
             latitude=None
-        description=data["object"]["description"]
-        #image=data["object"]["pathToEquipmentPostImage"]
-        link=data["object"]["link"]
+        try:
+            description=data["object"]["description"]
+        except:
+            return Response({"message":"You have to write a description"},400)
+        try:
+            link=data["object"]["link"]
+        except:
+            link=None
 
         try:
             actor=list(User.objects.filter(Id=owner_id).values('Id','name','surname','username'))[0]
@@ -262,10 +304,6 @@ def deleteEquipmentPost(request):
     actor_id=request.user.Id
     equipment_post_id=data["object"]["post_id"]
 
-    try:
-        actor=User.objects.get(Id=actor_id)
-    except:
-        return Response({"message":"There is no such user in the system"},404)
     try:
         EquipmentPost.objects.filter(pk=equipment_post_id).update(active=False)
         equipment_post=EquipmentPost.objects.get(id=equipment_post_id)
@@ -573,15 +611,7 @@ def changeEventInfo(request):
             event_post_updated=model_to_dict(event_post_ser.save())
             event_post_updated["sport_category"]=Sport.objects.get(id=event_post_updated["sport_category"]).sport_name
             event_post_updated["skill_requirement"]=SkillLevel.objects.get(id=event_post_updated["skill_requirement"]).level_name
-            if "badges" in modifications_keys:
-                for badge_ in data["modifications"]["badges"]:
-                    badge_id=badge_["id"]
-                    badge_ser=BadgeOfferedByEventPostSerializer(data={"post":post_id,"badge":badge_id})
-                    if badge_ser.is_valid():
-                        BadgeOfferedByEventPost.objects.filter(post=event_post).delete()
-                        badge_ser.save()
-                    else:
-                        return Response({"message":badge_ser.errors},422)
+            
 
             event_post_act_ser.save()
         else:
@@ -593,7 +623,6 @@ def changeEventInfo(request):
     event_post_updated["created_date"]=event_post_updated["created_date"].strftime('%Y-%m-%d %H:%M:%S')
     event_post_updated["date_time"]=event_post_updated["date_time"].strftime('%Y-%m-%d %H:%M:%S')
     event_post_updated["owner"]=actor
-    event_post_updated["badges"]=list(BadgeOfferedByEventPost.objects.filter(post=post_id).values('badge__id','badge__name','badge__description','badge__wikiId'))
     res={"@context":data["@context"],"summary":data["summary"],"actor":data["actor"],"type":data["type"],"object":event_post_updated}
     return Response(res,200)
 
@@ -716,8 +745,6 @@ def getEventPostDetails(request):
     if actor_id==event_post_details.owner_id:
         is_event_creator=True
     
-    badges_offered=list(BadgeOfferedByEventPost.objects.filter(post=post_id).values('badge__id','badge__name','badge__description','badge__wikiId'))
-
     try:
         comments=list(EventComment.objects.filter(event_post_id=post_id).order_by('id').values('id','content', 'created_date', 'owner_id__username'))
         for i in range(len(comments)):
@@ -731,7 +758,8 @@ def getEventPostDetails(request):
     except:
         sport=event_post_details.sport_category_id
 
-    skill_requirement=SkillLevel.objects.get(level_name=event_post_details.skill_requirement).level_name
+    skill_requirement=SkillLevel.objects.get(id=event_post_details.skill_requirement.id).level_name
+
     try:
         accepted_players=list(Application.objects.filter(event_post=post_id,status="accepted",applicant_type="player").values('user__Id',\
         'user__name','user__surname','user__username'))
@@ -788,7 +816,6 @@ def getEventPostDetails(request):
     event_post_details["rejected_players"]=rejected_players
     event_post_details["owner"]=list(User.objects.filter(Id=event_post_details["owner"]).values('Id','name','surname','username'))[0]
     event_post_details["is_event_creator"]=is_event_creator
-    event_post_details["badges"]=badges_offered
     event_post_details["date_time"]=event_post_details["date_time"].strftime('%Y-%m-%d %H:%M:%S')
     event_post_details["created_date"]=event_post_details["created_date"].strftime('%Y-%m-%d %H:%M:%S')
     data["actor"]["type"]="Person"

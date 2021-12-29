@@ -3,9 +3,9 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from requests.api import post
 from post.models import Application, EquipmentComment, EventComment
-from post.models import Badge,SkillLevel, Sport,EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream
+from post.models import Badge,SkillLevel, Sport,EquipmentPost,EventPost,EquipmentPostActivtyStream
 
-from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, \
+from post.serializers import  BadgeSerializer, EquipmentPostActivityStreamSerializer, \
     EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, ApplicationSerializer
 from rest_framework.decorators import api_view
 import requests
