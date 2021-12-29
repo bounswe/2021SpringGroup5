@@ -8,7 +8,8 @@ from .models import Application, EquipmentComment, EventComment
 from post.models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream, Application
 from django.utils.dateparse import parse_datetime
 from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, \
-    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, ApplicationSerializer
+    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, \
+    ApplicationSerializer, EventCommentSerializer, EventCommentActivityStreamSerializer, EquipmentCommentSerializer, EquipmentCommentActivityStreamSerializer
 from rest_framework.decorators import api_view
 import requests
 from django.conf import settings
@@ -939,6 +940,66 @@ def spectateToEvent(request):
     return Response({"message": "Spectate application is successfully created"}, status=status.HTTP_201_CREATED)
 
 
+@login_required()
+@api_view(['POST'])
+def createEventComment(request):
+    data = request.data
+    user_id = request.user.Id
+
+    try:
+        actor=User.objects.filter(Id=user_id)
+    except:
+        return Response({"message":"There is no such user in the system"},404)
+
+    try:
+        event_post=EventPost.objects.get(id=data["object"]["post_id"])
+    except:
+        return Response({"message":"There is no such post in the database"},404)
+
+    created_date = datetime.datetime.now()
+
+    comment_ser = EventCommentSerializer(data={"content": data["object"]["content"], "owner": user_id, "created_date": created_date+datetime.timedelta(hours=3), "event_post": event_post.id})
+    if comment_ser.is_valid():
+        comment_ser.save()
+    else:
+        return Response({"message":"There has been an error on comment creation"},400)
+
+    event_comment_act_stream_ser = EventCommentActivityStreamSerializer(data={"context": data["@context"], "summary": data["summary"],"type": data["type"], "actor": user_id, "object": comment_ser.data["id"]})
+    if event_comment_act_stream_ser.is_valid():
+        event_comment_act_stream_ser.save()
+
+    return Response({"message": "Comment created successfully"}, status=status.HTTP_201_CREATED)
+
+
+@login_required()
+@api_view(['POST'])
+def createEquipmentComment(request):
+    data = request.data
+    user_id = request.user.Id
+
+    try:
+        actor=User.objects.filter(Id=user_id)
+    except:
+        return Response({"message":"There is no such user in the system"},404)
+
+    try:
+        equipment_post=EquipmentPost.objects.get(id=data["post_id"])
+    except:
+        return Response({"message":"There is no such post in the database"},404)
+
+    created_date = datetime.datetime.now()
+
+    comment_ser = EquipmentCommentSerializer(data={"content": data["object"]["content"], "owner": user_id, "created_date": created_date+datetime.timedelta(hours=3), "equipment_post": equipment_post.id})
+    if comment_ser.is_valid():
+        comment_ser.save()
+    else:
+        return Response({"message":"There has been an error on comment creation"},400)
+
+    equipment_comment_act_stream_ser = EquipmentCommentActivityStreamSerializer(data={"context": data["@context"], "summary": data["summary"],"type": data["type"], "actor": user_id, "object": comment_ser.data["id"]})
+    if equipment_comment_act_stream_ser.is_valid():
+        equipment_comment_act_stream_ser.save()
+
+    return Response({"message": "Comment created successfully"}, status=status.HTTP_201_CREATED)
 
 @login_required()
 @api_view(['GET'])

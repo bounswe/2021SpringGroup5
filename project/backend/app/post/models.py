@@ -84,7 +84,7 @@ class EventComment(models.Model):
     created_date=models.DateTimeField(null=False,blank=False,default=timezone.now)
     event_post=models.ForeignKey(EventPost,null=True,blank=True,on_delete=models.CASCADE)
 
-class EventCommentActivtyStream(models.Model):
+class EventCommentActivityStream(models.Model):
     object=models.ForeignKey(EventComment,on_delete=CASCADE)
     context=models.URLField(null=False,blank=False) #????????????
     summary=models.CharField(max_length=200,null=False,blank=False)
@@ -97,7 +97,7 @@ class EquipmentComment(models.Model):
     created_date=models.DateTimeField(null=False,blank=False,default=timezone.now)
     equipment_post=models.ForeignKey(EquipmentPost,null=True,blank=True,on_delete=models.CASCADE)
 
-class EquipmentCommentActivtyStream(models.Model):
+class EquipmentCommentActivityStream(models.Model):
     object=models.ForeignKey(EquipmentComment,on_delete=CASCADE)
     context=models.URLField(null=False,blank=False) #????????????
     summary=models.CharField(max_length=200,null=False,blank=False)
