@@ -608,6 +608,12 @@ def postponeEvent(request):
     except:
         return Response({"message": "There is no such post in the database"}, 404)
 
+    if actor_id != event_post.owner_id:
+        return Response({"message": "You are now the owner of this event"}, 400)
+
+
+    sport = Sport.objects.get(id=event_post.sport_category_id)
+    skill = SkillLevel.objects.get(id=event_post.skill_requirement_id)
 
     new_date = datetime.strptime(data["new_date"], '%d/%m/%Y:%H')
     event_date = event_post.date_time.replace(tzinfo=None)
@@ -626,7 +632,18 @@ def postponeEvent(request):
     else:
         return Response({"message": event_post_act_ser.errors}, 422)
 
-    return Response(200)
+    res = list(EventPost.objects.filter(id=event_post.id).values())
+    if len(res) == 0:
+        return Response({"message": "There has been an error"}, 500)
+    else:
+        res[0]["sport_category_id"] = sport.sport_name
+        res[0]["sport_name"] = res[0].pop("sport_category_id")
+        res[0]["created_date"] = res[0]["created_date"].strftime('%Y-%m-%d %H:%M:%S')
+        res[0]["date_time"] = res[0]["date_time"].strftime('%Y-%m-%d %H:%M:%S')
+        res[0]["skill_requirement_id"] = skill.level_name
+        res[0]["skill_requirement"] = res[0].pop("skill_requirement_id")
+
+    return HttpResponse(json.dumps(res), content_type="application/json", status=200)
 
 
 @login_required()
