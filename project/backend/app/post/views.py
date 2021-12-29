@@ -425,7 +425,7 @@ def applyToEvent(request):
 def acceptApplicant(request):
     data = request.data
 
-    applicant_id = data["actor"]["Id"]
+    applicant_id = request.user.Id
     event_id = data["object"]["Id"]
 
     # Try if the user is valid
@@ -439,13 +439,11 @@ def acceptApplicant(request):
     except:
         return Response({"message":"There is no such event in the database, deletion operation is aborted"},status=status.HTTP_404_NOT_FOUND)
 
-
     try:
         application = Application.objects.filter(event_post_id=event_id, user_id=applicant_id)
         event_post = EventPost.objects.get(id=event_id)
     except:
         return Response({"message": "There is no such application in the database, operation is aborted"}, status=status.HTTP_404_NOT_FOUND)
-
 
     if event_post.participant_limit > event_post.current_player and event_post.status == "upcoming" and event_post.capacity == "open to applications":
         new_part = event_post.current_player+1
@@ -458,8 +456,7 @@ def acceptApplicant(request):
 
     application = application.update(status="accepted")
 
-
-    accept_act_stream_ser = EventPostActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":data["actor"]["Id"], "object":data["object"]["Id"]})
+    accept_act_stream_ser = EventPostActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":applicant_id, "object":data["object"]["Id"]})
     if accept_act_stream_ser.is_valid():
         accept_act_stream_ser.save()
 
@@ -470,7 +467,7 @@ def acceptApplicant(request):
 def rejectApplicant(request):
     data = request.data
 
-    applicant_id = data["actor"]["Id"]
+    applicant_id = request.user.Id
     event_id = data["object"]["Id"]
 
     # Try if the user is valid
@@ -484,17 +481,14 @@ def rejectApplicant(request):
     except:
         return Response({"message":"There is no such event in the database, deletion operation is aborted"},status=status.HTTP_404_NOT_FOUND)
 
-
     try:
         application = Application.objects.filter(event_post_id=event_id, user_id=applicant_id)
         event_post = EventPost.objects.get(id=event_id)
     except:
         return Response({"message": "There is no such application in the database, operation is aborted"}, status=status.HTTP_404_NOT_FOUND)
 
-
-
     application = application.update(status="rejected")
-    accept_act_stream_ser = EventPostActivityStreamSerializer(data={"context": data["@context"], "summary": data["summary"], "type": data["type"], "actor": data["actor"]["Id"], "object": data["object"]["Id"]})
+    accept_act_stream_ser = EventPostActivityStreamSerializer(data={"context": data["@context"], "summary": data["summary"], "type": data["type"], "actor": applicant_id, "object": data["object"]["Id"]})
     if accept_act_stream_ser.is_valid():
         accept_act_stream_ser.save()
     return Response({"message":"Application is rejected"},status=status.HTTP_200_OK)
