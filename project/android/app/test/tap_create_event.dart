@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ludo_app/screens/main_events/main_event_screen.dart';
 
 void main() {
-  testWidgets('in page.', (WidgetTester tester) async {
+  testWidgets('check if the profile button is working', (WidgetTester tester) async {
     MainEventScreen mainScreen = const MainEventScreen();
     var app = MediaQuery(
         data: const MediaQueryData(), child: MaterialApp(home: mainScreen));
