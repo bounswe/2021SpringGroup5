@@ -8,7 +8,8 @@ from .models import Application, EquipmentComment, EventComment
 from post.models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,Application
 from django.utils.dateparse import parse_datetime
 from post.serializers import BadgeSerializer, EquipmentPostActivityStreamSerializer, \
-    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, ApplicationSerializer
+    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, ApplicationSerializer, \
+    EventCommentSerializer, EventCommentActivityStreamSerializer, EquipmentCommentSerializer, EquipmentCommentActivityStreamSerializer
 
 from rest_framework.decorators import api_view
 import requests
@@ -22,7 +23,6 @@ from rest_framework.views import APIView
 from unidecode import unidecode
 from django.forms.models import model_to_dict
 from django.core import serializers
-from datetime import datetime
 # Create your views here.
 
 from django.apps import apps
