@@ -218,7 +218,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) {
-                                            return GoogleMapsScreen();
+                                            return GoogleMapsScreen(parentAction: (List) => {},);
                                           },
                                         ),
                                       );

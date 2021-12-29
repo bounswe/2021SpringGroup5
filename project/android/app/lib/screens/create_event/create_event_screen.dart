@@ -177,7 +177,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          child: const GoogleMapsScreen(),
+                          child: GoogleMapsScreen(parentAction: (List) => {},),
                           height: MediaQuery.of(context).size.height * 0.59,
                           width: MediaQuery.of(context).size.width * 0.93,
                         ),

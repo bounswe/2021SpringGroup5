@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class GoogleMapsScreen extends StatefulWidget {
-  const GoogleMapsScreen({Key? key}) : super(key: key);
+
+  final ValueChanged<List<double>> parentAction;
+  const GoogleMapsScreen({Key? key, required this.parentAction}) : super(key: key);
 
   @override
   _GoogleMapsScreenState createState() => _GoogleMapsScreenState();
@@ -15,6 +17,9 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
   List<Marker> collectionMarkers = [];
   List<Circle> collectionCircles = [];
 
+  List<double> mapCallback = [0.0, 0.0, 0.0];
+
+
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
@@ -22,7 +27,7 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
         child: Align(
           alignment: Alignment.center,
           child: GoogleMap(
-            initialCameraPosition: CameraPosition(
+            initialCameraPosition: const CameraPosition(
               target: LatLng(41.083556, 29.050598),
               zoom: 14.9,
             ),
@@ -33,8 +38,11 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
           ),
         ),
       ),
+      //Text(collectionMarkers[0].position),
+      //Text(collectionCircles[0].radius),
     ]);
   }
+
 
   handleTap(LatLng tappedPoint) {
     print(tappedPoint); // the lat / long values of tapped point.
@@ -70,6 +78,11 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
                             collectionMarkers[0].position.latitude)))
                 .abs()),
       ));
+
+      mapCallback[0] = (collectionMarkers[0].position.latitude);
+      mapCallback[1] = (collectionMarkers[0].position.longitude);
+      mapCallback[2] = (collectionCircles[0].radius);
+      widget.parentAction(mapCallback);
     });
   }
 }
