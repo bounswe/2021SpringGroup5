@@ -653,7 +653,7 @@ def postponeEvent(request):
     sport = Sport.objects.get(id=event_post.sport_category_id)
     skill = SkillLevel.objects.get(id=event_post.skill_requirement_id)
 
-    new_date = datetime.strptime(data["new_date"], '%d/%m/%Y:%H')
+    new_date = datetime.datetime.strptime(data["new_date"], '%d/%m/%Y:%H')
     event_date = event_post.date_time.replace(tzinfo=None)
 
 
