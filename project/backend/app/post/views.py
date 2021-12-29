@@ -914,7 +914,7 @@ def getEquipmentPostDetails(request):
 def spectateToEvent(request):
     data = request.data
 
-    actor_id = data["actor"]["Id"]
+    actor_id = request.user.Id
     event_id = data["object"]["Id"]
 
     # Try if the user is valid
@@ -929,24 +929,19 @@ def spectateToEvent(request):
         return Response({"message": "There is no such event in the database, spectate operation is aborted"},
                         status=status.HTTP_404_NOT_FOUND)
 
-
     if  event_post.current_spectator >= event_post.spectator_limit:
         return Response({"message": "Spectator limit is full"}, status=400)
 
     if event_post.status != "upcoming":
         return Response({"message": "This is not an upcoming event. Maybe it is cancelled or passed."}, status=400)
 
-
-
     ## Increase spectator by 1
     cur_spec = event_post.current_spectator
     EventPost.objects.filter(id=event_id).update(current_spectator = cur_spec+1)
 
-
     applicationStatus = "accepted"
     application_ser = ApplicationSerializer(
         data={"user": actor_id, "event_post": event_post.id, "status": applicationStatus, "applicant_type": "spectator"})
-
 
     if application_ser.is_valid():
         try:
@@ -959,10 +954,9 @@ def spectateToEvent(request):
         return Response({"message": "There was an error about application serializer"},
                         status=status.HTTP_406_NOT_ACCEPTABLE)
 
-    application_act_stream_ser = EventPostActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":data["actor"]["Id"], "object":data["object"]["Id"]})
+    application_act_stream_ser = EventPostActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":actor_id, "object":data["object"]["Id"]})
     if application_act_stream_ser.is_valid():
         application_act_stream_ser.save()
-
 
     return Response({"message": "Spectate application is successfully created"}, status=status.HTTP_201_CREATED)
 
