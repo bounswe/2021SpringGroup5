@@ -331,15 +331,13 @@ def deleteEquipmentPost(request):
 def deleteEventPost(request):
     data = request.data
 
-    actor_id = data["actor"]["Id"]
+    actor_id = request.user.Id
     event_post_id = data["object"]["post_id"]
 
     try:
         actor = User.objects.get(Id=actor_id)
     except:
         return Response({"message": "There is no such user in the system"}, 404)
-
-
 
     try:
         EventPost.objects.filter(pk=event_post_id).update(status="cancelled", capacity="cancelled")
@@ -358,8 +356,6 @@ def deleteEventPost(request):
         return Response({"message": "there was an error while deleting the event post"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
     return Response({"message": "Event post is deleted"}, status=status.HTTP_200_OK)
-
-
 
 
 @login_required()
