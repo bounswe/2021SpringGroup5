@@ -14,8 +14,8 @@ class MainEventScreen extends StatefulWidget {
 }
 
 class _MainEventScreenState extends State<MainEventScreen> {
-  var now_1d = DateTime.now().subtract(Duration(days: 1));
-  var now_1w = DateTime.now().subtract(Duration(days: 7));
+  var now_1d = DateTime.now().subtract(const Duration(days: 1));
+  var now_1w = DateTime.now().subtract(const Duration(days: 7));
   var now_1m = DateTime(
       DateTime.now().year, DateTime.now().month - 1, DateTime.now().day);
 
@@ -97,7 +97,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
   void sortByDate() {
     eventList.sort((a, b) => a['datetime'].compareTo(b['datetime']));
     setState(() {
-      //girdiden sonra sonuçları yansıtma
+      //girdiden sonra sonuçları yansıtma ve search olmuşsa yine de searched eventleri sortluyor.
       afterSearchActionEvents = eventList;
     });
     print("$eventList");
@@ -106,13 +106,13 @@ class _MainEventScreenState extends State<MainEventScreen> {
   void sortByName() {
     eventList.sort((a, b) => a['name'].compareTo(b['name']));
     setState(() {
-      //girdiden sonra sonuçları yansıtma
+      //girdiden sonra sonuçları yansıtma ve search olmuşsa yine de searched eventleri sortluyor.
       afterSearchActionEvents = eventList;
     });
     print("$eventList");
   }
 
-  void _searchAction(String userInputText) {
+  void searchAction(String userInputText) {
     List<Map<String, dynamic>> results = [];
     if (userInputText.isEmpty) {
       //girdi olmazsa tüm eventler gözükecek
@@ -143,7 +143,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
               children: [
                 Flexible(
                   child: TextField(
-                    onChanged: (value) => _searchAction(value),
+                    onChanged: (value) => searchAction(value),
                     decoration: const InputDecoration(
                         labelText: 'Search For An Event',
                         prefixIcon: Icon(Icons.search)),
