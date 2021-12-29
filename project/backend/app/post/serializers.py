@@ -45,6 +45,16 @@ class EquipmentCommentSerializer(serializers.ModelSerializer):
         model=EquipmentComment
         fields='__all__'
 
+class EventCommentActivityStreamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=EventCommentActivityStream
+        fields='__all__'
+
+class EquipmentCommentActivityStreamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=EquipmentCommentActivityStream
+        fields='__all__'
+
 class ApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model=Application
