@@ -1002,7 +1002,7 @@ def createEquipmentComment(request):
         return Response({"message":"There is no such user in the system"},404)
 
     try:
-        equipment_post=EquipmentPost.objects.get(id=data["post_id"])
+        equipment_post=EquipmentPost.objects.get(id=data["object"]["post_id"])
     except:
         return Response({"message":"There is no such post in the database"},404)
 
