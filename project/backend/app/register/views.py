@@ -59,12 +59,12 @@ def send_mail(user, request):
 @login_required
 @api_view(['GET'])
 def homePageEvents(request):
-    actor_id = request.user.Id
+    actor_id=request.user.Id
+    
+    following_user_ids=list(Follow.objects.filter(follower=actor_id).values('following__Id'))
 
-    following_user_ids = list(Follow.objects.filter(follower=actor_id).values('following__Id'))
-
-    if len(following_user_ids) == 0:
-        return Response({"message": "No record found"}, 404)
+    if len(following_user_ids)==0:
+        return Response({"message":"No record found"},404)
 
     result_events = []
     for i in range(len(following_user_ids)):
@@ -79,13 +79,13 @@ def homePageEvents(request):
         except:
             continue
 
-    return Response({"posts": result_events}, 202)
+    return Response({"posts": result_events}, 200)
 
 
 @login_required
 @api_view(['GET'])
 def getBadgesOwnedByUser(request):
-    actor_id = request.user.Id
+    actor_id=request.user.Id
     try:
         badges = list(
             BadgeOwnedByUser.objects.filter(owner=actor_id).values('badge__id', 'badge__name', 'badge__description',
