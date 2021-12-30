@@ -79,7 +79,7 @@ def homePageEvents(request):
         except:
             continue
 
-    return Response({"posts": result_events},200)
+    return Response({"posts":result_events},200)
 
 @login_required
 @api_view(['GET'])
