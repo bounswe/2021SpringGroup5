@@ -159,7 +159,7 @@ Future<String> login(BuildContext context, String username, String password) asy
       context,
       MaterialPageRoute(
         builder: (context) {
-          return MainEventScreen();
+          return MainEventScreen(willFetchAllEvents: true);
         },
       ),
     );

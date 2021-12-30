@@ -5,9 +5,13 @@ import 'package:ludo_app/screens/filter_popup/filter_popup_screen.dart';
 import 'package:ludo_app/screens/google_maps/google_maps_screen.dart';
 import 'package:ludo_app/screens/popup_event_details/popup_event_details.dart';
 import 'package:ludo_app/screens/user_profile/components/body.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class MainEventScreen extends StatefulWidget {
-  const MainEventScreen({Key? key}) : super(key: key);
+
+  final bool willFetchAllEvents;
+  const MainEventScreen({Key? key, this.willFetchAllEvents = false}) : super(key: key);
 
   @override
   _MainEventScreenState createState() => _MainEventScreenState();
@@ -19,6 +23,9 @@ class _MainEventScreenState extends State<MainEventScreen> {
   var now_1m = DateTime(
       DateTime.now().year, DateTime.now().month - 1, DateTime.now().day);
 
+  final List<Map<String, dynamic>> eventList = [];
+
+  /*
   final List<Map<String, dynamic>> eventList = [
     {
       "id": 1,
@@ -85,11 +92,15 @@ class _MainEventScreenState extends State<MainEventScreen> {
       "datetime": "2021-12-25 15:00"
     },
   ];
+   */
 
   List<Map<String, dynamic>> afterSearchActionEvents = [];
 
   @override
   initState() {
+    if(widget.willFetchAllEvents){
+      fetchEvents();
+    }
     afterSearchActionEvents = eventList;
     super.initState();
   }
@@ -129,6 +140,166 @@ class _MainEventScreenState extends State<MainEventScreen> {
     });
   }
 
+  Future fetchEvents() async {
+    // Return all events
+    var params = {
+      "status": "upcoming",
+      "search_query": "",
+      "sort_func": {
+        "isSortedByLocation": false
+      },
+      "filter_func": {
+        "location": null,
+        "sportType": "",
+        "date": null,
+        "capacity": "open to applications"
+      }
+    };
+    final response = await http.post(
+      Uri.parse('http://3.122.41.188:8000/search/search_event/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(params),
+    );
+
+    if (response.statusCode == 200) {
+      WidgetsBinding.instance!.addPostFrameCallback((_){
+        setState(() {
+          eventList.clear();
+          List events = jsonDecode(response.body);
+          for(var i = 0; i < events.length; i++){
+            Map<String, dynamic> oneEvent = {
+              "id": events[i]['pk'],
+              "name": events[i]['fields']['post_name'],
+              "description": events[i]['fields']['description'],
+              "image": events[i]['fields']['pathToEventImage'],
+              "location": "",
+              "datetime": events[i]['fields']['created_date'],
+            };
+            eventList.add(oneEvent);
+          }
+          print(eventList);
+        });
+      });
+      return response.body;
+    } else {
+      throw Exception(json.decode(response.body)['errormessage']);
+    }
+  }
+
+  void _filterButtonNavigate(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const FilterScreen()),
+    );
+
+    // After the Selection Screen returns a result, hide any previous snackbars
+    // and show the new result.
+    showAlertDialog(context, result[0], result[1], result[2], result[3],
+        result[4], result[5], result[6], result[7], sportType: result[8]);
+  }
+
+  showAlertDialog(BuildContext context, todayflag, thisweekflag, thismonthflag, alltimeflag,
+      opentoapplicationflag, fullflag, cancelledflag, mapCallback,
+      {sportType = ""}) async {
+
+
+    Future<String>? _futureResponse;
+    FutureBuilder<String> buildFutureBuilder() {
+      return FutureBuilder<String>(
+        future: _futureResponse,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List events = jsonDecode(snapshot.data!);
+            WidgetsBinding.instance!.addPostFrameCallback((_){
+                setState(() {
+                  eventList.clear();
+                  for(var i = 0; i < events.length; i++){
+                    Map<String, dynamic> oneEvent = {
+                      "id": events[i]['pk'],
+                      "name": events[i]['fields']['post_name'],
+                      "description": events[i]['fields']['description'],
+                      "image": events[i]['fields']['pathToEventImage'],
+                      "location": "",
+                      "datetime": events[i]['fields']['created_date'],
+                    };
+                    eventList.add(oneEvent);
+                  }
+                });
+            });
+
+            Navigator.pop(context);
+            //return Text(snapshot.data!);
+          } else if (snapshot.hasError) {
+            return Text('${snapshot.error}');
+          }
+
+          return const CircularProgressIndicator();
+        },
+      );
+    }
+    String capacity = "open to applications";
+    //if (fullflag) capacity = "full";
+    //else if (cancelledflag) capacity = "cancelled";
+
+    var params = {
+      "status": "upcoming",
+      "search_query": "",
+      "sort_func": {
+        "isSortedByLocation": true
+      },
+      "filter_func": {
+        "location": {
+          "lat": mapCallback[0],
+          "lng": mapCallback[1],
+          "radius": mapCallback[2]
+        },
+        "sportType": sportType,
+        "date": null,
+        "capacity": capacity
+      }
+    };
+
+    _futureResponse = filterEvents(params, context);
+    // late var futureRegister = fetchRegister();
+    // print(futureRegister);
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      content: buildFutureBuilder(),
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  Future<String> filterEvents(params, BuildContext context) async {
+    final response = await http.post(
+      Uri.parse('http://3.122.41.188:8000/search/search_event/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(params),
+    );
+
+    if (response.statusCode == 200) {
+
+      //Navigator.pop(context, response.body);
+
+      return response.body;
+
+    } else {
+      throw Exception(json.decode(response.body)['errormessage']);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -163,10 +334,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
                         size: 25, color: Colors.blue)),
                 IconButton(
                   onPressed: () {
-                    Navigator.of(context)
-                        .push(PopupCardEffect(builder: (context) {
-                      return FilterScreen();
-                    }));
+                    _filterButtonNavigate(context);
                   },
                   icon: const Icon(
                     Icons.filter_list,
@@ -194,10 +362,8 @@ class _MainEventScreenState extends State<MainEventScreen> {
                                 return PopupEventDetails();
                               }));
                             },
-                            leading: Image(
-                              fit: BoxFit.cover,
-                              image: AssetImage(
-                                  afterSearchActionEvents[index]['image']),
+                            leading: Image.network(
+                                afterSearchActionEvents[index]['image']
                             ),
                             title: Text(afterSearchActionEvents[index]['name']),
                             subtitle: Column(
@@ -212,18 +378,24 @@ class _MainEventScreenState extends State<MainEventScreen> {
                             trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
-                                  FloatingActionButton(
+                                  ElevatedButton(
                                     onPressed: () {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) {
-                                            return GoogleMapsScreen(parentAction: (List) => {},);
+                                            return GoogleMapsScreen(
+                                              parentAction: (List) => {},
+                                            );
                                           },
                                         ),
                                       );
                                     },
                                     child: Text('JOIN'),
+                                    style: ElevatedButton.styleFrom(
+                                      shape: CircleBorder(),
+                                      padding: EdgeInsets.all(20),
+                                    ),
                                   ),
                                 ]),
                           ),

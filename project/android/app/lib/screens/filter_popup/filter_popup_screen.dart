@@ -1,9 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ludo_app/screens/google_maps/google_maps_screen.dart';
-import 'package:ludo_app/screens/main_events/main_event_screen.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 class FilterScreen extends StatefulWidget {
   const FilterScreen({Key? key}) : super(key: key);
@@ -250,10 +247,8 @@ class _FilterScreenState extends State<FilterScreen> {
 
                 ElevatedButton(
                     onPressed: () {
-                      showAlertDialog(
-                        context, _todayflag, _thisweekflag, _thismonthflag, _alltimeflag,
-                          _opentoapplicationflag, _fullflag, _cancelledflag, mapCallback,
-                        sportType: sportTypeController.text);
+                      //showAlertDialog(context, _todayflag, _thisweekflag, _thismonthflag, _alltimeflag, _opentoapplicationflag, _fullflag, _cancelledflag, mapCallback, sportType: sportTypeController.text);
+                      Navigator.pop(context, [_todayflag, _thisweekflag, _thismonthflag, _alltimeflag, _opentoapplicationflag, _fullflag, _cancelledflag, mapCallback, sportTypeController.text]);
                       },
                     child: const Text(
                       "FILTER",
@@ -267,83 +262,3 @@ class _FilterScreenState extends State<FilterScreen> {
   }
 }
 
-showAlertDialog(BuildContext context, todayflag, thisweekflag, thismonthflag, alltimeflag,
-    opentoapplicationflag, fullflag, cancelledflag, mapCallback,
-    {sportType = ""}) async {
-
-
-  Future<String>? _futureResponse;
-  FutureBuilder<String> buildFutureBuilder() {
-    return FutureBuilder<String>(
-      future: _futureResponse,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Text(snapshot.data!);
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        }
-
-        return const CircularProgressIndicator();
-      },
-    );
-  }
-  String capacity = "open to applications";
-  //if (fullflag) capacity = "full";
-  //else if (cancelledflag) capacity = "cancelled";
-
-  var params = {
-    "status": "upcoming",
-    "search_query": "",
-    "sort_func": {
-      "isSortedByLocation": true
-    },
-    "filter_func": {
-      "location": {
-        "lat": mapCallback[0],
-        "lng": mapCallback[1],
-        "radius": mapCallback[2]
-      },
-      "sportType": sportType,
-      "date": null,
-      "capacity": capacity
-    }
-  };
-  print(params);
-  _futureResponse = filterEvents(params, context);
-  // late var futureRegister = fetchRegister();
-  // print(futureRegister);
-  // set up the AlertDialog
-  AlertDialog alert = AlertDialog(
-    content: buildFutureBuilder(),
-  );
-
-  // show the dialog
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
-}
-
-Future<String> filterEvents(params, BuildContext context) async {
-  final response = await http.post(
-    Uri.parse('http://3.122.41.188:8000/search/search_event/'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(params),
-  );
-
-  if (response.statusCode == 200) {
-
-    // TODO: RETURN TO MAIN WITH EVENTS
-
-    return response.body;
-
-  } else {
-    // If the server did not return a 201 CREATED response,
-    // then throw an exception.
-    throw Exception(json.decode(response.body)['errormessage']);
-  }
-}
