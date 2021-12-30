@@ -59,14 +59,7 @@ def send_mail(user, request):
 @login_required
 @api_view(['GET'])
 def homePageEvents(request):
-    token = request.headers['Authentication']
-    token = token[7:]
-    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
-    userId = valid_data['Id']
-
-    user = User.objects.get(Id=userId)
-
-    actor_id = user.Id
+    actor_id = request.user.Id
 
     following_user_ids = list(Follow.objects.filter(follower=actor_id).values('following__Id'))
 
@@ -92,14 +85,7 @@ def homePageEvents(request):
 @login_required
 @api_view(['GET'])
 def getBadgesOwnedByUser(request):
-    token = request.headers['Authentication']
-    token = token[7:]
-    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
-    userId = valid_data['Id']
-
-    user = User.objects.get(Id=userId)
-
-    actor_id = user.Id
+    actor_id = request.user.Id
     try:
         badges = list(
             BadgeOwnedByUser.objects.filter(owner=actor_id).values('badge__id', 'badge__name', 'badge__description',
