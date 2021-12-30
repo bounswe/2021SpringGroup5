@@ -421,14 +421,22 @@ def applyToEvent(request):
 def acceptApplicant(request):
     data = request.data
 
-    applicant_id = request.user.Id
+    actor_id = request.user.Id
+    applicant_id = data["applicant"]["Id"]
     event_id = data["object"]["Id"]
 
     # Try if the user is valid
     try:
-        actor = User.objects.get(Id=applicant_id)
+        actor = User.objects.get(Id=actor_id)
     except:
         return Response({"message": "There is no such user in the system"}, 404)
+
+    # Try if the applicant is valid
+    try:
+        applicant = User.objects.get(Id=applicant_id)
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+
     # Try if event is in the database
     try:
         event_post=EventPost.objects.get(id=event_id)
@@ -463,14 +471,22 @@ def acceptApplicant(request):
 def rejectApplicant(request):
     data = request.data
 
-    applicant_id = request.user.Id
+    actor_id = request.user.Id
+    applicant_id = data["applicant"]["Id"]
     event_id = data["object"]["Id"]
 
     # Try if the user is valid
     try:
+        actor = User.objects.get(Id=actor_id)
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+
+    # Try if the applicant is valid
+    try:
         actor = User.objects.get(Id=applicant_id)
     except:
         return Response({"message": "There is no such user in the system"}, 404)
+
     # Try if event is in the database
     try:
         event_post=EventPost.objects.get(id=event_id)
