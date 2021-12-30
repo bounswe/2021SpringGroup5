@@ -2,7 +2,7 @@ from django.test import TestCase
 from register.models import User, InterestLevel
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
-from post.models import Badge, BadgeOfferedByEventPost, EquipmentPost, SkillLevel, Sport ,EventPost, Application
+from post.models import EquipmentPost, SkillLevel, Sport ,EventPost, Application
 import json
 from datetime import datetime
 
@@ -15,20 +15,20 @@ class SearchTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=34, sport_name="Football")
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
         s = Sport.objects.get(sport_name='Football')
-        Sport.objects.create(id=35, sport_name="Swimming")
+        Sport.objects.create(id=35, sport_name="Swimming", is_custom=False)
         s2 = Sport.objects.get(sport_name='Swimming')
         date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
-
-        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
 
 
         ## Creating mock skill level and get it
         SkillLevel.objects.create(id=1, level_name="beginner")
         SkillLevel.objects.create(id=2, level_name="medium")
         skill = SkillLevel.objects.get(level_name='beginner')
+
+        InterestLevel.objects.create(id=1, skill_level=skill, owner_of_interest_id=12345, sport_name_id=34)
 
         ## Creating example event post
         EventPost.objects.create(id=10, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
@@ -37,7 +37,7 @@ class SearchTests(APITestCase):
                                  latitude=18.555, date_time=dt, participant_limit=20, \
                                  spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
                                  capacity="open to applications", \
-                                 location_requirement=None, contact_info="0555555555555", repeating_frequency=3, pathToEventImage=None,
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
                                  skill_requirement=skill, current_player=0, current_spectator=0)
 
 
@@ -47,12 +47,8 @@ class SearchTests(APITestCase):
                                  latitude=18.555, date_time=dt, participant_limit=20, \
                                  spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
                                  capacity="open to applications", \
-                                 location_requirement=None, contact_info="0555555555555", repeating_frequency=3, pathToEventImage=None,
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
                                  skill_requirement=skill, current_player=0, current_spectator=0)
-
-
-
-
 
         ## data
         data = {
@@ -81,20 +77,20 @@ class SearchTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=34, sport_name="Football")
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
         s = Sport.objects.get(sport_name='Football')
-        Sport.objects.create(id=35, sport_name="Swimming")
+        Sport.objects.create(id=35, sport_name="Swimming", is_custom=False)
         s2 = Sport.objects.get(sport_name='Swimming')
         date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
-
-        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
 
 
         ## Creating mock skill level and get it
         SkillLevel.objects.create(id=1, level_name="beginner")
         SkillLevel.objects.create(id=2, level_name="medium")
         skill = SkillLevel.objects.get(level_name='beginner')
+
+        InterestLevel.objects.create(id=1, skill_level=skill, owner_of_interest_id=12345, sport_name_id=34)
 
         ## Creating example event post
         EventPost.objects.create(id=10, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
@@ -103,7 +99,7 @@ class SearchTests(APITestCase):
                                  latitude=18.555, date_time=dt, participant_limit=20, \
                                  spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
                                  capacity="open to applications", \
-                                 location_requirement=None, contact_info="0555555555555", repeating_frequency=3, pathToEventImage=None,
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
                                  skill_requirement=skill, current_player=0, current_spectator=0)
 
 
@@ -113,11 +109,8 @@ class SearchTests(APITestCase):
                                  latitude=18.555, date_time=dt, participant_limit=20, \
                                  spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
                                  capacity="open to applications", \
-                                 location_requirement=None, contact_info="0555555555555", repeating_frequency=3, pathToEventImage=None,
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
                                  skill_requirement=skill, current_player=0, current_spectator=0)
-
-
-
 
 
         ## data
@@ -135,7 +128,6 @@ class SearchTests(APITestCase):
             }
         }
 
-
         client=APIClient()
         client.login(username="crazy_girl", password="123")
         response = client.post("/search/search_event/",data,format='json')
@@ -147,22 +139,21 @@ class SearchTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=34, sport_name="Football")
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
         s = Sport.objects.get(sport_name='Football')
-        Sport.objects.create(id=35, sport_name="Swimming")
+        Sport.objects.create(id=35, sport_name="Swimming", is_custom=False)
         s2 = Sport.objects.get(sport_name='Swimming')
         date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
         date_string2 = "2024-12-12 10:10"
         dt2=datetime.fromisoformat(date_string2)
 
-        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
-
-
         ## Creating mock skill level and get it
         SkillLevel.objects.create(id=1, level_name="beginner")
         SkillLevel.objects.create(id=2, level_name="medium")
         skill = SkillLevel.objects.get(level_name='beginner')
+
+        InterestLevel.objects.create(id=1, skill_level=skill, owner_of_interest_id=12345, sport_name_id=34)
 
         ## Creating example event post
         EventPost.objects.create(id=10, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
@@ -171,7 +162,7 @@ class SearchTests(APITestCase):
                                  latitude=18.555, date_time=dt, participant_limit=20, \
                                  spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
                                  capacity="open to applications", \
-                                 location_requirement=None, contact_info="0555555555555", repeating_frequency=3, pathToEventImage=None,
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
                                  skill_requirement=skill, current_player=0, current_spectator=0)
 
 
@@ -181,7 +172,7 @@ class SearchTests(APITestCase):
                                  latitude=18.555, date_time=dt2, participant_limit=20, \
                                  spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
                                  capacity="open to applications", \
-                                 location_requirement=None, contact_info="0555555555555", repeating_frequency=3, pathToEventImage=None,
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
                                  skill_requirement=skill, current_player=0, current_spectator=0)
 
 
@@ -218,22 +209,22 @@ class SearchTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=34, sport_name="Football")
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
         s = Sport.objects.get(sport_name='Football')
-        Sport.objects.create(id=35, sport_name="Swimming")
+        Sport.objects.create(id=35, sport_name="Swimming", is_custom=False)
         s2 = Sport.objects.get(sport_name='Swimming')
         date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
         date_string2 = "2024-12-12 10:10"
         dt2=datetime.fromisoformat(date_string2)
 
-        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
-
 
         ## Creating mock skill level and get it
         SkillLevel.objects.create(id=1, level_name="beginner")
         SkillLevel.objects.create(id=2, level_name="medium")
         skill = SkillLevel.objects.get(level_name='beginner')
+
+        InterestLevel.objects.create(id=1, skill_level=skill, owner_of_interest_id=12345, sport_name_id=34)
 
         ## Creating example event post
         EventPost.objects.create(id=10, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
@@ -242,7 +233,7 @@ class SearchTests(APITestCase):
                                  latitude=18.555, date_time=dt, participant_limit=20, \
                                  spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
                                  capacity="open to applications", \
-                                 location_requirement=None, contact_info="0555555555555", repeating_frequency=3, pathToEventImage=None,
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
                                  skill_requirement=skill, current_player=0, current_spectator=0)
 
 
@@ -252,7 +243,7 @@ class SearchTests(APITestCase):
                                  latitude=18.555, date_time=dt2, participant_limit=20, \
                                  spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
                                  capacity="open to applications", \
-                                 location_requirement=None, contact_info="0555555555555", repeating_frequency=3, pathToEventImage=None,
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
                                  skill_requirement=skill, current_player=0, current_spectator=0)
 
 
@@ -286,22 +277,21 @@ class SearchTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=34, sport_name="Football")
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
         s = Sport.objects.get(sport_name='Football')
-        Sport.objects.create(id=35, sport_name="Swimming")
+        Sport.objects.create(id=35, sport_name="Swimming", is_custom=False)
         s2 = Sport.objects.get(sport_name='Swimming')
         date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
         date_string2 = "2024-12-12 10:10"
         dt2=datetime.fromisoformat(date_string2)
 
-        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
-
-
         ## Creating mock skill level and get it
         SkillLevel.objects.create(id=1, level_name="beginner")
         SkillLevel.objects.create(id=2, level_name="medium")
         skill = SkillLevel.objects.get(level_name='beginner')
+
+        InterestLevel.objects.create(id=1, skill_level=skill, owner_of_interest_id=12345, sport_name_id=34)
 
         ## Creating example event post
         EventPost.objects.create(id=10, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
@@ -310,7 +300,7 @@ class SearchTests(APITestCase):
                                  latitude=15.555, date_time=dt, participant_limit=20, \
                                  spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
                                  capacity="open to applications", \
-                                 location_requirement=None, contact_info="0555555555555", repeating_frequency=3, pathToEventImage=None,
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
                                  skill_requirement=skill, current_player=0, current_spectator=0)
 
 
@@ -320,7 +310,7 @@ class SearchTests(APITestCase):
                                  latitude=25.555, date_time=dt2, participant_limit=20, \
                                  spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
                                  capacity="open to applications", \
-                                 location_requirement=None, contact_info="0555555555555", repeating_frequency=3, pathToEventImage=None,
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
                                  skill_requirement=skill, current_player=0, current_spectator=0)
 
 
@@ -355,22 +345,21 @@ class SearchTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=34, sport_name="Football")
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
         s = Sport.objects.get(sport_name='Football')
-        Sport.objects.create(id=35, sport_name="Swimming")
+        Sport.objects.create(id=35, sport_name="Swimming", is_custom=False)
         s2 = Sport.objects.get(sport_name='Swimming')
         date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
         date_string2 = "2024-12-12 10:10"
         dt2=datetime.fromisoformat(date_string2)
 
-        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
-
-
         ## Creating mock skill level and get it
         SkillLevel.objects.create(id=1, level_name="beginner")
         SkillLevel.objects.create(id=2, level_name="medium")
         skill = SkillLevel.objects.get(level_name='beginner')
+
+        InterestLevel.objects.create(id=1, skill_level=skill, owner_of_interest_id=12345, sport_name_id=34)
 
         ## Creating example event post
         EventPost.objects.create(id=10, post_name="Aksama hali saha", owner=u, sport_category=s, created_date=dt,
@@ -379,7 +368,7 @@ class SearchTests(APITestCase):
                                  latitude=15.555, date_time=dt, participant_limit=20, \
                                  spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
                                  capacity="open to applications", \
-                                 location_requirement=None, contact_info="0555555555555", repeating_frequency=3, pathToEventImage=None,
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
                                  skill_requirement=skill, current_player=0, current_spectator=0)
 
 
@@ -389,7 +378,7 @@ class SearchTests(APITestCase):
                                  latitude=25.555, date_time=dt2, participant_limit=20, \
                                  spectator_limit=30, rule="don't shout", equipment_requirement=None, status="upcoming",
                                  capacity="open to applications", \
-                                 location_requirement=None, contact_info="0555555555555", repeating_frequency=3, pathToEventImage=None,
+                                 location_requirement=None, contact_info="0555555555555", pathToEventImage=None,
                                  skill_requirement=skill, current_player=0, current_spectator=0)
 
         ### both events are too far from the location we want
@@ -429,32 +418,29 @@ class SearchTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=34, sport_name="Football")
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
         s = Sport.objects.get(sport_name='Football')
-        Sport.objects.create(id=35, sport_name="Swimming")
+        Sport.objects.create(id=35, sport_name="Swimming", is_custom=False)
         s2 = Sport.objects.get(sport_name='Swimming')
         date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
-
-        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
-
 
         ## Creating mock skill level and get it
         SkillLevel.objects.create(id=1, level_name="beginner")
         SkillLevel.objects.create(id=2, level_name="medium")
         skill = SkillLevel.objects.get(level_name='beginner')
 
+        InterestLevel.objects.create(id=1, skill_level=skill, owner_of_interest_id=12345, sport_name_id=34)
+
         ## Creating example equipment post
-        EquipmentPost.objects.create(id=124,post_name="adidas bileklik", owner=u,sport_category=s,created_date=dt,\
+        EquipmentPost.objects.create(id=124,post_name="adidas bileklik", owner=u, sport_category=s, created_date=dt,\
                                     description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
-                                        longitude=20.444,
-                                        latitude=18.555,link='...com',active=True,pathToEquipmentPostImage="...com")
+                                    longitude=20.444, latitude=18.555, link='...com', active=True)
 
 
-        EquipmentPost.objects.create(id=125,post_name="futbol topu", owner=u,sport_category=s,created_date=dt,\
+        EquipmentPost.objects.create(id=125,post_name="futbol topu", owner=u, sport_category=s, created_date=dt,\
                                     description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
-                                        longitude=20.444,
-                                        latitude=18.555,link='...com',active=True,pathToEquipmentPostImage="...com")
+                                    longitude=20.444, latitude=18.555, link='...com', active=True)
 
         ## data
         data = {
@@ -482,32 +468,31 @@ class SearchTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=34, sport_name="Football")
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
         s = Sport.objects.get(sport_name='Football')
-        Sport.objects.create(id=35, sport_name="Swimming")
+        Sport.objects.create(id=35, sport_name="Swimming", is_custom=False)
         s2 = Sport.objects.get(sport_name='Swimming')
         date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
-
-        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
-
 
         ## Creating mock skill level and get it
         SkillLevel.objects.create(id=1, level_name="beginner")
         SkillLevel.objects.create(id=2, level_name="medium")
         skill = SkillLevel.objects.get(level_name='beginner')
 
+        InterestLevel.objects.create(id=1, skill_level=skill, owner_of_interest_id=12345, sport_name_id=34)
+
         ## Creating example equipment post
         EquipmentPost.objects.create(id=124,post_name="adidas bileklik", owner=u,sport_category=s,created_date=dt,\
                                     description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                                         longitude=20.444,
-                                        latitude=18.555,link='...com',active=False,pathToEquipmentPostImage="...com")
+                                        latitude=18.555,link='...com',active=False,)
 
 
         EquipmentPost.objects.create(id=125,post_name="futbol topu", owner=u,sport_category=s,created_date=dt,\
                                     description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                                         longitude=20.444,
-                                        latitude=18.555,link='...com',active=True,pathToEquipmentPostImage="...com")
+                                        latitude=18.555,link='...com',active=True,)
 
         ## data
         data = {
@@ -535,32 +520,31 @@ class SearchTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=34, sport_name="Football")
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
         s = Sport.objects.get(sport_name='Football')
-        Sport.objects.create(id=35, sport_name="Swimming")
+        Sport.objects.create(id=35, sport_name="Swimming", is_custom=False)
         s2 = Sport.objects.get(sport_name='Swimming')
         date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
-
-        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
-
 
         ## Creating mock skill level and get it
         SkillLevel.objects.create(id=1, level_name="beginner")
         SkillLevel.objects.create(id=2, level_name="medium")
         skill = SkillLevel.objects.get(level_name='beginner')
 
+        InterestLevel.objects.create(id=1, skill_level=skill, owner_of_interest_id=12345, sport_name_id=34)
+
         ## Creating example equipment post
         EquipmentPost.objects.create(id=124,post_name="adidas bileklik", owner=u,sport_category=s,created_date=dt,\
                                     description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                                         longitude=17.444,
-                                        latitude=17.555,link='...com',active=True,pathToEquipmentPostImage="...com")
+                                        latitude=17.555,link='...com',active=True)
 
 
         EquipmentPost.objects.create(id=125,post_name="futbol topu", owner=u,sport_category=s,created_date=dt,\
                                     description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                                         longitude=200.444,
-                                        latitude=180.555,link='...com',active=True,pathToEquipmentPostImage="...com")
+                                        latitude=180.555,link='...com',active=True)
 
         ## data
         data = {
@@ -592,32 +576,31 @@ class SearchTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=34, sport_name="Football")
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
         s = Sport.objects.get(sport_name='Football')
-        Sport.objects.create(id=35, sport_name="Swimming")
+        Sport.objects.create(id=35, sport_name="Swimming", is_custom=False)
         s2 = Sport.objects.get(sport_name='Swimming')
         date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
-
-        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
-
 
         ## Creating mock skill level and get it
         SkillLevel.objects.create(id=1, level_name="beginner")
         SkillLevel.objects.create(id=2, level_name="medium")
         skill = SkillLevel.objects.get(level_name='beginner')
 
+        InterestLevel.objects.create(id=1, skill_level=skill, owner_of_interest_id=12345, sport_name_id=34)
+
         ## Creating example equipment post
         EquipmentPost.objects.create(id=124,post_name="adidas bileklik", owner=u,sport_category=s,created_date=dt,\
                                     description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                                         longitude=17.444,
-                                        latitude=17.555,link='...com',active=True,pathToEquipmentPostImage="...com")
+                                        latitude=17.555,link='...com',active=True)
 
 
         EquipmentPost.objects.create(id=125,post_name="futbol topu", owner=u,sport_category=s,created_date=dt,\
                                     description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                                         longitude=15.444,
-                                        latitude=15.555,link='...com',active=True,pathToEquipmentPostImage="...com")
+                                        latitude=15.555,link='...com',active=True)
 
         ## data
         data = {
@@ -649,32 +632,31 @@ class SearchTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=34, sport_name="Football")
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
         s = Sport.objects.get(sport_name='Football')
-        Sport.objects.create(id=35, sport_name="Swimming")
+        Sport.objects.create(id=35, sport_name="Swimming", is_custom=False)
         s2 = Sport.objects.get(sport_name='Swimming')
         date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
-
-        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
-
 
         ## Creating mock skill level and get it
         SkillLevel.objects.create(id=1, level_name="beginner")
         SkillLevel.objects.create(id=2, level_name="medium")
         skill = SkillLevel.objects.get(level_name='beginner')
 
+        InterestLevel.objects.create(id=1, skill_level=skill, owner_of_interest_id=12345, sport_name_id=34)
+
         ## Creating example equipment post
         EquipmentPost.objects.create(id=124,post_name="adidas bileklik", owner=u,sport_category=s,created_date=dt,\
                                     description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                                         longitude=17.444,
-                                        latitude=17.555,link='...com',active=True,pathToEquipmentPostImage="...com")
+                                        latitude=17.555,link='...com',active=True)
 
 
         EquipmentPost.objects.create(id=125,post_name="futbol topu", owner=u,sport_category=s,created_date=dt,\
                                     description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                                         longitude=200.444,
-                                        latitude=180.555,link='...com',active=True,pathToEquipmentPostImage="...com")
+                                        latitude=180.555,link='...com',active=True)
 
         ## data
         data = {
@@ -705,32 +687,31 @@ class SearchTests(APITestCase):
         u = User.objects.get(username='crazy_girl')
         u.set_password('123')
         u.save()
-        Sport.objects.create(id=34, sport_name="Football")
+        Sport.objects.create(id=34, sport_name="Football", is_custom=False)
         s = Sport.objects.get(sport_name='Football')
-        Sport.objects.create(id=35, sport_name="Swimming")
+        Sport.objects.create(id=35, sport_name="Swimming", is_custom=False)
         s2 = Sport.objects.get(sport_name='Swimming')
         date_string = "2021-12-12 10:10"
         dt=datetime.fromisoformat(date_string)
-
-        InterestLevel.objects.create(id=1, skill_level="beginner", owner_of_interest_id=12345, sport_name_id=34)
-
 
         ## Creating mock skill level and get it
         SkillLevel.objects.create(id=1, level_name="beginner")
         SkillLevel.objects.create(id=2, level_name="medium")
         skill = SkillLevel.objects.get(level_name='beginner')
 
+        InterestLevel.objects.create(id=1, skill_level=skill, owner_of_interest_id=12345, sport_name_id=34)
+
         ## Creating example equipment post
         EquipmentPost.objects.create(id=124,post_name="adidas bileklik", owner=u,sport_category=s,created_date=dt,\
                                     description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                                         longitude=17.444,
-                                        latitude=17.555,link='...com',active=True,pathToEquipmentPostImage="...com")
+                                        latitude=17.555,link='...com',active=True)
 
 
         EquipmentPost.objects.create(id=125,post_name="futbol topu", owner=u,sport_category=s,created_date=dt,\
                                     description="There is a big discount at this store for adidas bileklik. Don't miss it!",\
                                         longitude=200.444,
-                                        latitude=180.555,link='...com',active=True,pathToEquipmentPostImage="...com")
+                                        latitude=180.555,link='...com',active=True)
 
 
         ## data
