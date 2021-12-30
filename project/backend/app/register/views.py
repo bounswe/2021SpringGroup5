@@ -60,7 +60,7 @@ def send_mail(user, request):
 @api_view(['GET'])
 def homePageEvents(request):
     actor_id=request.user.Id
-    
+
     following_user_ids=list(Follow.objects.filter(follower=actor_id).values('following__Id'))
 
     if len(following_user_ids)==0:
@@ -79,8 +79,7 @@ def homePageEvents(request):
         except:
             continue
 
-    return Response({"posts": result_events}, 200)
-
+    return Response({"posts": result_events},200)
 
 @login_required
 @api_view(['GET'])
