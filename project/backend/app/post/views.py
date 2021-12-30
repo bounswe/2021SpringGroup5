@@ -1100,3 +1100,20 @@ class SaveSkillLevelsScript(APIView):
             if serializer.is_valid():
                 serializer.save()
         return Response({"message":"Skill levels are saved into the database"},status=status.HTTP_201_CREATED)
+
+@login_required()
+@api_view(['GET'])
+def GetEventOfUser(request):
+    data = request.data
+    userId = request.user.Id
+
+    eventlist = list(EventPost.objects.filter(owner=userId).values())
+    return JsonResponse(eventlist, safe=False)
+
+@login_required()
+@api_view(['GET'])
+def GetEquipmentOfUser(request):
+    data = request.data
+
+    equipmentlist = list(EquipmentPost.objects.filter(owner=request.user).values())
+    return JsonResponse(equipmentlist, safe=False)
