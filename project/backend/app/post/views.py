@@ -8,7 +8,8 @@ from .models import Application, EquipmentComment, EventComment
 from post.models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,Application
 from django.utils.dateparse import parse_datetime
 from post.serializers import BadgeSerializer, EquipmentPostActivityStreamSerializer, \
-    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, ApplicationSerializer
+    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, ApplicationSerializer, \
+    EventCommentSerializer, EventCommentActivityStreamSerializer, EquipmentCommentSerializer, EquipmentCommentActivityStreamSerializer
 
 from rest_framework.decorators import api_view
 import requests
@@ -22,7 +23,6 @@ from rest_framework.views import APIView
 from unidecode import unidecode
 from django.forms.models import model_to_dict
 from django.core import serializers
-from datetime import datetime
 # Create your views here.
 
 from django.apps import apps
@@ -331,15 +331,13 @@ def deleteEquipmentPost(request):
 def deleteEventPost(request):
     data = request.data
 
-    actor_id = data["actor"]["Id"]
+    actor_id = request.user.Id
     event_post_id = data["object"]["post_id"]
 
     try:
         actor = User.objects.get(Id=actor_id)
     except:
         return Response({"message": "There is no such user in the system"}, 404)
-
-
 
     try:
         EventPost.objects.filter(pk=event_post_id).update(status="cancelled", capacity="cancelled")
@@ -360,16 +358,13 @@ def deleteEventPost(request):
     return Response({"message": "Event post is deleted"}, status=status.HTTP_200_OK)
 
 
-
-
 @login_required()
 @api_view(['POST'])
 def applyToEvent(request):
     data = request.data
 
-    actor_id = data["actor"]["Id"]
+    actor_id = request.user.Id
     event_id = data["object"]["Id"]
-
 
     # Try if the user is valid
     try:
@@ -382,21 +377,17 @@ def applyToEvent(request):
     except:
         return Response({"message":"There is no such event in the database, deletion operation is aborted"},status=status.HTTP_404_NOT_FOUND)
 
-
     if not (event_post.capacity == "open to applications" and event_post.status == "upcoming"):                     # if the event is not open to applications or event status is
         return Response({"message": "Event is closed to applications"}, status=400)         # event is full, passed or cancelled       HTTP412 maybe??
 
-
     event_post_sport_id = event_post.sport_category_id
-    event_skill_requirement = event_post.skill_requirement_id  # bunu dene id olarak yaziyor ama kelime olarak nasil olduguna bak
+    event_skill_requirement = event_post.skill_requirement_id
     isAdequate = True
-
 
     try:
         users_skill_level = InterestLevel.objects.get(owner_of_interest_id=actor_id, sport_name_id=event_post_sport_id)
     except:
         isAdequate = False
-
 
     if isAdequate:
         if users_skill_level.skill_level_id >= event_skill_requirement:
@@ -404,11 +395,9 @@ def applyToEvent(request):
         else:
             isAdequate = False
 
-
     applicationStatus = "waiting"
     if not isAdequate:
         applicationStatus = "inadeq"
-
 
     application_ser=ApplicationSerializer(data={"user":actor_id, "event_post":event_post.id, "status":applicationStatus, "applicant_type":"player"})
 
@@ -420,8 +409,7 @@ def applyToEvent(request):
     else:
         return Response({"message": "There was an error about application serializer"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
-
-    application_act_stream_ser = EventPostActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":data["actor"]["Id"], "object":data["object"]["Id"]})
+    application_act_stream_ser = EventPostActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":actor_id, "object":data["object"]["Id"]})
     if application_act_stream_ser.is_valid():
         application_act_stream_ser.save()
 
@@ -433,7 +421,7 @@ def applyToEvent(request):
 def acceptApplicant(request):
     data = request.data
 
-    applicant_id = data["actor"]["Id"]
+    applicant_id = request.user.Id
     event_id = data["object"]["Id"]
 
     # Try if the user is valid
@@ -447,13 +435,11 @@ def acceptApplicant(request):
     except:
         return Response({"message":"There is no such event in the database, deletion operation is aborted"},status=status.HTTP_404_NOT_FOUND)
 
-
     try:
         application = Application.objects.filter(event_post_id=event_id, user_id=applicant_id)
         event_post = EventPost.objects.get(id=event_id)
     except:
         return Response({"message": "There is no such application in the database, operation is aborted"}, status=status.HTTP_404_NOT_FOUND)
-
 
     if event_post.participant_limit > event_post.current_player and event_post.status == "upcoming" and event_post.capacity == "open to applications":
         new_part = event_post.current_player+1
@@ -466,8 +452,7 @@ def acceptApplicant(request):
 
     application = application.update(status="accepted")
 
-
-    accept_act_stream_ser = EventPostActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":data["actor"]["Id"], "object":data["object"]["Id"]})
+    accept_act_stream_ser = EventPostActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":applicant_id, "object":data["object"]["Id"]})
     if accept_act_stream_ser.is_valid():
         accept_act_stream_ser.save()
 
@@ -478,7 +463,7 @@ def acceptApplicant(request):
 def rejectApplicant(request):
     data = request.data
 
-    applicant_id = data["actor"]["Id"]
+    applicant_id = request.user.Id
     event_id = data["object"]["Id"]
 
     # Try if the user is valid
@@ -492,17 +477,14 @@ def rejectApplicant(request):
     except:
         return Response({"message":"There is no such event in the database, deletion operation is aborted"},status=status.HTTP_404_NOT_FOUND)
 
-
     try:
         application = Application.objects.filter(event_post_id=event_id, user_id=applicant_id)
         event_post = EventPost.objects.get(id=event_id)
     except:
         return Response({"message": "There is no such application in the database, operation is aborted"}, status=status.HTTP_404_NOT_FOUND)
 
-
-
     application = application.update(status="rejected")
-    accept_act_stream_ser = EventPostActivityStreamSerializer(data={"context": data["@context"], "summary": data["summary"], "type": data["type"], "actor": data["actor"]["Id"], "object": data["object"]["Id"]})
+    accept_act_stream_ser = EventPostActivityStreamSerializer(data={"context": data["@context"], "summary": data["summary"], "type": data["type"], "actor": applicant_id, "object": data["object"]["Id"]})
     if accept_act_stream_ser.is_valid():
         accept_act_stream_ser.save()
     return Response({"message":"Application is rejected"},status=status.HTTP_200_OK)
@@ -653,7 +635,7 @@ def postponeEvent(request):
     sport = Sport.objects.get(id=event_post.sport_category_id)
     skill = SkillLevel.objects.get(id=event_post.skill_requirement_id)
 
-    new_date = datetime.strptime(data["new_date"], '%d/%m/%Y:%H')
+    new_date = datetime.datetime.strptime(data["new_date"], '%d/%m/%Y:%H')
     event_date = event_post.date_time.replace(tzinfo=None)
 
 
@@ -914,7 +896,7 @@ def getEquipmentPostDetails(request):
 def spectateToEvent(request):
     data = request.data
 
-    actor_id = data["actor"]["Id"]
+    actor_id = request.user.Id
     event_id = data["object"]["Id"]
 
     # Try if the user is valid
@@ -929,24 +911,19 @@ def spectateToEvent(request):
         return Response({"message": "There is no such event in the database, spectate operation is aborted"},
                         status=status.HTTP_404_NOT_FOUND)
 
-
     if  event_post.current_spectator >= event_post.spectator_limit:
         return Response({"message": "Spectator limit is full"}, status=400)
 
     if event_post.status != "upcoming":
         return Response({"message": "This is not an upcoming event. Maybe it is cancelled or passed."}, status=400)
 
-
-
     ## Increase spectator by 1
     cur_spec = event_post.current_spectator
     EventPost.objects.filter(id=event_id).update(current_spectator = cur_spec+1)
 
-
     applicationStatus = "accepted"
     application_ser = ApplicationSerializer(
         data={"user": actor_id, "event_post": event_post.id, "status": applicationStatus, "applicant_type": "spectator"})
-
 
     if application_ser.is_valid():
         try:
@@ -959,10 +936,9 @@ def spectateToEvent(request):
         return Response({"message": "There was an error about application serializer"},
                         status=status.HTTP_406_NOT_ACCEPTABLE)
 
-    application_act_stream_ser = EventPostActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":data["actor"]["Id"], "object":data["object"]["Id"]})
+    application_act_stream_ser = EventPostActivityStreamSerializer(data={"context":data["@context"], "summary":data["summary"], "type":data["type"], "actor":actor_id, "object":data["object"]["Id"]})
     if application_act_stream_ser.is_valid():
         application_act_stream_ser.save()
-
 
     return Response({"message": "Spectate application is successfully created"}, status=status.HTTP_201_CREATED)
 

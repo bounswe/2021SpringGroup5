@@ -2,7 +2,8 @@ from django.db import models
 from django.db.models import fields
 from rest_framework import serializers
 from post.models import Sport,EquipmentPost,EventPost,EventComment,Application,Badge,\
-    EquipmentComment, SkillLevel, BadgeOwnedByUser, EventPostActivityStream,EquipmentPostActivtyStream
+    EquipmentComment, SkillLevel, BadgeOwnedByUser, EventPostActivityStream,EquipmentPostActivtyStream, \
+    EventCommentActivityStream, EquipmentCommentActivityStream
 
 class SportSerializer(serializers.ModelSerializer):
     class Meta:
