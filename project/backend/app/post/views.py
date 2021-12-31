@@ -1105,3 +1105,26 @@ def GetEquipmentOfUser(request):
     equipmentlist = list(EquipmentPost.objects.filter(owner=request.user).values())
     return JsonResponse(equipmentlist, safe=False)
 
+
+@login_required()
+@api_view(['POST'])
+def sendBadge(request):
+
+    touser = User.objects.get(Id=request.data['user']['Id'])
+    fromuser = request.user
+
+    badge = Badge.objects.get(name=request.data['badge']['name'])
+    try:
+        BadgeOwnedByUser.objects.get(badge=badge, owner=touser, isGivenBySystem=False)
+    except:
+        BadgeOwnedByUser.objects.create(badge=badge, owner=touser, isGivenBySystem=False)
+
+    return JsonResponse(badge, 200)
+
+@login_required()
+@api_view(['GET'])
+def getAllBadges(request):
+
+    allBadges = list(Badge.objects.filter().values())
+    return JsonResponse(allBadges, safe=False)
+
