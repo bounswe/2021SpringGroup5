@@ -6,16 +6,12 @@ from rest_framework_simplejwt.backends import TokenBackend
 from .models import Application, EquipmentComment, EventComment
 from .models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,Application
 from django.utils.dateparse import parse_datetime
-<<<<<<< Updated upstream
-from post.serializers import BadgeSerializer, EquipmentPostActivityStreamSerializer, \
-    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, ApplicationSerializer, \
-    EventCommentSerializer, EventCommentActivityStreamSerializer, EquipmentCommentSerializer, EquipmentCommentActivityStreamSerializer
-=======
+
 from .serializers import BadgeSerializer, EquipmentPostActivityStreamSerializer, \
     EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, \
     SportSerializer, ApplicationSerializer, EventCommentSerializer, EventCommentActivityStreamSerializer, \
     EquipmentCommentSerializer, EquipmentCommentActivityStreamSerializer
->>>>>>> Stashed changes
+
 
 from rest_framework.decorators import api_view
 import requests
@@ -29,10 +25,9 @@ from rest_framework.views import APIView
 from unidecode import unidecode
 from django.forms.models import model_to_dict
 from django.core import serializers
-<<<<<<< Updated upstream
-=======
+
 import datetime
->>>>>>> Stashed changes
+
 # Create your views here.
 
 from django.apps import apps
@@ -330,10 +325,6 @@ def deleteEquipmentPost(request):
         return Response({"message":"there was an error while deleting the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
     return Response({"message":"Equipment post is deleted"},status=status.HTTP_200_OK)
-
-
-
-
 
 
 @login_required()
