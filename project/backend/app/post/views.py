@@ -1122,7 +1122,7 @@ def sendBadge(request):
     except:
         BadgeOwnedByUser.objects.create(badge=badge, owner=touser, isGivenBySystem=False)
 
-    return JsonResponse(badge, 200)
+    return JsonResponse('SUCCESS', safe=False)
 
 @login_required()
 @api_view(['GET'])
