@@ -1113,7 +1113,7 @@ def GetEquipmentOfUser(request):
 @api_view(['POST'])
 def sendBadge(request):
 
-    touser = User.objects.get(Id=request.data['user']['Id'])
+    touser = User.objects.get(Id=request.data['to_user']['Id'])
     fromuser = request.user
 
     badge = Badge.objects.get(name=request.data['badge']['name'])
