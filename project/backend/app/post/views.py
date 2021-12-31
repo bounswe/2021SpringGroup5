@@ -12,7 +12,7 @@ from django.utils.dateparse import parse_datetime
 from .serializers import BadgeSerializer, EquipmentPostActivityStreamSerializer, \
     EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, \
     SportSerializer, ApplicationSerializer, EventCommentSerializer, EventCommentActivityStreamSerializer, \
-    EquipmentCommentSerializer, EquipmentCommentActivityStreamSerializer
+    EquipmentCommentSerializer, EquipmentCommentActivityStreamSerializer, BadgeOwnedByUser 
 
 
 from rest_framework.decorators import api_view
