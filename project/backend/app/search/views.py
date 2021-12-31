@@ -101,6 +101,9 @@ def searchEvent(request):
         eventList = eventList.order_by('date_time')
 
     result = list(eventList)
+    if len(result) == 0:
+        return Response({"message": "There is no event found"}, status=status.HTTP_404_NOT_FOUND)
+
     for res in result:
         res["created_date"] = res["created_date"].strftime('%Y-%m-%d %H:%M:%S')
         res["date_time"] = res["date_time"].strftime('%Y-%m-%d %H:%M:%S')
@@ -122,7 +125,7 @@ def searchEquipment(request):
 
     ## Initiating the query
     equipmentList = EquipmentPost.objects.filter(active=True).values("id", "post_name", "owner", "sport_category__sport_name", "created_date",\
-                                                                     "description", "longitude", "latitude", "active", "pathToEventImage", "link")
+                                                                     "description", "longitude", "latitude", "active", "pathToEquipmentPostImage", "link")
 
     if isDefaultQuery:
         pass
@@ -167,6 +170,10 @@ def searchEquipment(request):
         equipmentList = equipmentList.order_by('created_date')
 
     result = list(equipmentList)
+    if len(result) == 0:
+        return Response({"message": "There is no event found"}, status=status.HTTP_404_NOT_FOUND)
+
+
     for res in result:
         res["created_date"] = res["created_date"].strftime('%Y-%m-%d %H:%M:%S')
         res["sport_name"] = res.pop("sport_category__sport_name")

@@ -4,15 +4,15 @@ from django.views.decorators.csrf import csrf_exempt
 from requests.api import post
 from rest_framework_simplejwt.backends import TokenBackend
 from .models import Application, EquipmentComment, EventComment
+
+from .models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,Application
 from django.utils.dateparse import parse_datetime
-from .models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,Application, BadgeOwnedByUser
-from django.utils.dateparse import parse_datetime
+
 
 from .serializers import BadgeSerializer, EquipmentPostActivityStreamSerializer, \
     EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, \
     SportSerializer, ApplicationSerializer, EventCommentSerializer, EventCommentActivityStreamSerializer, \
     EquipmentCommentSerializer, EquipmentCommentActivityStreamSerializer
-
 
 
 from rest_framework.decorators import api_view
@@ -27,7 +27,6 @@ from rest_framework.views import APIView
 from unidecode import unidecode
 from django.forms.models import model_to_dict
 from django.core import serializers
-
 
 import datetime
 
@@ -331,10 +330,6 @@ def deleteEquipmentPost(request):
     return Response({"message":"Equipment post is deleted"},status=status.HTTP_200_OK)
 
 
-
-
-
-
 @login_required()
 @api_view(['DELETE'])
 def deleteEventPost(request):
@@ -430,14 +425,22 @@ def applyToEvent(request):
 def acceptApplicant(request):
     data = request.data
 
-    applicant_id = request.user.Id
+    actor_id = request.user.Id
+    applicant_id = data["applicant"]["Id"]
     event_id = data["object"]["Id"]
 
     # Try if the user is valid
     try:
-        actor = User.objects.get(Id=applicant_id)
+        actor = User.objects.get(Id=actor_id)
     except:
         return Response({"message": "There is no such user in the system"}, 404)
+
+    # Try if the applicant is valid
+    try:
+        applicant = User.objects.get(Id=applicant_id)
+    except:
+        return Response({"message": "There is no such user in the system"}, 404)
+
     # Try if event is in the database
     try:
         event_post=EventPost.objects.get(id=event_id)
@@ -472,14 +475,16 @@ def acceptApplicant(request):
 def rejectApplicant(request):
     data = request.data
 
-    applicant_id = request.user.Id
+    actor_id = request.user.Id
+    applicant_id = data["applicant"]["Id"]
     event_id = data["object"]["Id"]
 
-    # Try if the user is valid
+    # Try if the applicant is valid
     try:
         actor = User.objects.get(Id=applicant_id)
     except:
         return Response({"message": "There is no such user in the system"}, 404)
+
     # Try if event is in the database
     try:
         event_post=EventPost.objects.get(id=event_id)
@@ -995,7 +1000,7 @@ def createEquipmentComment(request):
         return Response({"message":"There is no such user in the system"},404)
 
     try:
-        equipment_post=EquipmentPost.objects.get(id=data["post_id"])
+        equipment_post=EquipmentPost.objects.get(id=data["object"]["post_id"])
     except:
         return Response({"message":"There is no such post in the database"},404)
 
@@ -1102,3 +1107,4 @@ def GetEquipmentOfUser(request):
 
     equipmentlist = list(EquipmentPost.objects.filter(owner=request.user).values())
     return JsonResponse(equipmentlist, safe=False)
+
