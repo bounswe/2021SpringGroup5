@@ -243,13 +243,12 @@ def activate_user(request, uidb64, token):
 
 @login_required()
 @api_view(['POST'])
-def follow(request):
+def follow(request, userId):
 
-    context = request.data['actor']
-
+    
     followinguser = request.user
-    followeduser = User.objects.get(username=context['username'])
+    followeduser = User.objects.get(Id=userId)
 
     Follow.objects.create(follower=followinguser, following=followeduser)
 
-    return JsonResponse(context, status=200)
+    return JsonResponse(context, status=201)
