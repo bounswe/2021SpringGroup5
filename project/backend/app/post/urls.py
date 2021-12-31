@@ -1,5 +1,5 @@
 from django.urls import path
-from post import views
+from . import views
 
 urlpatterns=[
     path('create_event_post/',views.createEventPost,name='create an event post'),
@@ -27,4 +27,6 @@ urlpatterns=[
     path('accept_application/',views.acceptApplicant,name='accept an application'),
     path('reject_application/',views.rejectApplicant,name='reject an application'),
     path('get_event_post_analytics/',views.getEventPostAnalytics,name='get event post analytics'),
+    #path('get_all_badges/', views.getAllBadges, name='get All Badges'),
+    #path('send_badge/', views.sendBadge, name='Send Badge'),
 ]

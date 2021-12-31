@@ -23,12 +23,14 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.conf import settings
 from rest_framework.decorators import api_view
-from post.models import EventPost, BadgeOwnedByUser
+
 from django.apps import apps
 
 Sport = apps.get_model('post', 'Sport')
 SkillLevel = apps.get_model('post', 'SkillLevel')
-
+EquipmentPost = apps.get_model('post', 'EquipmentPost')
+BadgeOwnedByUser = apps.get_model('post', 'BadgeOwnedByUser')
+EventPost = apps.get_model('post', 'EventPost')
 
 class EmailThread(threading.Thread):
 
@@ -239,3 +241,44 @@ def activate_user(request, uidb64, token):
     context['has_error'] = True
     context['message'] = 'There is a problem with activation'
     return JsonResponse(context)
+
+
+@login_required()
+@api_view(['POST'])
+def follow(request, userId):
+    followinguser = request.user
+    followeduser = User.objects.get(Id=userId)
+
+    Follow.objects.create(follower=followinguser, following=followeduser)
+
+    return JsonResponse('SUCCESS', status=201)
+
+
+@login_required()
+@api_view(['GET'])
+def getProfileOfUser(request, userId):
+    user1 = request.user
+    user2 = User.objects.get(Id=userId)
+
+    badges = list(
+        BadgeOwnedByUser.objects.filter(owner=user2.Id).values('badge__id', 'badge__name', 'badge__description',
+                                                               'badge__wikiId'))
+    events = list(EventPost.objects.filter(owner=user2.Id).values())
+    equipments = list(EquipmentPost.objects.filter(owner=user2).values())
+    sports = list(InterestLevel.objects.filter(owner_of_interest=user2).values())
+    user = list(
+        User.objects.filter(username=user2.username).values('username', 'name', 'surname', 'location')).__getitem__(0)
+    try:
+        follow = Follow.objects.get(follower=user1, following=user2)
+        following = True
+    except:
+        following = False
+    context = {
+        'badges': badges,
+        'equipments': equipments,
+        'events': events,
+        'sports': sports,
+        'user': user,
+        'following': following,
+    }
+    return JsonResponse(context, status=200)
