@@ -1121,13 +1121,13 @@ def sendBadge(request):
         BadgeOwnedByUser.objects.get(badge=badge, owner=touser, isGivenBySystem=False)
     except:
         BadgeOwnedByUser.objects.create(badge=badge, owner=touser, isGivenBySystem=False)
-
-    return JsonResponse('SUCCESS', safe=False)
+        return JsonResponse('SUCCESS', safe=False, status=status.HTTP_200_OK)
+    return JsonResponse('User already has this badge', safe=False, status=status.HTTP_400_BAD_REQUEST)
 
 @login_required()
 @api_view(['GET'])
 def getAllBadges(request):
 
     allBadges = list(Badge.objects.filter().values())
-    return JsonResponse(allBadges, safe=False)
+    return JsonResponse(allBadges, safe=, status=status.HTTP_200_OK)
 
