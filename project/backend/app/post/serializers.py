@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import fields
 from rest_framework import serializers
 
+
 from .models import Sport, EquipmentPost, EventPost, EventComment, Application, Badge, \
     EquipmentComment, SkillLevel, BadgeOwnedByUser, EventPostActivityStream, EquipmentPostActivtyStream, \
     EventCommentActivityStream, EquipmentCommentActivityStream

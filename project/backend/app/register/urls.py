@@ -12,5 +12,6 @@ urlpatterns = [
     path('home/', views.homePageEvents, name='home page'),
     path('me/', views.profile, name='profile'),
     path('getBadgesOwnedByUser/', views.getBadgesOwnedByUser, name='get badges owned by the user'),
+    path('profile/<userId>', views.getProfileOfUser, name='profileofuser'),
     path('follow/<userId>', views.follow, name='follow'),
 ]
