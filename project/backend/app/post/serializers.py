@@ -1,16 +1,11 @@
 from django.db import models
 from django.db.models import fields
 from rest_framework import serializers
-<<<<<<< Updated upstream
-from post.models import Sport,EquipmentPost,EventPost,EventComment,Application,Badge,\
-    EquipmentComment, SkillLevel, BadgeOwnedByUser, EventPostActivityStream,EquipmentPostActivtyStream, \
-    EventCommentActivityStream, EquipmentCommentActivityStream
-=======
+
 from .models import Sport, EquipmentPost, EventPost, EventComment, Application, Badge, \
     EquipmentComment, SkillLevel, BadgeOwnedByUser, EventPostActivityStream, EquipmentPostActivtyStream, \
     EventCommentActivityStream, EquipmentCommentActivityStream
 
->>>>>>> Stashed changes
 
 class SportSerializer(serializers.ModelSerializer):
     class Meta:
