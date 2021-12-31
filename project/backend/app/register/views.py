@@ -23,7 +23,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.conf import settings
 from rest_framework.decorators import api_view
-from post.models import EventPost, BadgeOwnedByUser
+from post.models import EventPost, BadgeOwnedByUser, EquipmentPost
 from django.apps import apps
 
 Sport = apps.get_model('post', 'Sport')
@@ -59,12 +59,12 @@ def send_mail(user, request):
 @login_required
 @api_view(['GET'])
 def homePageEvents(request):
-    actor_id=request.user.Id
+    actor_id = request.user.Id
 
-    following_user_ids=list(Follow.objects.filter(follower=actor_id).values('following__Id'))
+    following_user_ids = list(Follow.objects.filter(follower=actor_id).values('following__Id'))
 
-    if len(following_user_ids)==0:
-        return Response({"message":"No record found"},404)
+    if len(following_user_ids) == 0:
+        return Response({"message": "No record found"}, 404)
 
     result_events = []
     for i in range(len(following_user_ids)):
@@ -79,12 +79,13 @@ def homePageEvents(request):
         except:
             continue
 
-    return Response({"posts":result_events},200)
+    return Response({"posts": result_events}, 200)
+
 
 @login_required
 @api_view(['GET'])
 def getBadgesOwnedByUser(request):
-    actor_id=request.user.Id
+    actor_id = request.user.Id
     try:
         badges = list(
             BadgeOwnedByUser.objects.filter(owner=actor_id).values('badge__id', 'badge__name', 'badge__description',
@@ -187,7 +188,7 @@ def login_user(request):
             'username': username,
             'password': password
         }
-        
+
         token = requests.post("http://3.122.41.188:8000/api/token/", json=postjson)
 
         return Response(token.json(), status=status.HTTP_200_OK)
@@ -239,3 +240,13 @@ def activate_user(request, uidb64, token):
     context['has_error'] = True
     context['message'] = 'There is a problem with activation'
     return JsonResponse(context)
+
+@login_required()
+@api_view(['POST'])
+def follow(request, userId):
+    followinguser = request.user
+    followeduser = User.objects.get(Id=userId)
+
+    Follow.objects.create(follower=followinguser, following=followeduser)
+
+    return JsonResponse('SUCCESS', status=201)

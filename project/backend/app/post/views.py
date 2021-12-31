@@ -3,13 +3,15 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from requests.api import post
 from rest_framework_simplejwt.backends import TokenBackend
-from register.models import Follow
 from .models import Application, EquipmentComment, EventComment
-from post.models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,Application
+from .models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,Application
 from django.utils.dateparse import parse_datetime
-from post.serializers import BadgeSerializer, EquipmentPostActivityStreamSerializer, \
-    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, ApplicationSerializer, \
-    EventCommentSerializer, EventCommentActivityStreamSerializer, EquipmentCommentSerializer, EquipmentCommentActivityStreamSerializer
+
+from .serializers import BadgeSerializer, EquipmentPostActivityStreamSerializer, \
+    EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, \
+    SportSerializer, ApplicationSerializer, EventCommentSerializer, EventCommentActivityStreamSerializer, \
+    EquipmentCommentSerializer, EquipmentCommentActivityStreamSerializer
+
 
 from rest_framework.decorators import api_view
 import requests
@@ -23,6 +25,9 @@ from rest_framework.views import APIView
 from unidecode import unidecode
 from django.forms.models import model_to_dict
 from django.core import serializers
+
+import datetime
+
 # Create your views here.
 
 from django.apps import apps
@@ -320,10 +325,6 @@ def deleteEquipmentPost(request):
         return Response({"message":"there was an error while deleting the equipment post"},status=status.HTTP_406_NOT_ACCEPTABLE)
 
     return Response({"message":"Equipment post is deleted"},status=status.HTTP_200_OK)
-
-
-
-
 
 
 @login_required()
@@ -1103,3 +1104,4 @@ def GetEquipmentOfUser(request):
 
     equipmentlist = list(EquipmentPost.objects.filter(owner=request.user).values())
     return JsonResponse(equipmentlist, safe=False)
+
