@@ -4,8 +4,10 @@ from django.views.decorators.csrf import csrf_exempt
 from requests.api import post
 from rest_framework_simplejwt.backends import TokenBackend
 from .models import Application, EquipmentComment, EventComment
+
 from .models import Badge, SkillLevel, Sport, EquipmentPost,EventPost,Application
 from django.utils.dateparse import parse_datetime
+
 
 from .serializers import BadgeSerializer, EquipmentPostActivityStreamSerializer, \
     EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, \
@@ -27,6 +29,7 @@ from django.forms.models import model_to_dict
 from django.core import serializers
 
 import datetime
+
 
 # Create your views here.
 
