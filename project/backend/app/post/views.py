@@ -12,7 +12,7 @@ from django.utils.dateparse import parse_datetime
 from .serializers import BadgeSerializer, EquipmentPostActivityStreamSerializer, \
     EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, \
     SportSerializer, ApplicationSerializer, EventCommentSerializer, EventCommentActivityStreamSerializer, \
-    EquipmentCommentSerializer, EquipmentCommentActivityStreamSerializer
+    EquipmentCommentSerializer, EquipmentCommentActivityStreamSerializer, BadgeOwnedByUser 
 
 
 from rest_framework.decorators import api_view
@@ -1107,4 +1107,27 @@ def GetEquipmentOfUser(request):
 
     equipmentlist = list(EquipmentPost.objects.filter(owner=request.user).values())
     return JsonResponse(equipmentlist, safe=False)
+
+
+@login_required()
+@api_view(['POST'])
+def sendBadge(request):
+
+    touser = User.objects.get(Id=request.data['to_user']['Id'])
+    fromuser = request.user
+
+    badge = Badge.objects.get(name=request.data['badge']['name'])
+    try:
+        BadgeOwnedByUser.objects.get(badge=badge, owner=touser, isGivenBySystem=False)
+    except:
+        BadgeOwnedByUser.objects.create(badge=badge, owner=touser, isGivenBySystem=False)
+        
+    return JsonResponse('SUCCESS', safe=False, status=status.HTTP_201_CREATED)
+
+@login_required()
+@api_view(['GET'])
+def getAllBadges(request):
+
+    allBadges = list(Badge.objects.filter().values())
+    return JsonResponse(allBadges, safe=, status=status.HTTP_200_OK)
 
