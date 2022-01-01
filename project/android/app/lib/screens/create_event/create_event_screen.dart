@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ludo_app/screens/google_maps/google_maps_screen.dart';
+import 'package:ludo_app/screens/google_maps/google_maps_screen_no_radius.dart';
 import 'package:ludo_app/screens/main_events/main_event_screen.dart';
 
 class CreateEventScreen extends StatefulWidget {
@@ -15,6 +15,13 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   bool _averageFlag = true;
   bool _skilledFlag = true;
   bool _expertFlag = true;
+  List<double> mapCallback = [];
+
+  _updateLocation(List<double> maps){
+    setState(() {
+      mapCallback = maps;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +50,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 decoration: InputDecoration(
                   hintText: ('Type here...'),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
+                    borderRadius: BorderRadius.circular(10.0),
                     borderSide: BorderSide(),
                   ),
                 ),
@@ -68,7 +75,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 decoration: InputDecoration(
                   hintText: ('Type here...'),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
+                    borderRadius: BorderRadius.circular(10.0),
                     borderSide: BorderSide(),
                   ),
                 ),
@@ -93,10 +100,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               Container(
                 decoration: BoxDecoration(
                     border: Border.all(),
-                    borderRadius: BorderRadius.circular(20)),
+                    borderRadius: BorderRadius.circular(10)),
                 child: Padding(
                   padding: const EdgeInsets.only(
-                      left: 8.0, right: 8.0, top: 3.0, bottom: 3.0),
+                      left: 6.0, right: 6.0, top: 3.0, bottom: 3.0),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -170,14 +177,14 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               Container(
                 decoration: BoxDecoration(
                     border: Border.all(),
-                    borderRadius: BorderRadius.circular(20)),
+                    borderRadius: BorderRadius.circular(10)),
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(6.0),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          child: GoogleMapsScreen(parentAction: (List) => {},),
+                          child: GoogleMapsNoRadiusScreen(parentAction: _updateLocation),
                           height: MediaQuery.of(context).size.height * 0.59,
                           width: MediaQuery.of(context).size.width * 0.93,
                         ),
@@ -231,6 +238,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   style: TextStyle(fontSize: 16),
                 ),
               ), //map
+              Text(mapCallback.toString()),
             ],
           ),
         ));

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ludo_app/screens/welcome/welcome_screen.dart';
 import 'package:ludo_app/services/user_service.dart';
+import 'package:ludo_app/globals.dart' as globals;
 
 class ProfileScreen extends StatelessWidget {
   @override

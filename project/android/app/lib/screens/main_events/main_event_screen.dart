@@ -7,6 +7,7 @@ import 'package:ludo_app/screens/popup_event_details/popup_event_details.dart';
 import 'package:ludo_app/screens/user_profile/components/body.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:ludo_app/globals.dart' as globals;
 
 class MainEventScreen extends StatefulWidget {
 
@@ -24,7 +25,6 @@ class _MainEventScreenState extends State<MainEventScreen> {
       DateTime.now().year, DateTime.now().month - 1, DateTime.now().day);
 
   final List<Map<String, dynamic>> eventList = [];
-
   /*
   final List<Map<String, dynamic>> eventList = [
     {
@@ -168,18 +168,19 @@ class _MainEventScreenState extends State<MainEventScreen> {
         setState(() {
           eventList.clear();
           List events = jsonDecode(response.body);
+          //print(events);
           for(var i = 0; i < events.length; i++){
             Map<String, dynamic> oneEvent = {
               "id": events[i]['pk'],
-              "name": events[i]['fields']['post_name'],
-              "description": events[i]['fields']['description'],
-              "image": events[i]['fields']['pathToEventImage'],
+              "name": events[i]['post_name'],
+              "description": events[i]['description'],
+              "image": events[i]['pathToEventImage'],
               "location": "",
-              "datetime": events[i]['fields']['created_date'],
+              "datetime": events[i]['created_date'],
             };
             eventList.add(oneEvent);
           }
-          print(eventList);
+          //print(eventList);
         });
       });
       return response.body;
@@ -225,11 +226,11 @@ class _MainEventScreenState extends State<MainEventScreen> {
                   for(var i = 0; i < events.length; i++){
                     Map<String, dynamic> oneEvent = {
                       "id": events[i]['pk'],
-                      "name": events[i]['fields']['post_name'],
-                      "description": events[i]['fields']['description'],
-                      "image": events[i]['fields']['pathToEventImage'],
+                      "name": events[i]['post_name'],
+                      "description": events[i]['description'],
+                      "image": events[i]['pathToEventImage'],
                       "location": "",
-                      "datetime": events[i]['fields']['created_date'],
+                      "datetime": events[i]['created_date'],
                     };
                     eventList.add(oneEvent);
                   }
@@ -367,9 +368,10 @@ class _MainEventScreenState extends State<MainEventScreen> {
                                 return PopupEventDetails();
                               }));
                             },
-                            leading: Image.network(
-                                afterSearchActionEvents[index]['image']
-                            ),
+                            leading:
+                            (afterSearchActionEvents[index]['image'] != '') ?
+                              Image.network(afterSearchActionEvents[index]['image']) :
+                              Image.asset('assets/images/default_event_image.png'),
                             title: Text(afterSearchActionEvents[index]['name']),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
