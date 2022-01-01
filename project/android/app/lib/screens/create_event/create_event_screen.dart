@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ludo_app/components/rounded_dropdown_1_10.dart';
 import 'package:ludo_app/screens/google_maps/google_maps_screen.dart';
 import 'package:ludo_app/screens/main_events/main_event_screen.dart';
 
@@ -39,16 +40,42 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 ),
               ),
               Container(
-                  child: TextFormField(
-                decoration: InputDecoration(
-                  hintText: ('Type here...'),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                    borderSide: BorderSide(),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    hintText: ('Type here...'),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(),
+                    ),
                   ),
+                  keyboardType: TextInputType.text,
                 ),
-                keyboardType: TextInputType.text,
-              )),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Container(
+                        decoration:
+                            BoxDecoration(color: Colors.blue.withOpacity(0.4)),
+                        child: const Text("Type Your Event Description",
+                            style: TextStyle(fontSize: 16)))
+                  ],
+                ),
+              ),
+
+              Container(
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    hintText: ('Type here...'),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(),
+                    ),
+                  ),
+                  keyboardType: TextInputType.text,
+                ),
+              ),
 
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -177,7 +204,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          child: GoogleMapsScreen(parentAction: (List) => {},),
+                          child: GoogleMapsScreen(
+                            parentAction: (List) => {},
+                          ),
                           height: MediaQuery.of(context).size.height * 0.59,
                           width: MediaQuery.of(context).size.width * 0.93,
                         ),
@@ -214,6 +243,116 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   minuteInterval: 1,
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Container(
+                        decoration:
+                            BoxDecoration(color: Colors.blue.withOpacity(0.4)),
+                        child: const Text("Select Your Participation Limit",
+                            style: TextStyle(fontSize: 16)))
+                  ],
+                ),
+              ),
+
+              Container(
+                padding: EdgeInsets.all(18),
+                child: RoundedDropdownButton(),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Container(
+                        decoration:
+                            BoxDecoration(color: Colors.blue.withOpacity(0.4)),
+                        child: const Text("Select Your Spectator Limit",
+                            style: TextStyle(fontSize: 16)))
+                  ],
+                ),
+              ),
+
+              Container(
+                padding: EdgeInsets.all(18),
+                child: RoundedDropdownButton(),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Container(
+                        decoration:
+                            BoxDecoration(color: Colors.blue.withOpacity(0.4)),
+                        child: const Text("Type Your General Rules",
+                            style: TextStyle(fontSize: 16)))
+                  ],
+                ),
+              ),
+
+              Container(
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    hintText: ('Type here...'),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(),
+                    ),
+                  ),
+                  keyboardType: TextInputType.text,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Container(
+                        decoration:
+                            BoxDecoration(color: Colors.blue.withOpacity(0.4)),
+                        child: const Text("Type Your Equipment Requirements",
+                            style: TextStyle(fontSize: 16)))
+                  ],
+                ),
+              ),
+
+              Container(
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    hintText: ('Type here...'),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: BorderSide(),
+                    ),
+                  ),
+                  keyboardType: TextInputType.text,
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Container(
+                        decoration:
+                            BoxDecoration(color: Colors.blue.withOpacity(0.4)),
+                        child: const Text("Type Your Contact Information",
+                            style: TextStyle(fontSize: 16)))
+                  ],
+                ),
+              ),
+
+              Container(
+                  child: TextFormField(
+                decoration: InputDecoration(
+                  hintText: ('Type here...'),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: BorderSide(),
+                  ),
+                ),
+                keyboardType: TextInputType.text,
+              )),
 
               ElevatedButton(
                 onPressed: () {
