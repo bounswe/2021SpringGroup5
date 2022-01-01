@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ludo_app/components/rounded_dropdown_1_10.dart';
+import 'package:ludo_app/components/upload_image.dart';
 import 'package:ludo_app/screens/google_maps/google_maps_screen.dart';
 import 'package:ludo_app/screens/main_events/main_event_screen.dart';
 
@@ -242,6 +243,23 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   use24hFormat: false,
                   minuteInterval: 1,
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Container(
+                        decoration:
+                            BoxDecoration(color: Colors.blue.withOpacity(0.4)),
+                        child: const Text("Pick Your Event Image",
+                            style: TextStyle(fontSize: 16)))
+                  ],
+                ),
+              ),
+
+              Container(
+                padding: EdgeInsets.all(18),
+                child: UploadImage(),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),

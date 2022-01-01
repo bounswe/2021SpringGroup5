@@ -103,29 +103,46 @@
 69-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:40:20-65
 70            android:value="AIzaSyDE6gbH_m5Eb1th41tzIPSUX6Szwsb_e_A" />
 70-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:41:20-75
-71        <!-- Needs to be explicitly declared on P+ -->
-72        <uses-library
-72-->[com.google.android.gms:play-services-maps:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:33:9-35:40
-73            android:name="org.apache.http.legacy"
-73-->[com.google.android.gms:play-services-maps:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:34:13-50
-74            android:required="false" />
-74-->[com.google.android.gms:play-services-maps:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:35:13-37
-75
-76        <activity
-76-->[com.google.android.gms:play-services-base:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:23:9-26:75
-77            android:name="com.google.android.gms.common.api.GoogleApiActivity"
-77-->[com.google.android.gms:play-services-base:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:24:13-79
-78            android:exported="false"
-78-->[com.google.android.gms:play-services-base:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:25:13-37
-79            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-79-->[com.google.android.gms:play-services-base:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:26:13-72
-80
-81        <meta-data
-81-->[com.google.android.gms:play-services-basement:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/3c8e7eb3d21ac94d08f658f6d8a1c9f3/jetified-play-services-basement-17.0.0/AndroidManifest.xml:23:9-25:69
-82            android:name="com.google.android.gms.version"
-82-->[com.google.android.gms:play-services-basement:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/3c8e7eb3d21ac94d08f658f6d8a1c9f3/jetified-play-services-basement-17.0.0/AndroidManifest.xml:24:13-58
-83            android:value="@integer/google_play_services_version" />
-83-->[com.google.android.gms:play-services-basement:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/3c8e7eb3d21ac94d08f658f6d8a1c9f3/jetified-play-services-basement-17.0.0/AndroidManifest.xml:25:13-66
-84    </application>
-85
-86</manifest>
+71
+72        <provider
+72-->[:image_picker] /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:8:9-16:20
+73            android:name="io.flutter.plugins.imagepicker.ImagePickerFileProvider"
+73-->[:image_picker] /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:9:13-82
+74            android:authorities="com.example.map_deneme.flutter.image_provider"
+74-->[:image_picker] /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:10:13-74
+75            android:exported="false"
+75-->[:image_picker] /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:11:13-37
+76            android:grantUriPermissions="true" >
+76-->[:image_picker] /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:12:13-47
+77            <meta-data
+77-->[:image_picker] /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:13:13-15:75
+78                android:name="android.support.FILE_PROVIDER_PATHS"
+78-->[:image_picker] /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:14:17-67
+79                android:resource="@xml/flutter_image_picker_file_paths" />
+79-->[:image_picker] /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:15:17-72
+80        </provider> <!-- Needs to be explicitly declared on P+ -->
+81        <uses-library
+81-->[com.google.android.gms:play-services-maps:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:33:9-35:40
+82            android:name="org.apache.http.legacy"
+82-->[com.google.android.gms:play-services-maps:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:34:13-50
+83            android:required="false" />
+83-->[com.google.android.gms:play-services-maps:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:35:13-37
+84
+85        <activity
+85-->[com.google.android.gms:play-services-base:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:23:9-26:75
+86            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+86-->[com.google.android.gms:play-services-base:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:24:13-79
+87            android:exported="false"
+87-->[com.google.android.gms:play-services-base:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:25:13-37
+88            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+88-->[com.google.android.gms:play-services-base:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:26:13-72
+89
+90        <meta-data
+90-->[com.google.android.gms:play-services-basement:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/3c8e7eb3d21ac94d08f658f6d8a1c9f3/jetified-play-services-basement-17.0.0/AndroidManifest.xml:23:9-25:69
+91            android:name="com.google.android.gms.version"
+91-->[com.google.android.gms:play-services-basement:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/3c8e7eb3d21ac94d08f658f6d8a1c9f3/jetified-play-services-basement-17.0.0/AndroidManifest.xml:24:13-58
+92            android:value="@integer/google_play_services_version" />
+92-->[com.google.android.gms:play-services-basement:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/3c8e7eb3d21ac94d08f658f6d8a1c9f3/jetified-play-services-basement-17.0.0/AndroidManifest.xml:25:13-66
+93    </application>
+94
+95</manifest>
