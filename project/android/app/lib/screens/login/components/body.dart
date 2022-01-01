@@ -22,7 +22,7 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    if(message == null) Future.delayed(Duration.zero, () => showMailDialog(context, message??''));
+    if(message != null) Future.delayed(Duration.zero, () => showMailDialog(context, message??''));
     return Background(
       child: SingleChildScrollView(
         child: Column(

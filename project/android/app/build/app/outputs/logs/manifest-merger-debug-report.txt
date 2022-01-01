@@ -98,15 +98,15 @@ ADDED from /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/and
 	android:name
 		ADDED from /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:32:27-74
 meta-data#flutterEmbedding
-ADDED from /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:37:9-39:37
+ADDED from /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:37:9-39:36
 	android:value
 		ADDED from /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:39:17-34
 	android:name
 		ADDED from /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:38:17-48
 meta-data#com.google.android.geo.API_KEY
-ADDED from /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:40:9-41:50
+ADDED from /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:40:9-41:77
 	android:value
-		ADDED from /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:41:20-48
+		ADDED from /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:41:20-75
 	android:name
 		ADDED from /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:40:20-65
 uses-permission#android.permission.INTERNET

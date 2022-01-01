@@ -184,7 +184,12 @@ class _MainEventScreenState extends State<MainEventScreen> {
       });
       return response.body;
     } else {
-      throw Exception(json.decode(response.body)['errormessage']);
+      Map responseBody = json.decode(response.body);
+      if (responseBody.containsKey('errormessage')) {
+        throw Exception(responseBody['errormessage']);
+      } else if (responseBody.containsKey('message')){
+        return response.body;
+      }
     }
   }
 
