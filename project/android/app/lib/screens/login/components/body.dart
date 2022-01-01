@@ -151,13 +151,15 @@ Future<String> login(BuildContext context, String username, String password) asy
     }),
   );
 
-  if (response.statusCode == 200) {
+  Map bodyMap = json.decode(response.body);
+
+  if (bodyMap.containsKey("access")) {
 
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) {
-          return MainScreen();
+          return MainEventScreen(willFetchAllEvents: true);
         },
       ),
     );
@@ -165,8 +167,7 @@ Future<String> login(BuildContext context, String username, String password) asy
     //return response.body;
     return "";
   } else {
-    // If the server did not return a 201 CREATED response,
-    // then throw an exception.
-    throw Exception(json.decode(response.body)['errormessage']);
+
+    throw Exception(bodyMap['errormessage']);
   }
 }
