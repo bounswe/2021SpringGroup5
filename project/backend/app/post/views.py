@@ -1129,5 +1129,5 @@ def sendBadge(request):
 def getAllBadges(request):
 
     allBadges = list(Badge.objects.filter().values())
-    return JsonResponse(allBadges, safe=, status=status.HTTP_200_OK)
+    return JsonResponse(allBadges, safe=False, status=status.HTTP_200_OK)
 
