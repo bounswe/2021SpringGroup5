@@ -115,7 +115,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         "location_requirement": "",
         "contact_info": contactInfoController.text,
         "skill_requirement": skillLevel,
-        "repeating_frequency": 1,
+        "repeating_frequency": 0,
         "badges": [
           {
             "id": 1,
@@ -126,6 +126,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         ]
       }
     };
+    debugPrint(jsonEncode(params));
 
     var uri = Uri.parse('http://3.122.41.188:8000/post/create_event_post/');
     var request = http.MultipartRequest('POST', uri);
