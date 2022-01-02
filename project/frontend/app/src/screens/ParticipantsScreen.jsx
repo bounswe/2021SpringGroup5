@@ -77,11 +77,10 @@ export const ParticipantListingRow = props => {
           <Card
             key={index}
             className="user-card"
-            onClick={() => {
-              history.push(`/profile?username=${participant.user_username}`);
-            }}
           >
-            <CardContent className="user-card-content">
+            <CardContent className="user-card-content" onClick={() => {
+              history.push(`/profile?username=${participant.user_username}`);
+            }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Avatar alt={participant.user_username} src={participant.image_url} />
                 <div style={{ marginLeft: '10px' }}>

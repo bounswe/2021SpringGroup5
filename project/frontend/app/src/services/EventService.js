@@ -45,7 +45,7 @@ const event_details_mock = {
         username: 'tsubasa',
       },
     ],
-    is_event_creator: true,
+    is_event_creator: false,
   },
 };
 export function getEvent(event_id) {
