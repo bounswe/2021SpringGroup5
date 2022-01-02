@@ -24,8 +24,8 @@ export function login(loginForm) {
 }
 
 export function me() {
-  // return new Promise(resolve => resolve({ username: 'didemaytac', name: 'Didem', surname: 'Aytac', user_id: 1 }));
-  return httpClient.get('/me').then(res => res.data);
+  return new Promise(resolve => resolve({ username: 'didemaytac', name: 'Didem', surname: 'Aytac', user_id: 1 }));
+  // return httpClient.get('/me', { withCredentials: true }).then(res => res.data);
 }
 
 export function forgotPassword(forgotPasswordForm) {
@@ -44,17 +44,17 @@ export function register(registerForm) {
       surname: registerForm.surname,
       password1: registerForm.password,
       password2: registerForm.password_confirm,
-      items: [
-        {
-          name: registerForm.sport_1,
-          level: registerForm.level_1,
-        },
-        {
-          name: registerForm.sport_2,
-          level: registerForm.level_2,
-        },
-      ],
     },
+    items: [
+      {
+        name: registerForm.sport_1,
+        level: registerForm.level_1,
+      },
+      {
+        name: registerForm.sport_2,
+        level: registerForm.level_2,
+      },
+    ],
   });
 }
 
