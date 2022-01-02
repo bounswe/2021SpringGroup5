@@ -1,12 +1,10 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:ludo_app/components/popup_card_effect.dart';
 import 'package:ludo_app/screens/create_event/create_event_screen.dart';
+import 'package:ludo_app/screens/event_details/popup_event_details.dart';
 import 'package:ludo_app/screens/filter_popup/filter_popup_screen.dart';
 import 'package:ludo_app/screens/google_maps/google_maps_screen.dart';
-import 'package:ludo_app/screens/popup_event_details/popup_event_details.dart';
 import 'package:ludo_app/screens/user_profile/components/body.dart';
 
 class MainEventScreen extends StatefulWidget {
@@ -41,7 +39,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
   void sortByDate() {
     eventList.sort((a, b) => a['datetime'].compareTo(b['datetime']));
     setState(() {
-      //girdiden sonra sonuçları yansıtma ve search olmuşsa yine de searched eventleri sortluyor.
+      //list results after the input
       afterSearchActionEvents = eventList;
     });
     print("$eventList");
@@ -50,7 +48,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
   void sortByName() {
     eventList.sort((a, b) => a['name'].compareTo(b['name']));
     setState(() {
-      //girdiden sonra sonuçları yansıtma ve search olmuşsa yine de searched eventleri sortluyor.
+      ////list results after the input
       afterSearchActionEvents = eventList;
     });
     print("$eventList");
@@ -59,7 +57,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
   void searchAction(String userInputText) {
     List<Map<String, dynamic>> results = [];
     if (userInputText.isEmpty) {
-      //girdi olmazsa tüm eventler gözükecek
+      //if input = null, show all events
       results = eventList;
     } else {
       results = eventList
@@ -68,7 +66,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
           .toList();
     }
     setState(() {
-      //girdiden sonra sonuçları yansıtma
+      //list results after the input
       afterSearchActionEvents = results;
     });
   }
@@ -284,10 +282,14 @@ class _MainEventScreenState extends State<MainEventScreen> {
                           padding: const EdgeInsets.all(13.0),
                           child: ListTile(
                             onTap: () {
-                              Navigator.of(context)
-                                  .push(PopupCardEffect(builder: (context) {
-                                return PopupEventDetails();
-                              }));
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return EventDetailsScreen();
+                                  },
+                                ),
+                              );
                             },
                             leading: Image.network(
                                 afterSearchActionEvents[index]['image']),
