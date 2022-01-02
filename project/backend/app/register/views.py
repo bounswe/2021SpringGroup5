@@ -1,4 +1,6 @@
 import threading
+
+
 from django.forms.models import model_to_dict
 import requests
 from django.shortcuts import render, redirect
@@ -10,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from .models import User, InterestLevel, Follow
 from django.urls import reverse
 import hashlib
+from django.middleware import csrf
 from django.http import JsonResponse
 from django.contrib import messages
 from django.template.loader import render_to_string
@@ -192,8 +195,13 @@ def login_user(request):
         }
 
         token = requests.post("http://3.122.41.188:8000/api/token/", json=postjson)
-
-        return Response(token.json(), status=status.HTTP_200_OK)
+        sessionId = request.session.session_key
+        csrftoken = csrf.get_token(request)
+        resp = {
+            'sessionId': sessionId,
+            'csrftoken': csrftoken,
+        }
+        return Response(resp, status=status.HTTP_200_OK)
     else:
         return Response({"message": "You are not logged in, you can't do this request"}, 401)
 
