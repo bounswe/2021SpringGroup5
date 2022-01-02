@@ -1,3 +1,12 @@
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { render as rtlRender, screen } from '@testing-library/react';
+import { ProfileInformation } from '../screens/Profile';
+
+function render(children) {
+  const queryClient = new QueryClient();
+  return rtlRender(<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>);
+}
+
 const user_sports_mock = [
   { sport_name: 'basketball', level_name: 'beginner' },
   { sport_name: 'football', level_name: 'beginner' },
@@ -71,27 +80,36 @@ const user_events_mock = [
   },
 ];
 
-const user_info_mock = {
-  name: 'Mr.',
-  surname: 'Peanutbutter',
-  username: 'peanutz',
-  mail: 'peanutbutter@pblivin.com',
-  profile_image_url: 'https://pbs.twimg.com/profile_images/600483555416920065/cDUoY9Ar_400x400.jpg',
-  events: user_events_mock,
-  equipments: user_events_mock,
-  sports: user_sports_mock,
-  badges: user_badges_mock,
-  is_followed: true,
-};
+test('should show unfollow button when followed', async () => {
+  const user_info_mock = {
+    name: 'Mr.',
+    surname: 'Peanutbutter',
+    username: 'peanutz',
+    mail: 'peanutbutter@pblivin.com',
+    profile_image_url: 'https://pbs.twimg.com/profile_images/600483555416920065/cDUoY9Ar_400x400.jpg',
+    events: user_events_mock,
+    sports: user_sports_mock,
+    badges: user_badges_mock,
+    is_followed: true,
+  };
 
-export function getUserInfo() {
-  return new Promise(resolve => resolve(user_info_mock));
-}
+  render(<ProfileInformation user={user_info_mock} />);
+  expect(screen.getByRole('button', { name: 'Unfollow' })).toBeInTheDocument();
+});
 
-export function followUser() {
-  return new Promise(resolve => resolve(user_info_mock));
-}
+test('should show follow button when not followed', async () => {
+  const user_info_mock = {
+    name: 'Mr.',
+    surname: 'Peanutbutter',
+    username: 'peanutz',
+    mail: 'peanutbutter@pblivin.com',
+    profile_image_url: 'https://pbs.twimg.com/profile_images/600483555416920065/cDUoY9Ar_400x400.jpg',
+    events: user_events_mock,
+    sports: user_sports_mock,
+    badges: user_badges_mock,
+    is_followed: false,
+  };
 
-export function unfollowUser() {
-  return new Promise(resolve => resolve(user_info_mock));
-}
+  render(<ProfileInformation user={user_info_mock} />);
+  expect(screen.getByRole('button', { name: 'Follow' })).toBeInTheDocument();
+});
