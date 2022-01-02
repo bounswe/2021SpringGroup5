@@ -50,6 +50,12 @@
       "languageVersion": "1.17"
     },
     {
+      "name": "cross_file",
+      "rootUri": "file:///Users/berkaybor/Development/flutter/.pub-cache/hosted/pub.dartlang.org/cross_file-0.3.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "crypto",
       "rootUri": "file:///Users/berkaybor/Development/flutter/.pub-cache/hosted/pub.dartlang.org/crypto-3.0.1",
       "packageUri": "lib/",
@@ -122,6 +128,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "flutter_web_plugins",
+      "rootUri": "file:///Users/berkaybor/Development/flutter/packages/flutter_web_plugins",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "fuchsia_remote_debug_protocol",
       "rootUri": "file:///Users/berkaybor/Development/flutter/packages/fuchsia_remote_debug_protocol",
       "packageUri": "lib/",
@@ -148,6 +160,36 @@
     {
       "name": "http_parser",
       "rootUri": "file:///Users/berkaybor/Development/flutter/.pub-cache/hosted/pub.dartlang.org/http_parser-4.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "image_picker",
+      "rootUri": "file:///Users/berkaybor/Development/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+4",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
+      "name": "image_picker_for_web",
+      "rootUri": "file:///Users/berkaybor/Development/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker_for_web-2.1.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "image_picker_platform_interface",
+      "rootUri": "file:///Users/berkaybor/Development/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker_platform_interface-2.4.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "intl",
+      "rootUri": "file:///Users/berkaybor/Development/flutter/.pub-cache/hosted/pub.dartlang.org/intl-0.17.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "js",
+      "rootUri": "file:///Users/berkaybor/Development/flutter/.pub-cache/hosted/pub.dartlang.org/js-0.6.3",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -314,7 +356,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2022-01-02T11:58:45.504665Z",
+  "generated": "2022-01-02T17:06:07.403082Z",
   "generator": "pub",
   "generatorVersion": "2.14.4"
 }
