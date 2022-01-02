@@ -7,6 +7,7 @@ INJECTED from /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/
 MERGED from /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:1:1-44:12
 MERGED from [:google_maps_flutter] /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/google_maps_flutter/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [:flutter_plugin_android_lifecycle] /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/flutter_plugin_android_lifecycle/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
+MERGED from [:path_provider_android] /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/path_provider_android/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [com.google.android.gms:play-services-maps:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:17:1-38:12
 MERGED from [com.google.android.gms:play-services-base:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:17:1-29:12
 MERGED from [com.google.android.gms:play-services-tasks:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/953f01bd1c1ba965762327dfde85b8cc/jetified-play-services-tasks-17.0.0/AndroidManifest.xml:2:1-9:12
@@ -125,6 +126,8 @@ MERGED from [:google_maps_flutter] /Users/berkaybor/Development/flutter-app/2021
 MERGED from [:google_maps_flutter] /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/google_maps_flutter/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:flutter_plugin_android_lifecycle] /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/flutter_plugin_android_lifecycle/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:flutter_plugin_android_lifecycle] /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/flutter_plugin_android_lifecycle/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
+MERGED from [:path_provider_android] /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/path_provider_android/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
+MERGED from [:path_provider_android] /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/path_provider_android/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [com.google.android.gms:play-services-maps:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:20:5-44
 MERGED from [com.google.android.gms:play-services-maps:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:20:5-44
 MERGED from [com.google.android.gms:play-services-base:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:20:5-44

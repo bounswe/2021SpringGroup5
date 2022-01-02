@@ -65,7 +65,7 @@ class ProfileScreen extends StatelessWidget {
                                       height: 18,
                                     ),
                                     Text(
-                                      userInfo[0]["name"],
+                                      globals.name + ' ' + globals.surname,
                                       style: const TextStyle(
                                         fontSize: 20,
                                       ),
@@ -75,7 +75,7 @@ class ProfileScreen extends StatelessWidget {
                                     ),
                                     Positioned(
                                       child: Text(
-                                        userInfo[0]["mail"],
+                                        globals.email,
                                         style: const TextStyle(
                                           fontSize: 14,
                                         ),

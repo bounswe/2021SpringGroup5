@@ -159,6 +159,9 @@ class _MainEventScreenState extends State<MainEventScreen> {
       Uri.parse('http://3.122.41.188:8000/search/search_event/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authentication': globals.access,
+        'X-CSRFTOKEN': globals.csrftoken,
+        'Cookie': 'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}',
       },
       body: jsonEncode(params),
     );

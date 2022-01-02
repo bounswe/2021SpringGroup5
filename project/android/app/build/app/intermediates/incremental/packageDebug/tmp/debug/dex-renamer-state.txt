@@ -1,4 +1,4 @@
-#Thu Dec 30 22:59:25 TRT 2021
+#Sun Jan 02 14:35:06 TRT 2022
 base.0=/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
 renamed.0=classes.dex
 path.0=classes.dex

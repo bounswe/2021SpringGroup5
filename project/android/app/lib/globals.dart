@@ -9,3 +9,4 @@ String email = "";
 String access = "";
 String refresh = "";
 String csrftoken = "";
+String sessionid = "";
