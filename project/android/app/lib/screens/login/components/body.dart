@@ -165,6 +165,7 @@ Future<String> login(BuildContext context, String username, String password) asy
     globals.sessionid = sessionid;
     globals.access = 'Bearer ' + bodyMap['access'];
     globals.refresh = bodyMap['refresh'];
+
     final response2 = await http.get(
       Uri.parse('http://3.122.41.188:8000/me'),
       headers: <String, String>{
