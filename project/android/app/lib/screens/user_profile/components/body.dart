@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ludo_app/components/popup_card_effect.dart';
+import 'package:ludo_app/screens/popup_send_badge/popup_Send_badge.dart';
 import 'package:ludo_app/screens/welcome/welcome_screen.dart';
 import 'package:ludo_app/services/user_service.dart';
 
@@ -180,13 +182,22 @@ class ProfileScreen extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(13.0),
                                   child: ListTile(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        PopupCardEffect(
+                                          builder: (context) {
+                                            return PopupSendBadge();
+                                          },
+                                        ),
+                                      );
+                                    },
                                     leading: Image(
                                       fit: BoxFit.cover,
                                       image: AssetImage(userInfo[0]['badges']
                                           [index]['image']),
                                     ),
-                                    title: Text(userInfo[0]['badges'][index]["name"]),
+                                    title: Text(
+                                        userInfo[0]['badges'][index]["name"]),
                                   ),
                                 ),
                               ),
