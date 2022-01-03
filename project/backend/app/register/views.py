@@ -8,7 +8,6 @@ from requests import api
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.backends import TokenBackend
-from django.contrib.auth.decorators import login_required
 from .models import User, InterestLevel, Follow
 from django.urls import reverse
 import hashlib
@@ -61,7 +60,7 @@ def send_mail(user, request):
     email.send(fail_silently=False)
 
 
-@login_required
+
 @api_view(['GET'])
 def homePageEvents(request):
     actor_id = request.user.Id
@@ -87,7 +86,6 @@ def homePageEvents(request):
     return Response({"posts": result_events}, 200)
 
 
-@login_required
 @api_view(['GET'])
 def getBadgesOwnedByUser(request):
     actor_id = request.user.Id
@@ -181,12 +179,12 @@ def login_user(request):
         if user and not user.is_email_verified:
             context['errormessage'] = 'Please check your email inbox, your email is not verified'
             context['has_error'] = True
-            return JsonResponse(context)
+            return JsonResponse(context, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         if not user:
             context['errormessage'] = 'You entered invalid credentials, try again please'
             context['has_error'] = True
-            return JsonResponse(context)
+            return JsonResponse(context, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         login(request, user)
         postjson = {
@@ -195,11 +193,9 @@ def login_user(request):
         }
 
         token = (requests.post("http://3.122.41.188:8000/api/token/", json=postjson)).json()
-        #sessionId = request.session.session_key
+
         csrftoken = csrf.get_token(request)
         resp = {
-            #'sessionId': sessionId,
-            #'csrftoken': csrftoken,
             'token': token,
             'csrf': csrftoken,
         }
@@ -256,7 +252,7 @@ def activate_user(request, uidb64, token):
 
     context['has_error'] = True
     context['message'] = 'There is a problem with activation'
-    return JsonResponse(context)
+    return JsonResponse(context, status=status.HTTP_400_BAD_REQUEST)
 
 
 
