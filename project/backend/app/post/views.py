@@ -427,7 +427,7 @@ def applyToEvent(request):
 
     applicationStatus = "waiting"
     if not isAdequate:
-        applicationStatus = "inadeq"
+        applicationStatus = "waiting"
 
     application_ser = ApplicationSerializer(
         data={"user": actor_id, "event_post": event_post.id, "status": applicationStatus, "applicant_type": "player"})
