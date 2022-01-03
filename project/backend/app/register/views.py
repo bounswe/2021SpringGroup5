@@ -1,6 +1,5 @@
 import threading
 
-
 from django.forms.models import model_to_dict
 import requests
 from django.shortcuts import render, redirect
@@ -34,6 +33,7 @@ EquipmentPost = apps.get_model('post', 'EquipmentPost')
 BadgeOwnedByUser = apps.get_model('post', 'BadgeOwnedByUser')
 EventPost = apps.get_model('post', 'EventPost')
 
+
 class EmailThread(threading.Thread):
 
     def __init__(self, email):
@@ -58,7 +58,6 @@ def send_mail(user, request):
                          from_email=settings.EMAIL_HOST_USER,
                          to=[user.mail])
     email.send(fail_silently=False)
-
 
 
 @api_view(['GET'])
@@ -207,10 +206,9 @@ def login_user(request):
         return Response({"message": "You are not logged in, you can't do this request"}, 401)
 
 
-
 @api_view(['GET'])
 def profile(request):
-    #user = request.user
+    # user = request.user
     token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
@@ -258,7 +256,6 @@ def activate_user(request, uidb64, token):
     return JsonResponse(context, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 @api_view(['POST'])
 def follow(request, userId):
     token = request.headers['Authorization']
@@ -268,11 +265,12 @@ def follow(request, userId):
     followinguser = User.objects.get(Id=userId2)
     followeduser = User.objects.get(Id=userId)
 
-    Follow.objects.create(follower=followinguser, following=followeduser)
+    try:
+        Follow.objects.get(follower=followinguser, following=followeduser)
+    except:
+        Follow.objects.create(follower=followinguser, following=followeduser)
 
-    return JsonResponse('SUCCESS', status=201)
-
-
+    return JsonResponse('SUCCESS', status=201, safe=False)
 
 
 @api_view(['GET'])
@@ -287,7 +285,12 @@ def getProfileOfUser(request, userId):
     badges = list(
         BadgeOwnedByUser.objects.filter(owner=user2.Id).values('badge__id', 'badge__name', 'badge__description',
                                                                'badge__wikiId'))
-    events = list(EventPost.objects.filter(owner=user2.Id).values())
+    events = list(EventPost.objects.filter(owner=user2.Id).values('post_name', 'sport_category',
+                                                                    'created_date','description','longitude','latitude',
+                                                                  'date_time','participant_limit','spectator_limit','rule',
+                                                                  'equipment_requirement','status', 'capacity', 'location_requirement',
+                                                                  'contact_info','pathToEventImage','skill_requirement',
+                                                                  'current_player', 'current_spectator', 'sport_category__sport_name'))
     equipments = list(EquipmentPost.objects.filter(owner=user2).values())
     sports = list(InterestLevel.objects.filter(owner_of_interest=user2).values('sport_name__sport_name', 'skill_level__level_name'))
     user = list(
@@ -306,4 +309,4 @@ def getProfileOfUser(request, userId):
         'user': user,
         'following': following,
     }
-    return JsonResponse(context, status=200)
+    return JsonResponse(context, status=200, safe=False)
