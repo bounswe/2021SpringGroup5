@@ -3,11 +3,20 @@ import 'package:ludo_app/components/popup_card_effect.dart';
 import 'package:ludo_app/screens/popup_send_badge/popup_Send_badge.dart';
 import 'package:ludo_app/screens/welcome/welcome_screen.dart';
 import 'package:ludo_app/services/user_service.dart';
+import 'package:ludo_app/screens/event_page/popup_event_details.dart';
 import 'package:ludo_app/globals.dart' as globals;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  List userEvents = [];
+  List userBadges = [];
 
   showAlertDialog(BuildContext context) async {
     Future<String>? _futureResponse;
@@ -82,9 +91,40 @@ class ProfileScreen extends StatelessWidget {
     } else {
       throw Exception(bodyMap.toString());
     }
-
-
   }
+
+  Future<String> getUserInfo(BuildContext context) async {
+    final response = await http.get(
+      Uri.parse('http://3.122.41.188:8000/profile/${globals.userid}'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': globals.access,
+        'Cookie': 'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}'
+      },
+    );
+
+    debugPrint(response.body);
+    if (response.statusCode == 200) {
+      Map userInfo = json.decode(response.body);
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        setState(() {
+          userEvents = userInfo['events'];
+          userBadges = userInfo['badges'];
+        });
+      });
+    } else {
+      throw Exception("Error at gathering user info");
+    }
+    return "";
+  }
+
+  @override
+  void initState() {
+
+    getUserInfo(context);
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -260,8 +300,11 @@ class ProfileScreen extends StatelessWidget {
                                 )),
                           ],),
                           Expanded(
-                            child: ListView.builder(
-                              itemCount: userInfo[0]["badges"].length,
+                            child:
+                              userBadges.isEmpty ?
+                              const Text("No badges") :
+                              ListView.builder(
+                              itemCount: userBadges.length,
                               itemBuilder: (context, index) => Card(
                                 elevation: 5,
                                 key: ValueKey([index][0]),
@@ -271,21 +314,15 @@ class ProfileScreen extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(13.0),
                                   child: ListTile(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        PopupCardEffect(
-                                          builder: (context) {
-                                            return PopupSendBadge();
-                                          },
-                                        ),
-                                      );
-                                    },
-                                    leading: Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(userInfo[0]['badges']
-                                      [index]['image']),
+                                    onTap: () {},
+                                    leading: Image.asset('assets/images/badge_icon.png'),
+                                    title: Text(userBadges[index]['badge__name'][0].toString().toUpperCase() + userBadges[index]['badge__name'].toString().substring(1)),
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(userBadges[index]['badge__description'][0].toString().toUpperCase() + userBadges[index]['badge__description'].toString().substring(1)),
+                                      ],
                                     ),
-                                    title: Text(userInfo[0]['badges'][index]["name"]),
                                   ),
                                 ),
                               ),
@@ -316,13 +353,15 @@ class ProfileScreen extends StatelessWidget {
                           Stack(children: const [
                             Positioned(
                                 child: Text(
-                                  "Previously Joined Events",
+                                  "Previously Created Events",
                                   style: TextStyle(fontSize: 17),
                                 )),],
                           ),
                           Expanded(
-                            child: ListView.builder(
-                              itemCount: userInfo[0]["events"].length,
+                            child: userEvents.isEmpty ?
+                            const Text("User created no events") :
+                            ListView.builder(
+                              itemCount: userEvents.length,
                               itemBuilder: (context, index) => Card(
                                 elevation: 5,
                                 key: ValueKey([index][0]),
@@ -332,14 +371,30 @@ class ProfileScreen extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(13.0),
                                   child: ListTile(
-                                    onTap: () {},
-                                    leading: Image(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return EventDetailsScreen();
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    leading: Image.network(
+                                      userEvents[index]['pathToEventImage'],
                                       fit: BoxFit.cover,
-                                      image: AssetImage(userInfo[0]['events']
-                                      [index]['image']),
                                     ),
                                     title: Text(
-                                        userInfo[0]['events'][index]["name"]),
+                                      userEvents[index]['post_name'],
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(userEvents[index]['sport_category__sport_name']),
+                                        Text(userEvents[index]['date_time'])
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
