@@ -216,6 +216,9 @@ function HomeScreen() {
                     </div>
                 </div>
             )}
+            {
+                <p className="text-muted mb-5">There is not any event</p>
+            }
         </div>
     );
 }
