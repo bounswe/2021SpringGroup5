@@ -1,6 +1,6 @@
 import { httpClient } from '../httpClient';
 
-export let accessToken, refreshToken;
+export let accessToken, csrfToken;
 
 export function login(loginForm) {
   return httpClient
@@ -15,18 +15,14 @@ export function login(loginForm) {
       { headers: { 'Content-Type': 'multipart/form-data' } }
     )
     .then(res => {
-      accessToken = res.data.access;
-      refreshToken = res.data.refresh;
-      console.log(res);
-      // console.log(refreshToken);
-      httpClient.defaults.headers['Authentication'] = `Bearer ${accessToken}`;
+      accessToken = res.data.token.access;
+      httpClient.defaults.headers['Authorization'] = accessToken;
       httpClient.defaults.headers['Content-Type'] = 'application/json; charset=UTF-8';
     });
 }
 
 export function me() {
-  // return new Promise(resolve => resolve({ username: 'didemaytac', name: 'Didem', surname: 'Aytac', user_id: 1 }));
-  return httpClient.get('/me', { withCredentials: true }).then(res => res.data);
+  return httpClient.get('/me/', { withCredentials: true }).then(res => res.data);
 }
 
 export function forgotPassword(forgotPasswordForm) {
