@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ludo_app/components/popup_card_effect.dart';
 import 'package:ludo_app/screens/create_event/create_event_screen.dart';
 import 'package:ludo_app/screens/filter_popup/filter_popup_screen.dart';
 import 'package:ludo_app/screens/google_maps/google_maps_screen.dart';
@@ -34,7 +33,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
     if (widget.willFetchAllEvents) {
       fetchEvents();
     }
-    afterSearchActionEvents = eventList;
+
     super.initState();
   }
 
@@ -103,10 +102,10 @@ class _MainEventScreenState extends State<MainEventScreen> {
         setState(() {
           eventList.clear();
           List events = jsonDecode(response.body);
-          //print(events);
+          print(events);
           for(var i = 0; i < events.length; i++){
             Map<String, dynamic> oneEvent = {
-              "id": events[i]['pk'],
+              "id": events[i]['id'],
               "name": events[i]['post_name'],
               "description": events[i]['description'],
               "image": events[i]['pathToEventImage'],
@@ -115,7 +114,8 @@ class _MainEventScreenState extends State<MainEventScreen> {
             };
             eventList.add(oneEvent);
           }
-          //print(eventList);
+          afterSearchActionEvents = eventList;
+          print(afterSearchActionEvents);
         });
       });
       return response.body;
@@ -305,7 +305,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return EventDetailsScreen();
+                              return EventDetailsScreen(eventId: afterSearchActionEvents[index]['id']);
                             },
                           ),
                         );

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ludo_app/components/popup_card_effect.dart';
-import 'package:ludo_app/screens/popup_send_badge/popup_Send_badge.dart';
 import 'package:ludo_app/screens/welcome/welcome_screen.dart';
-import 'package:ludo_app/services/user_service.dart';
 import 'package:ludo_app/screens/event_page/popup_event_details.dart';
 import 'package:ludo_app/globals.dart' as globals;
 import 'package:http/http.dart' as http;
@@ -376,7 +373,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) {
-                                            return EventDetailsScreen();
+                                            return EventDetailsScreen(eventId: userEvents[index]['id']);
                                           },
                                         ),
                                       );
