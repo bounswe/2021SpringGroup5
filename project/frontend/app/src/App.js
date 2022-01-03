@@ -19,6 +19,8 @@ function App() {
   const { me } = useAuth();
   const queryClient = new QueryClient();
 
+  console.log(me);
+
   return (
     <div className="App">
       <QueryClientProvider client={queryClient}>
