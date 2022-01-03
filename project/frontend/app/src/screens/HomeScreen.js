@@ -1,11 +1,10 @@
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
-import { Box, CardActionArea, Divider, SwipeableDrawer } from '@mui/material';
+import { CardActionArea } from '@mui/material';
 
 import { followedUsersEventsRequest } from '../services/HomeService';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import Badge from "../components/Common/Badge";
 import { useState, useEffect } from 'react';
 import './Home.css';
 
