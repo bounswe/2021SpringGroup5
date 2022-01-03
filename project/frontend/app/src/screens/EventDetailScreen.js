@@ -5,12 +5,15 @@ import { getEvent } from '../services/EventService';
 import { useAuth } from '../auth/Auth';
 
 function EventDetailScreen() {
+  const { me } = useAuth();
   const { id: event_id } = useParams();
+
   const { me } = useAuth();
   const { data: event, isLoading } = useQuery(`eventDetail/${event_id}`, () => getEvent(event_id, me));
   
   console.log('umut');
   console.log(me);
+
 
   if (!isLoading && !event) {
     return <div> Event not found. </div>;
@@ -99,7 +102,7 @@ function EventDetailScreen() {
                 <p>{state.json.object.location_requirement}</p>
               </div>
             </article>
-            {event && <CommentSection comments={event.object.comments} event_id={event_id} />}
+            {event && <CommentSection comments={event.object.comments} event_id={event.object.id} />}
           </div>
         </div>
       </div>

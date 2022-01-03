@@ -12,43 +12,43 @@
 12         to allow setting breakpoints, to provide hot reload, etc.
 13    -->
 14    <uses-permission android:name="android.permission.INTERNET" />
-14-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:43:5-66
-14-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:43:22-64
+14-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:43:5-66
+14-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:43:22-64
 15    <!-- Include required permissions for Google Maps API to run. -->
 16    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-16-->[com.google.android.gms:play-services-maps:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:23:5-79
-16-->[com.google.android.gms:play-services-maps:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:23:22-76
+16-->[com.google.android.gms:play-services-maps:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:23:5-79
+16-->[com.google.android.gms:play-services-maps:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:23:22-76
 17
 18    <uses-feature
-18-->[com.google.android.gms:play-services-maps:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:26:5-28:35
+18-->[com.google.android.gms:play-services-maps:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:26:5-28:35
 19        android:glEsVersion="0x00020000"
-19-->[com.google.android.gms:play-services-maps:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:27:9-41
+19-->[com.google.android.gms:play-services-maps:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:27:9-41
 20        android:required="true" />
-20-->[com.google.android.gms:play-services-maps:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:28:9-32
+20-->[com.google.android.gms:play-services-maps:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:28:9-32
 21
 22    <application
-22-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:3:5-42:19
+22-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:3:5-42:19
 23        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-23-->[androidx.core:core:1.1.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/2e94107f30f39be366a17347c2bf100b/core-1.1.0/AndroidManifest.xml:24:18-86
+23-->[androidx.core:core:1.1.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/2e94107f30f39be366a17347c2bf100b/core-1.1.0/AndroidManifest.xml:24:18-86
 24        android:debuggable="true"
 25        android:icon="@mipmap/ic_launcher"
-25-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:5:13-47
+25-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:5:13-47
 26        android:label="ludo_app" >
-26-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:4:13-37
+26-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:4:13-37
 27        <activity
-27-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:6:9-34:20
+27-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:6:9-34:20
 28            android:name="com.example.ludo_app.MainActivity"
-28-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:7:17-45
+28-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:7:17-45
 29            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-29-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:10:17-167
+29-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:10:17-167
 30            android:hardwareAccelerated="true"
-30-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:11:17-51
+30-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:11:17-51
 31            android:launchMode="singleTop"
-31-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:8:17-47
+31-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:8:17-47
 32            android:theme="@style/LaunchTheme"
-32-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:9:17-51
+32-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:9:17-51
 33            android:windowSoftInputMode="adjustResize" >
-33-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:12:17-59
+33-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:12:17-59
 34
 35            <!--
 36                 Specifies an Android theme to apply to this Activity as soon as
@@ -57,11 +57,11 @@
 39                 to determine the Window background behind the Flutter UI.
 40            -->
 41            <meta-data
-41-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:17:13-20:15
+41-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:17:13-20:15
 42                android:name="io.flutter.embedding.android.NormalTheme"
-42-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:18:21-76
+42-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:18:21-76
 43                android:resource="@style/NormalTheme" />
-43-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:19:21-58
+43-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:19:21-58
 44            <!--
 45                 Displays an Android View that continues showing the launch screen
 46                 Drawable until Flutter paints its first frame, then this splash
@@ -70,21 +70,21 @@
 49                 Flutter's first frame.
 50            -->
 51            <meta-data
-51-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:26:13-29:15
+51-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:26:13-29:15
 52                android:name="io.flutter.embedding.android.SplashScreenDrawable"
-52-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:27:21-85
+52-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:27:21-85
 53                android:resource="@drawable/launch_background" />
-53-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:28:21-67
+53-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:28:21-67
 54
 55            <intent-filter>
-55-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:30:13-33:29
+55-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:30:13-33:29
 56                <action android:name="android.intent.action.MAIN" />
-56-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:31:17-68
-56-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:31:25-66
+56-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:31:17-68
+56-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:31:25-66
 57
 58                <category android:name="android.intent.category.LAUNCHER" />
-58-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:32:17-76
-58-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:32:27-74
+58-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:32:17-76
+58-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:32:27-74
 59            </intent-filter>
 60        </activity>
 61        <!--
@@ -92,57 +92,57 @@
 63             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java
 64        -->
 65        <meta-data
-65-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:37:9-39:36
+65-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:37:9-39:36
 66            android:name="flutterEmbedding"
-66-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:38:17-48
+66-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:38:17-48
 67            android:value="2" />
-67-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:39:17-34
+67-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:39:17-34
 68        <meta-data
-68-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:40:9-41:77
+68-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:40:9-41:77
 69            android:name="com.google.android.geo.API_KEY"
-69-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:40:20-65
+69-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:40:20-65
 70            android:value="AIzaSyDE6gbH_m5Eb1th41tzIPSUX6Szwsb_e_A" />
-70-->/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:41:20-75
+70-->/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/android/app/src/main/AndroidManifest.xml:41:20-75
 71
 72        <provider
-72-->[:image_picker] /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:8:9-16:20
+72-->[:image_picker] /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:8:9-16:20
 73            android:name="io.flutter.plugins.imagepicker.ImagePickerFileProvider"
-73-->[:image_picker] /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:9:13-82
+73-->[:image_picker] /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:9:13-82
 74            android:authorities="com.example.map_deneme.flutter.image_provider"
-74-->[:image_picker] /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:10:13-74
+74-->[:image_picker] /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:10:13-74
 75            android:exported="false"
-75-->[:image_picker] /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:11:13-37
+75-->[:image_picker] /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:11:13-37
 76            android:grantUriPermissions="true" >
-76-->[:image_picker] /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:12:13-47
+76-->[:image_picker] /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:12:13-47
 77            <meta-data
-77-->[:image_picker] /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:13:13-15:75
+77-->[:image_picker] /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:13:13-15:75
 78                android:name="android.support.FILE_PROVIDER_PATHS"
-78-->[:image_picker] /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:14:17-67
+78-->[:image_picker] /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:14:17-67
 79                android:resource="@xml/flutter_image_picker_file_paths" />
-79-->[:image_picker] /Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:15:17-72
+79-->[:image_picker] /Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/image_picker/intermediates/library_manifest/debug/AndroidManifest.xml:15:17-72
 80        </provider> <!-- Needs to be explicitly declared on P+ -->
 81        <uses-library
-81-->[com.google.android.gms:play-services-maps:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:33:9-35:40
+81-->[com.google.android.gms:play-services-maps:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:33:9-35:40
 82            android:name="org.apache.http.legacy"
-82-->[com.google.android.gms:play-services-maps:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:34:13-50
+82-->[com.google.android.gms:play-services-maps:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:34:13-50
 83            android:required="false" />
-83-->[com.google.android.gms:play-services-maps:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:35:13-37
+83-->[com.google.android.gms:play-services-maps:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/c5de8972dacd649c27c247c9e16de3ac/jetified-play-services-maps-17.0.0/AndroidManifest.xml:35:13-37
 84
 85        <activity
-85-->[com.google.android.gms:play-services-base:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:23:9-26:75
+85-->[com.google.android.gms:play-services-base:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:23:9-26:75
 86            android:name="com.google.android.gms.common.api.GoogleApiActivity"
-86-->[com.google.android.gms:play-services-base:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:24:13-79
+86-->[com.google.android.gms:play-services-base:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:24:13-79
 87            android:exported="false"
-87-->[com.google.android.gms:play-services-base:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:25:13-37
+87-->[com.google.android.gms:play-services-base:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:25:13-37
 88            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-88-->[com.google.android.gms:play-services-base:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:26:13-72
+88-->[com.google.android.gms:play-services-base:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/AndroidManifest.xml:26:13-72
 89
 90        <meta-data
-90-->[com.google.android.gms:play-services-basement:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/3c8e7eb3d21ac94d08f658f6d8a1c9f3/jetified-play-services-basement-17.0.0/AndroidManifest.xml:23:9-25:69
+90-->[com.google.android.gms:play-services-basement:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/3c8e7eb3d21ac94d08f658f6d8a1c9f3/jetified-play-services-basement-17.0.0/AndroidManifest.xml:23:9-25:69
 91            android:name="com.google.android.gms.version"
-91-->[com.google.android.gms:play-services-basement:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/3c8e7eb3d21ac94d08f658f6d8a1c9f3/jetified-play-services-basement-17.0.0/AndroidManifest.xml:24:13-58
+91-->[com.google.android.gms:play-services-basement:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/3c8e7eb3d21ac94d08f658f6d8a1c9f3/jetified-play-services-basement-17.0.0/AndroidManifest.xml:24:13-58
 92            android:value="@integer/google_play_services_version" />
-92-->[com.google.android.gms:play-services-basement:17.0.0] /Users/kmlcgn/.gradle/caches/transforms-2/files-2.1/3c8e7eb3d21ac94d08f658f6d8a1c9f3/jetified-play-services-basement-17.0.0/AndroidManifest.xml:25:13-66
+92-->[com.google.android.gms:play-services-basement:17.0.0] /Users/berkaybor/.gradle/caches/transforms-2/files-2.1/3c8e7eb3d21ac94d08f658f6d8a1c9f3/jetified-play-services-basement-17.0.0/AndroidManifest.xml:25:13-66
 93    </application>
 94
 95</manifest>

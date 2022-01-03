@@ -20,8 +20,6 @@ import { Auth } from './auth/Auth';
 function App() {
   const queryClient = new QueryClient();
 
-  //console.log(me);
-
   return (
     <div className="App">
       <QueryClientProvider client={queryClient}>

@@ -36,7 +36,7 @@ def process_string(s):
     return s
 
 
-@login_required()
+
 @api_view(['POST'])
 def searchEvent(request):
     data = request.data
@@ -112,7 +112,7 @@ def searchEvent(request):
     return HttpResponse(json.dumps(result), content_type="application/json", status=200)
 
 
-@login_required()
+
 @api_view(['POST'])
 def searchEquipment(request):
     data = request.data
