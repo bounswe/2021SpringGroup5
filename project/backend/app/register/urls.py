@@ -10,5 +10,8 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('home/', views.homePageEvents, name='home page'),
+    path('me/', views.profile, name='profile'),
     path('getBadgesOwnedByUser/', views.getBadgesOwnedByUser, name='get badges owned by the user'),
+    path('profile/<userId>', views.getProfileOfUser, name='profileofuser'),
+    path('follow/<userId>', views.follow, name='follow'),
 ]

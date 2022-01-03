@@ -17,15 +17,16 @@ export function login(loginForm) {
     .then(res => {
       accessToken = res.data.access;
       refreshToken = res.data.refresh;
-      console.log(accessToken);
-      console.log(refreshToken);
-      httpClient.defaults.headers['Authorization'] = `Bearer ${accessToken}`;
+      console.log(res);
+      // console.log(refreshToken);
+      httpClient.defaults.headers['Authentication'] = `Bearer ${accessToken}`;
+      httpClient.defaults.headers['Content-Type'] = 'application/json; charset=UTF-8';
     });
 }
 
 export function me() {
   // return new Promise(resolve => resolve({ username: 'didemaytac', name: 'Didem', surname: 'Aytac', user_id: 1 }));
-  return httpClient.get('/me').then(res => res.data);
+  return httpClient.get('/me', { withCredentials: true }).then(res => res.data);
 }
 
 export function forgotPassword(forgotPasswordForm) {
@@ -44,17 +45,17 @@ export function register(registerForm) {
       surname: registerForm.surname,
       password1: registerForm.password,
       password2: registerForm.password_confirm,
-      items: [
-        {
-          name: registerForm.sport_1,
-          level: registerForm.level_1,
-        },
-        {
-          name: registerForm.sport_2,
-          level: registerForm.level_2,
-        },
-      ],
     },
+    items: [
+      {
+        name: registerForm.sport_1,
+        level: registerForm.level_1,
+      },
+      {
+        name: registerForm.sport_2,
+        level: registerForm.level_2,
+      },
+    ],
   });
 }
 

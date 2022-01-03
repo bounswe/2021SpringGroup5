@@ -10,6 +10,7 @@ import 'package:ludo_app/screens/main_events/main_event_screen.dart';
 import 'package:ludo_app/screens/signup/signup_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:ludo_app/globals.dart' as globals;
 
 class Body extends StatelessWidget {
   final String? message;
@@ -22,7 +23,7 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    if(message == null) Future.delayed(Duration.zero, () => showMailDialog(context, message??''));
+    if(message != null) Future.delayed(Duration.zero, () => showMailDialog(context, message??''));
     return Background(
       child: SingleChildScrollView(
         child: Column(
@@ -151,13 +152,48 @@ Future<String> login(BuildContext context, String username, String password) asy
     }),
   );
 
-  if (response.statusCode == 200) {
+  Map bodyMap = json.decode(response.body);
+  print(bodyMap);
+
+  if (bodyMap.containsKey("access")) {
+
+    RegExp exp = RegExp(r'csrftoken=(\w+);');
+    String csrf = exp.firstMatch(response.headers['set-cookie']!)!.group(1)!;
+    exp = RegExp(r'sessionid=(\w+);');
+    String sessionid = exp.firstMatch(response.headers['set-cookie']!)!.group(1)!;
+    globals.csrftoken = csrf;
+    globals.sessionid = sessionid;
+    globals.access = 'Bearer ' + bodyMap['access'];
+    globals.refresh = bodyMap['refresh'];
+
+    final response2 = await http.get(
+      Uri.parse('http://3.122.41.188:8000/me'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authentication': globals.access,
+        'X-CSRFTOKEN': globals.csrftoken,
+        'Cookie': 'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}'
+      },
+    );
+
+    Map userInfo = json.decode(response2.body);
+
+    if(userInfo.containsKey('name')) {
+      globals.isLoggedIn = true;
+      globals.name = userInfo['name'];
+      globals.surname = userInfo['surname'];
+      globals.username = userInfo['username'];
+      globals.userid = userInfo['Id'];
+      globals.email = userInfo['mail'];
+    } else {
+      throw Exception(response2.body);
+    }
 
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) {
-          return MainScreen();
+          return MainEventScreen(willFetchAllEvents: true);
         },
       ),
     );
@@ -165,8 +201,6 @@ Future<String> login(BuildContext context, String username, String password) asy
     //return response.body;
     return "";
   } else {
-    // If the server did not return a 201 CREATED response,
-    // then throw an exception.
-    throw Exception(json.decode(response.body)['errormessage']);
+    throw Exception(bodyMap['errormessage']);
   }
 }

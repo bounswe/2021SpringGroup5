@@ -1,4 +1,4 @@
-import SearchScreen from '../screens/SearchScreen';
+import EventSearch from '../components/EventSearch/EventSearch';
 import { render as rtlRender, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import userEvent from '@testing-library/user-event';
@@ -9,7 +9,7 @@ function render(children) {
 }
 
 test('check for end date earlier than start date', async () => {
-    render(<SearchScreen />);
+    render(<EventSearch />);
     expect(screen.getByTestId('date')).toBeInTheDocument();
     const startDate = screen.getByTestId('startDate');
     const endDate = screen.getByTestId('endDate');
@@ -25,7 +25,7 @@ test('check for end date earlier than start date', async () => {
 });
 
 test('check for not double data type radius for the map', async () => {
-    render(<SearchScreen />);
+    render(<EventSearch />);
     expect(screen.getByTestId('map')).toBeInTheDocument();
     const radius = screen.getByTestId('radius');
     expect(screen.getByRole('button', { name: /applyMap/i })).toBeInTheDocument();
@@ -34,6 +34,6 @@ test('check for not double data type radius for the map', async () => {
     userEvent.type(radius, 'RandomThings......');
     userEvent.click(mapButton);
 
-    expect(screen.getByTestId('errorMessageForMap')).toNotBeInTheDocument();
+    expect(screen.getByTestId('errorMessageForMap')).toBeInTheDocument();
     await waitFor(() => { });
 });

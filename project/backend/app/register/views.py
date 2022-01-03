@@ -1,4 +1,6 @@
 import threading
+
+
 from django.forms.models import model_to_dict
 import requests
 from django.shortcuts import render, redirect
@@ -7,9 +9,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.backends import TokenBackend
 from django.contrib.auth.decorators import login_required
-from .models import User, InterestLevel,Follow
+from .models import User, InterestLevel, Follow
 from django.urls import reverse
 import hashlib
+from django.middleware import csrf
 from django.http import JsonResponse
 from django.contrib import messages
 from django.template.loader import render_to_string
@@ -23,10 +26,14 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.conf import settings
 from rest_framework.decorators import api_view
-from post.models import EventPost,BadgeOwnedByUser
+
 from django.apps import apps
+
 Sport = apps.get_model('post', 'Sport')
-SkillLevel=apps.get_model('post','SkillLevel')
+SkillLevel = apps.get_model('post', 'SkillLevel')
+EquipmentPost = apps.get_model('post', 'EquipmentPost')
+BadgeOwnedByUser = apps.get_model('post', 'BadgeOwnedByUser')
+EventPost = apps.get_model('post', 'EventPost')
 
 class EmailThread(threading.Thread):
 
@@ -36,6 +43,7 @@ class EmailThread(threading.Thread):
 
     def run(self):
         self.email.send()
+
 
 def send_mail(user, request):
     current_site = get_current_site(request)
@@ -52,55 +60,47 @@ def send_mail(user, request):
                          to=[user.mail])
     email.send(fail_silently=False)
 
+
 @login_required
 @api_view(['GET'])
 def homePageEvents(request):
-    token = request.headers['Authentication']
-    token = token[7:]
-    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
-    userId = valid_data['Id']
+    actor_id = request.user.Id
 
-    user = User.objects.get(Id=userId)
+    following_user_ids = list(Follow.objects.filter(follower=actor_id).values('following__Id'))
 
-    actor_id=user.Id
+    if len(following_user_ids) == 0:
+        return Response({"message": "No record found"}, 404)
 
-    following_user_ids=list(Follow.objects.filter(follower=actor_id).values('following__Id'))
-
-    if len(following_user_ids)==0:
-        return Response({"message":"No record found"},404)
-        
-    result_events=[]
+    result_events = []
     for i in range(len(following_user_ids)):
         try:
-            event=model_to_dict(EventPost.objects.filter(owner=following_user_ids[i]["following__Id"],status='upcoming').last())
+            event = model_to_dict(
+                EventPost.objects.filter(owner=following_user_ids[i]["following__Id"], status='upcoming').last())
 
-            sport_name=Sport.objects.get(id=event["sport_category"]).sport_name
-            event["sport_category"]=sport_name
-            event["skill_requirement"]=SkillLevel.objects.get(pk=event["skill_requirement"]).level_name
+            sport_name = Sport.objects.get(id=event["sport_category"]).sport_name
+            event["sport_category"] = sport_name
+            event["skill_requirement"] = SkillLevel.objects.get(pk=event["skill_requirement"]).level_name
             result_events.append(event)
         except:
             continue
 
-    return Response({"posts":result_events},202)
+    return Response({"posts": result_events}, 200)
+
 
 @login_required
 @api_view(['GET'])
 def getBadgesOwnedByUser(request):
-    token = request.headers['Authentication']
-    token = token[7:]
-    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
-    userId = valid_data['Id']
-
-    user = User.objects.get(Id=userId)
-
-    actor_id=user.Id
+    actor_id = request.user.Id
     try:
-        badges=list(BadgeOwnedByUser.objects.filter(owner=actor_id).values('badge__id','badge__name','badge__description','badge__wikiId')) 
-        return Response({"badges":badges},200)
+        badges = list(
+            BadgeOwnedByUser.objects.filter(owner=actor_id).values('badge__id', 'badge__name', 'badge__description',
+                                                                   'badge__wikiId'))
+        return Response({"badges": badges}, 200)
     except:
-        return Response({"message":"This user has not received any badges"},404)
+        return Response({"message": "This user has not received any badges"}, 404)
 
-@api_view(['GET','POST'])
+
+@api_view(['GET', 'POST'])
 def register(request):
     if request.method == 'POST':
         body_unicode = request.body.decode('utf-8')
@@ -142,11 +142,7 @@ def register(request):
             return JsonResponse(context, status=401)
 
         user = User.objects.create_user(username=username, mail=mail, name=name, surname=surname)
-        user.set_password(password)
-        user.save()
-
         send_mail(user, request)
-
         skill1 = SkillLevel.objects.get(level_name=level1)
         skill2 = SkillLevel.objects.get(level_name=level2)
 
@@ -159,17 +155,19 @@ def register(request):
         interest1.save()
         interest2.save()
 
+        user.set_password(password)
+        user.save()
+
         return Response('SUCCESS', status=status.HTTP_201_CREATED)
     else:
-        sports=list(Sport.objects.filter(is_custom=False).values('id',"sport_name"))
-        skill_levels=list(SkillLevel.objects.values())
-        res={"sports":sports,"skill_levels":skill_levels}
-        return Response(res,status=status.HTTP_200_OK)
+        sports = list(Sport.objects.filter(is_custom=False).values('id', "sport_name"))
+        skill_levels = list(SkillLevel.objects.values())
+        res = {"sports": sports, "skill_levels": skill_levels}
+        return Response(res, status=status.HTTP_200_OK)
 
 
-@api_view(['GET','POST'])
+@api_view(['GET', 'POST'])
 def login_user(request):
-    
     if request.method == 'POST':
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
@@ -195,21 +193,23 @@ def login_user(request):
             'username': username,
             'password': password
         }
+
         token = requests.post("http://3.122.41.188:8000/api/token/", json=postjson)
-
-        return Response(token.json(), status=status.HTTP_200_OK)
+        sessionId = request.session.session_key
+        csrftoken = csrf.get_token(request)
+        resp = {
+            'sessionId': sessionId,
+            'csrftoken': csrftoken,
+        }
+        return Response(resp, status=status.HTTP_200_OK)
     else:
-        return Response({"message":"You are not logged in, you can't do this request"},401)
+        return Response({"message": "You are not logged in, you can't do this request"}, 401)
 
+
+@login_required()
 @api_view(['GET'])
 def profile(request):
-    token = request.headers['Authentication']
-    token = token[7:]
-
-    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
-    userId = valid_data['Id']
-
-    user = User.objects.get(Id=userId)
+    user = request.user
     context = {
         'username': user.username,
         'name': user.name,
@@ -219,6 +219,7 @@ def profile(request):
         'location': user.location
     }
     return Response(context, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def logout_user(request):
@@ -249,3 +250,46 @@ def activate_user(request, uidb64, token):
     context['has_error'] = True
     context['message'] = 'There is a problem with activation'
     return JsonResponse(context)
+
+
+@login_required()
+@api_view(['POST'])
+def follow(request, userId):
+    followinguser = request.user
+    followeduser = User.objects.get(Id=userId)
+
+    Follow.objects.create(follower=followinguser, following=followeduser)
+
+    return JsonResponse('SUCCESS', status=201)
+
+
+
+@login_required()
+@api_view(['GET'])
+def getProfileOfUser(request, userId):
+    user1 = request.user
+    user2 = User.objects.get(Id=userId)
+
+    badges = list(
+        BadgeOwnedByUser.objects.filter(owner=user2.Id).values('badge__id', 'badge__name', 'badge__description',
+                                                               'badge__wikiId'))
+    events = list(EventPost.objects.filter(owner=user2.Id).values())
+    equipments = list(EquipmentPost.objects.filter(owner=user2).values())
+    sports = list(InterestLevel.objects.filter(owner_of_interest=user2).values())
+    user = list(
+        User.objects.filter(username=user2.username).values('username', 'name', 'surname', 'location')).__getitem__(0)
+    try:
+        follow = Follow.objects.get(follower=user1, following=user2)
+        following = True
+    except:
+        following = False
+    context = {
+        'badges': badges,
+        'equipments': equipments,
+        'events': events,
+        'sports': sports,
+        'user': user,
+        'following': following,
+    }
+    return JsonResponse(context, status=200)
+  

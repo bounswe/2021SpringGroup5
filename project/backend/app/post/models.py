@@ -39,7 +39,7 @@ class EventPost(models.Model):
     date_time=models.DateTimeField(null=False,blank=False)
     participant_limit=models.IntegerField(null=False,blank=False)
     spectator_limit=models.IntegerField(null=False,blank=False)
-    rule=models.TextField(null=False,blank=False,max_length=300)
+    rule=models.TextField(null=True,blank=True,max_length=300)
     equipment_requirement=models.TextField(null=True,blank=True,max_length=300)
     status=models.CharField(null=False,blank=False,max_length=10)
     capacity=models.CharField(null=False,blank=False,max_length=25)
@@ -84,7 +84,7 @@ class EventComment(models.Model):
     created_date=models.DateTimeField(null=False,blank=False,default=timezone.now)
     event_post=models.ForeignKey(EventPost,null=True,blank=True,on_delete=models.CASCADE)
 
-class EventCommentActivtyStream(models.Model):
+class EventCommentActivityStream(models.Model):
     object=models.ForeignKey(EventComment,on_delete=CASCADE)
     context=models.URLField(null=False,blank=False) #????????????
     summary=models.CharField(max_length=200,null=False,blank=False)
@@ -97,7 +97,7 @@ class EquipmentComment(models.Model):
     created_date=models.DateTimeField(null=False,blank=False,default=timezone.now)
     equipment_post=models.ForeignKey(EquipmentPost,null=True,blank=True,on_delete=models.CASCADE)
 
-class EquipmentCommentActivtyStream(models.Model):
+class EquipmentCommentActivityStream(models.Model):
     object=models.ForeignKey(EquipmentComment,on_delete=CASCADE)
     context=models.URLField(null=False,blank=False) #????????????
     summary=models.CharField(max_length=200,null=False,blank=False)
@@ -110,14 +110,6 @@ class Badge(models.Model):
     wikiId=models.CharField(max_length=20,null=True,blank=True)
     
 
-class BadgeOfferedByEventPost(models.Model):
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['post', 'badge'], name='badge offered by an event post')
-        ]
-    post=models.ForeignKey(EventPost,on_delete=models.CASCADE)
-    badge=models.ForeignKey(Badge,on_delete=models.CASCADE)
-
 class BadgeOwnedByUser(models.Model):
     class Meta:
         constraints = [
@@ -127,3 +119,5 @@ class BadgeOwnedByUser(models.Model):
     owner=models.ForeignKey('register.User', on_delete=models.CASCADE)
     date_time=models.DateTimeField(auto_now_add=True)
     isGivenBySystem=models.BooleanField()
+
+
