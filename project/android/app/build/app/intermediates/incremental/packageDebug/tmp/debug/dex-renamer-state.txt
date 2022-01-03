@@ -1,4 +1,4 @@
-#Sat Jan 01 13:47:51 EET 2022
-base.0=/Users/kmlcgn/IdeaProjects/2021SpringGroup5/project/android/app/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
+#Mon Jan 03 14:33:07 TRT 2022
+base.0=/Users/berkaybor/Development/flutter-app/2021SpringGroup5/project/android/app/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
 renamed.0=classes.dex
 path.0=classes.dex
