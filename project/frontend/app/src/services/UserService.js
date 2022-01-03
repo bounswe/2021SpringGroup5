@@ -9,15 +9,31 @@ const user_sports_mock = [
 ];
 
 const user_badges_mock = [
-  'Good Player',
-  'Nice Dog',
-  '5 Events',
-  'Loves Diane',
-  'BarfBarf',
-  'Dog Dog',
-  'Hi Todd',
-  'On Time',
-  'TagTag',
+  {
+    badge_name: 'enthusiastic',
+    badge_description: 'the trait of being overly enthusiastic',
+  },
+  {
+    badge_name: 'friendly',
+    badge_description: 'relationship between people who have mutual affection for each other',
+  },
+  {
+    badge_name: 'leader',
+    badge_description:
+      'someone with the authority to affect the conduct of others; who have the responsibility of leading',
+  },
+  {
+    badge_name: 'gifted',
+    badge_description: 'intellectual ability significantly higher than average',
+  },
+  {
+    badge_name: 'loser',
+    badge_description: 'one who loses',
+  },
+  {
+    badge_name: 'competitive',
+    badge_description: 'trait of being competitive',
+  },
 ];
 
 const user_events_mock = [
@@ -62,10 +78,20 @@ const user_info_mock = {
   mail: 'peanutbutter@pblivin.com',
   profile_image_url: 'https://pbs.twimg.com/profile_images/600483555416920065/cDUoY9Ar_400x400.jpg',
   events: user_events_mock,
+  equipments: user_events_mock,
   sports: user_sports_mock,
   badges: user_badges_mock,
+  is_followed: true,
 };
 
 export function getUserInfo() {
+  return new Promise(resolve => resolve(user_info_mock));
+}
+
+export function followUser() {
+  return new Promise(resolve => resolve(user_info_mock));
+}
+
+export function unfollowUser() {
   return new Promise(resolve => resolve(user_info_mock));
 }

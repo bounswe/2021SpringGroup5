@@ -1,8 +1,12 @@
 from django.db import models
 from django.db.models import fields
 from rest_framework import serializers
-from post.models import Sport,EquipmentPost,EventPost,EventComment,Application,Badge,BadgeOfferedByEventPost, \
-    EquipmentComment, SkillLevel, BadgeOwnedByUser, EventPostActivityStream,EquipmentPostActivtyStream
+
+
+from .models import Sport, EquipmentPost, EventPost, EventComment, Application, Badge, \
+    EquipmentComment, SkillLevel, BadgeOwnedByUser, EventPostActivityStream, EquipmentPostActivtyStream, \
+    EventCommentActivityStream, EquipmentCommentActivityStream
+
 
 class SportSerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,6 +49,16 @@ class EquipmentCommentSerializer(serializers.ModelSerializer):
         model=EquipmentComment
         fields='__all__'
 
+class EventCommentActivityStreamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=EventCommentActivityStream
+        fields='__all__'
+
+class EquipmentCommentActivityStreamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=EquipmentCommentActivityStream
+        fields='__all__'
+
 class ApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model=Application
@@ -55,10 +69,6 @@ class BadgeSerializer(serializers.ModelSerializer):
         model=Badge
         fields='__all__'
 
-class BadgeOfferedByEventPostSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=BadgeOfferedByEventPost
-        fields='__all__'
 
 class BadgeOwnedByUserSerializer(serializers.ModelSerializer):
     class Meta:

@@ -42,8 +42,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'post',
     'register',
-    "corsheaders",
-    'rest_framework_simplejwt'
+    "corsheaders"
+
 ]
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -51,13 +51,14 @@ AUTHENTICATION_BACKENDS = [
     ]
 AUTH_USER_MODEL = 'register.User'
 CORS_ALLOW_ALL_ORIGINS= True
+#CORS_ALLOWED_ORIGINS=['http://cmpe451-frontend.s3-website.us-east-2.amazonaws.com','http://localhost:3000', 'http://localhost:8000','http://3.122.41.188:8000']
 CORS_ALLOW_CREDENTIALS= True
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -162,16 +163,14 @@ USE_L10N = True
 
 USE_TZ = True
 
-"""REST_FRAMEWORK={ 
+REST_FRAMEWORK={
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication'
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        #'rest_framework.authentication.SessionAuthentication',
     ]}
 
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'ROTATE_REFRESH_TOKENS': True,
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=2)
-}"""
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

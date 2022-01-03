@@ -3,9 +3,9 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from requests.api import post
 from post.models import Application, EquipmentComment, EventComment
-from post.models import Badge,SkillLevel, Sport,EquipmentPost,EventPost,BadgeOfferedByEventPost,EquipmentPostActivtyStream
+from post.models import Badge,SkillLevel, Sport,EquipmentPost,EventPost,EquipmentPostActivtyStream
 
-from post.serializers import BadgeOfferedByEventPostSerializer, BadgeSerializer, EquipmentPostActivityStreamSerializer, \
+from post.serializers import  BadgeSerializer, EquipmentPostActivityStreamSerializer, \
     EquipmentPostSerializer, EventPostActivityStreamSerializer, EventPostSerializer, SkillLevelSerializer, SportSerializer, ApplicationSerializer
 from rest_framework.decorators import api_view
 import requests
@@ -36,6 +36,7 @@ def process_string(s):
     return s
 
 
+@login_required()
 @api_view(['POST'])
 def searchEvent(request):
     data = request.data
@@ -51,7 +52,10 @@ def searchEvent(request):
 
 
     ## Initiating the query
-    eventList = EventPost.objects.filter(status="upcoming", capacity=capacity)
+    eventList = EventPost.objects.filter(status="upcoming", capacity=capacity).values("id", "post_name", "owner", "sport_category__sport_name", "created_date", "description", "longitude",\
+                                                                                      "latitude", "date_time", "participant_limit", "spectator_limit", "rule", "equipment_requirement",\
+                                                                                      "status", "capacity", "location_requirement", "contact_info", "pathToEventImage",\
+                                                                                      "skill_requirement__level_name", "current_player", "current_spectator")
 
     if isDefaultQuery:
         pass
@@ -96,13 +100,19 @@ def searchEvent(request):
     else:                                   ## else the data must be sorted by date
         eventList = eventList.order_by('date_time')
 
+    result = list(eventList)
+    if len(result) == 0:
+        return Response({"message": "There is no event found"}, status=status.HTTP_404_NOT_FOUND)
 
-    result = serializers.serialize('json', eventList)
-    return HttpResponse(result, content_type="application/json", status=200)
+    for res in result:
+        res["created_date"] = res["created_date"].strftime('%Y-%m-%d %H:%M:%S')
+        res["date_time"] = res["date_time"].strftime('%Y-%m-%d %H:%M:%S')
+        res["sport_name"] = res.pop("sport_category__sport_name")
+        res["skill_requirement"] = res.pop("skill_requirement__level_name")
+    return HttpResponse(json.dumps(result), content_type="application/json", status=200)
 
 
-
-
+@login_required()
 @api_view(['POST'])
 def searchEquipment(request):
     data = request.data
@@ -114,7 +124,8 @@ def searchEquipment(request):
 
 
     ## Initiating the query
-    equipmentList = EquipmentPost.objects.filter(active=True)
+    equipmentList = EquipmentPost.objects.filter(active=True).values("id", "post_name", "owner", "sport_category__sport_name", "created_date",\
+                                                                     "description", "longitude", "latitude", "active", "pathToEquipmentPostImage", "link")
 
     if isDefaultQuery:
         pass
@@ -158,6 +169,12 @@ def searchEquipment(request):
     else:  ## else the data must be sorted by date
         equipmentList = equipmentList.order_by('created_date')
 
+    result = list(equipmentList)
+    if len(result) == 0:
+        return Response({"message": "There is no event found"}, status=status.HTTP_404_NOT_FOUND)
 
-    result = serializers.serialize('json', equipmentList)
-    return HttpResponse(result, content_type="application/json", status=200)
+
+    for res in result:
+        res["created_date"] = res["created_date"].strftime('%Y-%m-%d %H:%M:%S')
+        res["sport_name"] = res.pop("sport_category__sport_name")
+    return HttpResponse(json.dumps(result), content_type="application/json", status=200)

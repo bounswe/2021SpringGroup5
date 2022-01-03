@@ -1,0 +1,13 @@
+.comment-button{
+    margin-top: 10px;
+}
+
+.comment-info{
+    display: flex;
+}
+
+.comment-info div{
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+}
