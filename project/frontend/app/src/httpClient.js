@@ -8,7 +8,4 @@ const cookies = new Cookies();
 export const httpClient = axios.create({
   baseURL: API_URL,
   withCredentials: true,
-  headers: {
-    Authorization: cookies.get('accessToken'),
-  },
 });
