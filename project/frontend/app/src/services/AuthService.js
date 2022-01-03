@@ -1,4 +1,5 @@
 import { httpClient } from '../httpClient';
+import Cookies from 'universal-cookie';
 
 export let accessToken, csrfToken;
 
@@ -18,6 +19,8 @@ export function login(loginForm) {
       accessToken = res.data.token.access;
       httpClient.defaults.headers['Authorization'] = accessToken;
       httpClient.defaults.headers['Content-Type'] = 'application/json; charset=UTF-8';
+      const cookies = new Cookies();
+      cookies.set('accessToken', accessToken, { path: '/' });
     });
 }
 

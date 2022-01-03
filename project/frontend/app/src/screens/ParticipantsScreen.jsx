@@ -8,8 +8,10 @@ import IconButton from '@mui/material/IconButton';
 import { Check, Close } from '@mui/icons-material';
 import './ParticipanstScreen.css';
 import { acceptUser, getEvent, rejectUser } from '../services/EventService';
+import { useAuth } from '../auth/Auth';
 
 export const ParticipantListingRow = props => {
+  const { me } = useAuth();
   const history = useHistory();
 
   const { participants, title, actionable, event } = props;
@@ -42,15 +44,17 @@ export const ParticipantListingRow = props => {
 
   const queryClient = useQueryClient();
 
-  const acceptMutation = useMutation('accept', user_id => acceptUser(event.event_id, user_id), {
+  const acceptMutation = useMutation('accept', user_id => acceptUser(me, event.object.id, user_id), {
+    enabled: !!me,
     onSuccess: () => {
-      queryClient.invalidateQueries(`events/${event.event_id}`).then();
+      queryClient.invalidateQueries(`events/${event.object.id}`).then();
     },
   });
 
-  const rejectMutation = useMutation('reject', user_id => rejectUser(event.event_id, user_id), {
+  const rejectMutation = useMutation('reject', user_id => rejectUser(me, event.object.id, user_id), {
+    enabled: !!me,
     onSuccess: () => {
-      queryClient.invalidateQueries(`events/${event.event_id}`).then();
+      queryClient.invalidateQueries(`events/${event.object.id}`).then();
     },
   });
 
@@ -74,19 +78,19 @@ export const ParticipantListingRow = props => {
           {hasPreviousItems && <ArrowBackIosIcon onClick={onPrevious} />}
         </div>
         {displayedItems.map((participant, index) => (
-          <Card
-            key={index}
-            className="user-card"
-          >
-            <CardContent className="user-card-content" onClick={() => {
-              history.push(`/profile?username=${participant.user_username}`);
-            }}>
+          <Card key={index} className="user-card">
+            <CardContent
+              className="user-card-content"
+              onClick={() => {
+                history.push(`/profile?user_id=${participant.user__Id}`);
+              }}
+            >
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar alt={participant.user_username} src={participant.image_url} />
+                <Avatar alt={participant.user__username} src={participant.image_url} />
                 <div style={{ marginLeft: '10px' }}>
-                  <Typography color="text.secondary">{participant.user_username}</Typography>
+                  <Typography color="text.secondary">{participant.user__username}</Typography>
                   <Typography color="text.primary">
-                    {participant.user_name} {participant.user_surname}
+                    {participant.user__name} {participant.user__surname}
                   </Typography>
                 </div>
               </div>
@@ -94,13 +98,13 @@ export const ParticipantListingRow = props => {
                 <div className="action-buttons">
                   <IconButton
                     data-testid={'accept_button_'.concat(index)}
-                    onClick={e => onAccept(participant.user_id, e)}
+                    onClick={e => onAccept(participant.user__Id, e)}
                     size="small"
                     disabled={event.object.accepted_players.length >= event.object.participant_limit}
                   >
                     <Check fontSize="inherit" />
                   </IconButton>
-                  <IconButton onClick={e => onReject(participant.user_id, e)} size="small">
+                  <IconButton onClick={e => onReject(participant.user__Id, e)} size="small">
                     <Close fontSize="inherit" />
                   </IconButton>
                 </div>
@@ -126,16 +130,16 @@ const ParticipantListingPage = props => {
             className="user-card"
             style={{ width: '100%' }}
             onClick={() => {
-              history.push(`/profile?username=${participant.user_username}`);
+              history.push(`/profile?user_id=${participant.user__Id}`);
             }}
           >
             <CardContent className="user-card-content">
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar alt={participant.user_username} src={participant.image_url} />
+                <Avatar alt={participant.user__username} src={participant.image_url} />
                 <div style={{ marginLeft: '10px' }}>
-                  <Typography color="text.secondary">{participant.user_username}</Typography>
+                  <Typography color="text.secondary">{participant.user__username}</Typography>
                   <Typography color="text.primary">
-                    {participant.user_name} {participant.user_surname}
+                    {participant.user__name} {participant.user__surname}
                   </Typography>
                 </div>
               </div>
@@ -148,8 +152,9 @@ const ParticipantListingPage = props => {
 };
 
 const ParticipantsScreen = () => {
+  const { me } = useAuth();
   const { id: event_id } = useParams();
-  const { data: event, isLoading } = useQuery(`events/${event_id}`, () => getEvent(event_id));
+  const { data: event, isLoading } = useQuery(`events/${event_id}`, () => getEvent(me, event_id), { enabled: !!me });
 
   if (!isLoading && !event) {
     return <div> Event not found. </div>;

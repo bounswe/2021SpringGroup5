@@ -2,10 +2,12 @@ import CommentSection from '../components/Common/CommentSection';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { getEvent } from '../services/EventService';
+import { useAuth } from '../auth/Auth';
 
 function EventDetailScreen() {
+  const { me } = useAuth();
   const { id: event_id } = useParams();
-  const { data: event, isLoading } = useQuery(`events/${event_id}`, () => getEvent(event_id));
+  const { data: event, isLoading } = useQuery(`events/${event_id}`, () => getEvent(me, event_id), { enabled: !!me });
 
   if (!isLoading && !event) {
     return <div> Event not found. </div>;
@@ -94,7 +96,7 @@ function EventDetailScreen() {
                 <p>{state.json.object.location_requirement}</p>
               </div>
             </article>
-            {event && <CommentSection comments={event.object.comments} event_id={event_id} />}
+            {event && <CommentSection comments={event.object.comments} event_id={event.object.id} />}
           </div>
         </div>
       </div>

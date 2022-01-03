@@ -32,10 +32,6 @@
     justify-content: center;
     margin-top: 10px;
 }
-.profile-information img{
-    height: 120px;
-    border-radius: 50%;
-}
 
 .profile-horizontal-slider{
     padding: 10px;
@@ -57,6 +53,7 @@
 
 .profile-sport-card{
     width: 30%;
+    min-height: 160px;
 }
 
 .profile-horizontal-arrow-icon{
@@ -75,6 +72,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 250px;
+    width: 300px;
 }
 
 .profile-slider-header{
