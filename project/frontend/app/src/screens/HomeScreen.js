@@ -65,7 +65,7 @@ function HomeScreen() {
     }, [])
 
     return (
-        <div className="container_home">
+        <div className="container_home" data-testid="followedPost">
             <img className="logo_home" src="https://cdn.discordapp.com/attachments/825091092374356030/907634507308490772/1.png" />
             <span className="text_home">This website is creating an amateur sports coordination platform. The main virtue of the platform is that it brings people that are interested same kind of sports together so that they can meet new people, socialize and engage in sports they like. In addition to that, people can create accounts for commercial purposes for example sport shop owners or sport field owners can create an account in the name of their business, create posts and participate in events like every other user can do.</span>
             <h3><b>Favourite Sport Categories</b></h3>
@@ -85,7 +85,7 @@ function HomeScreen() {
                     </a>
                 </div>
             </div>
-            <div className='mt-5'>
+            <div data-testid="button" className='mt-5'>
                 <h3><b>Upcoming Events of Followed Users</b></h3>
             </div>
             {sports && (
