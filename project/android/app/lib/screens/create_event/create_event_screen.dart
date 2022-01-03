@@ -133,10 +133,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     request.headers.addAll(
       <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authentication': globals.access,
-        'X-CSRFTOKEN': globals.csrftoken,
-        'Cookie':
-            'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}'
+        'Authorization': globals.access,
+        'Cookie': 'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}',
       },
     );
     request.files.add(await http.MultipartFile.fromPath('image', _image));

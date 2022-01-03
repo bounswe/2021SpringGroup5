@@ -46,8 +46,7 @@ class ProfileScreen extends StatelessWidget {
       Uri.parse('http://3.122.41.188:8000/logout_user'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authentication': globals.access,
-        'X-CSRFTOKEN': globals.csrftoken,
+        'Authorization': globals.access,
         'Cookie': 'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}'
       },
     );
