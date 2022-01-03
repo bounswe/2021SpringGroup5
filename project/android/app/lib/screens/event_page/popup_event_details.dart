@@ -42,31 +42,24 @@ class EventDetailsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  /*
                   Expanded(
-                      child: ListView.builder(
-                        itemCount: participants.length,
-                        itemBuilder: (context, index) => Card(
-                          elevation: 5,
-                          key: ValueKey([index][0]),
-                          color: Colors.white,
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          child: Padding(
-                            padding: const EdgeInsets.all(13.0),
-                            child: ListTile(
-                                onTap: () {}, // navigate to users profile
-                                leading: Image(
-                                  fit: BoxFit.cover,
-                                  image:
-                                      AssetImage(participants[index]['image']),
-                                ),
-                                title: participants[index]["name"]),
-                          ),
+                    child: ListView.builder(
+                      itemCount: participants.length,
+                      itemBuilder: (context, index) => Card(
+                        elevation: 5,
+                        key: ValueKey([index][0]),
+                        color: Colors.white,
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        child: Padding(
+                          padding: const EdgeInsets.all(13.0),
+                          child: ListTile(
+                              onTap: () {}, // navigate to users profile
+                              title: participants[index]["name"]),
                         ),
                       ),
                     ),
-                  ),*/
-                  SizedBox(
+                  ),
+                  const SizedBox(
                     height: 15,
                   ),
                   Row(
