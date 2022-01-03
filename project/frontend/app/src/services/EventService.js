@@ -1,11 +1,13 @@
 import { httpClient } from '../httpClient';
 
 export function getEvent(me, event_id) {
+
   return httpClient
     .post(`/post/get_event_post_details/`, {
       '@context': 'https://www.w3.org/ns/activitystreams',
       summary: `${me.name} is reading an event post.`,
       type: 'View',
+
       actor: {
         type: 'Person',
         name: `${me.name}`,
@@ -13,12 +15,15 @@ export function getEvent(me, event_id) {
         username: `${me.username}`,
         Id: Number.parseInt(me.Id),
       },
+
       object: {
         type: 'EventPost',
         post_id: Number.parseInt(event_id),
       },
+
     })
     .then(res => res.data);
+
 }
 
 export function postComment(post_id, text) {

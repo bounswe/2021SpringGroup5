@@ -229,6 +229,7 @@ function CreateEvent() {
             </div>
           </div>
 
+
           <div className="col-md-8 form-group has-validation">
             <label htmlFor="contactInfo">Contact Information</label>
             <input type="text" className="form-control" id="contactInfo" name="contactInfo" placeholder="Enter contact information" required />
@@ -296,6 +297,7 @@ function CreateEvent() {
           </div>
         </Box>
       </Modal>
+
     </div>
   );
 }
