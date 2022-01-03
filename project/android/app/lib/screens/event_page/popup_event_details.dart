@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:ludo_app/screens/main_events/main_event_screen.dart';
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:ludo_app/globals.dart' as globals;
+import 'package:ludo_app/screens/main_events/main_event_screen.dart';
 
 class EventDetailsScreen extends StatefulWidget {
   int eventId;
@@ -14,7 +15,6 @@ class EventDetailsScreen extends StatefulWidget {
 }
 
 class _EventDetailsScreenState extends State<EventDetailsScreen> {
-
   Map eventDetails = {};
 
   Future fetchEventDetails() async {
@@ -41,12 +41,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': globals.access,
-        'Cookie': 'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}',
+        'Cookie':
+            'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}',
       },
       body: jsonEncode(params),
     );
-    if (response.statusCode == 201){
-      WidgetsBinding.instance!.addPostFrameCallback((_){
+    if (response.statusCode == 201) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
         setState(() {
           eventDetails = jsonDecode(response.body)['object'];
           print(jsonDecode(response.body)['object']);
@@ -57,7 +58,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     }
   }
 
-  String capFirstLetter(String word){
+  String capFirstLetter(String word) {
     return word[0].toUpperCase() + word.substring(1);
   }
 
@@ -78,22 +79,23 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         child: Material(
           color: Colors.white.withOpacity(0.95),
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(15),
               child: Column(
                 children: [
                   Row(
-                    children:  [
+                    children: [
                       Padding(
                         padding: EdgeInsets.only(right: 20),
-                        child: Text(
-                          eventDetails.isEmpty ? "" :
-                          eventDetails['post_name'],
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                        child: Expanded(
+                          child: Text(
+                            eventDetails.isEmpty ? "" : eventDetails['post_name'],
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -103,11 +105,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Container(
-                    child:
-                    eventDetails.isEmpty ? Text("") :
-                    eventDetails['pathToEventImage'] == "" ?
-                    Image.asset('assets/images/default_event_image.png') :
-                    Image.network(eventDetails['pathToEventImage']),
+                    child: eventDetails.isEmpty
+                        ? Text("")
+                        : eventDetails['pathToEventImage'] == ""
+                            ? Image.asset(
+                                'assets/images/default_event_image.png')
+                            : Image.network(eventDetails['pathToEventImage']),
                   ),
                   /*
                   Row(
@@ -159,10 +162,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['accepted_players'].toString(),
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty
+                              ? ""
+                              : eventDetails['accepted_players'].toString(),
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -180,10 +186,15 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['owner']['name'] + ' ' + eventDetails['owner']['surname'],
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty
+                              ? ""
+                              : eventDetails['owner']['name'] +
+                                  ' ' +
+                                  eventDetails['owner']['surname'],
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -201,10 +212,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        capFirstLetter(eventDetails['sport_category']),
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty
+                              ? ""
+                              : capFirstLetter(eventDetails['sport_category']),
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -222,10 +236,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['created_date'],
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty
+                              ? ""
+                              : eventDetails['created_date'],
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -243,10 +260,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['description'],
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty
+                              ? ""
+                              : eventDetails['description'],
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -264,10 +284,15 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['latitude'].toString() + ', ' + eventDetails['longitude'].toString(),
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty
+                              ? ""
+                              : eventDetails['latitude'].toString() +
+                                  ', ' +
+                                  eventDetails['longitude'].toString(),
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -285,10 +310,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['date_time'],
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty ? "" : eventDetails['date_time'],
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -296,7 +322,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children:  [
+                    children: [
                       const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
@@ -306,10 +332,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['participant_limit'].toString(),
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty
+                              ? ""
+                              : eventDetails['participant_limit'].toString(),
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -327,10 +356,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['spectator_limit'].toString(),
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty
+                              ? ""
+                              : eventDetails['spectator_limit'].toString(),
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -348,10 +380,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['rule'],
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty ? "" : eventDetails['rule'],
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -369,10 +402,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['equipment_requirement'],
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty
+                              ? ""
+                              : eventDetails['equipment_requirement'],
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -390,10 +426,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['status'],
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty ? "" : eventDetails['status'],
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -411,10 +448,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['capacity'],
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty ? "" : eventDetails['capacity'],
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -432,11 +470,15 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['location_requirement'] == "" ? "None" :
-                        eventDetails['location_requirement'],
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty
+                              ? ""
+                              : eventDetails['location_requirement'] == ""
+                                  ? "None"
+                                  : eventDetails['location_requirement'],
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -454,11 +496,15 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['contact_info'] == "" ? "None" :
-                        eventDetails['contact_info'],
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty
+                              ? ""
+                              : eventDetails['contact_info'] == ""
+                                  ? "None"
+                                  : eventDetails['contact_info'],
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -476,10 +522,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['skill_requirement'],
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty
+                              ? ""
+                              : eventDetails['skill_requirement'],
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -497,10 +546,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['current_player'].toString(),
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty
+                              ? ""
+                              : eventDetails['current_player'].toString(),
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -518,10 +570,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['current_spectator'].toString(),
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty
+                              ? ""
+                              : eventDetails['current_spectator'].toString(),
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
@@ -539,10 +594,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['comments'].toString(),
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: Text(
+                          eventDetails.isEmpty
+                              ? ""
+                              : eventDetails['comments'].toString(),
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
                     ],
                   ),
