@@ -254,7 +254,6 @@ class _FilterScreenState extends State<FilterScreen> {
                       "FILTER",
                       style: TextStyle(fontSize: 16),
                     )), //map
-                Text(mapCallback.toString()),
               ],
             ),
           ),
