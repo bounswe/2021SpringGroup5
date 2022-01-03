@@ -3,10 +3,11 @@
     padding: 60px;
     display: grid;
     grid-template-columns: 1.5fr 5fr;
-    grid-template-rows: 3fr 3fr;
+    grid-template-rows: 3fr 1fr;
     grid-gap: 16px;
     height: 90%;
     align-items: center;
+    text-align: left;
 }
 
 .profile-information{
@@ -14,7 +15,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    grid-row: 1 / span 2;
+    grid-row: 1 / span 1;
+    grid-column: 1 / span 1;
     background: var(--gradient-background);
     padding: 10px;
     border-radius: 10px;
@@ -54,16 +56,7 @@
 }
 
 .profile-sport-card{
-    width: 20%;
-}
-
-
-.profile-badge-card{
-    width: 12%;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+    width: 30%;
 }
 
 .profile-horizontal-arrow-icon{
@@ -89,4 +82,11 @@
     border-radius: 5px 5px 0 0;
     padding: 1px 10px;
     background: var(--color-ludo-green);
+}
+
+.profile-sports-and-badges{
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    grid-column: 1 / -1;
+    grid-gap: 10px;
 }
