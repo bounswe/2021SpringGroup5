@@ -58,7 +58,7 @@ function HomeScreen() {
         }
     }
 
-    console.log(sports);
+    console.log(sports.length);
 
     useEffect(() => {
         handleFollowedUsersEventsRequest()
@@ -99,7 +99,7 @@ function HomeScreen() {
                     </div>
                 </div>
             )}
-            {!sports &&
+            {sports.length === 0 &&
                 <p className="text-muted mb-5">There is not any event</p>
             }
         </div>
