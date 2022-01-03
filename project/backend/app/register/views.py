@@ -290,9 +290,10 @@ def getProfileOfUser(request, userId):
                                                                'badge__wikiId'))
     events = list(EventPost.objects.filter(owner=user2.Id).values())
     equipments = list(EquipmentPost.objects.filter(owner=user2).values())
-    sports = list(InterestLevel.objects.filter(owner_of_interest=user2).values())
+    sports = list(InterestLevel.objects.filter(owner_of_interest=user2).values('sport_name__sport_name', 'skill_level__level_name'))
     user = list(
         User.objects.filter(username=user2.username).values('username', 'name', 'surname', 'location')).__getitem__(0)
+    #interestlevels = InterestLevel.objects.filter()
     try:
         follow = Follow.objects.get(follower=user1, following=user2)
         following = True
