@@ -256,7 +256,7 @@ class EventDetailsScreen extends StatelessWidget {
                         Text(
                           "Accepted USer Info:",
                           style: TextStyle(fontSize: 16),
-                        )
+                        ),
                       ],
                     ),
                     SizedBox(
