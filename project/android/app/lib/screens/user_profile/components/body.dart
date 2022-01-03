@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ludo_app/components/popup_card_effect.dart';
+import 'package:ludo_app/screens/popup_send_badge/popup_Send_badge.dart';
 import 'package:ludo_app/screens/welcome/welcome_screen.dart';
 import 'package:ludo_app/services/user_service.dart';
 import 'package:ludo_app/globals.dart' as globals;
@@ -265,15 +267,23 @@ class ProfileScreen extends StatelessWidget {
                                 key: ValueKey([index][0]),
                                 color: Colors.white,
                                 margin:
-                                    const EdgeInsets.symmetric(vertical: 10),
+                                const EdgeInsets.symmetric(vertical: 10),
                                 child: Padding(
                                   padding: const EdgeInsets.all(13.0),
                                   child: ListTile(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        PopupCardEffect(
+                                          builder: (context) {
+                                            return PopupSendBadge();
+                                          },
+                                        ),
+                                      );
+                                    },
                                     leading: Image(
                                       fit: BoxFit.cover,
                                       image: AssetImage(userInfo[0]['badges']
-                                          [index]['image']),
+                                      [index]['image']),
                                     ),
                                     title: Text(userInfo[0]['badges'][index]["name"]),
                                   ),
@@ -305,10 +315,10 @@ class ProfileScreen extends StatelessWidget {
                           ),
                           Stack(children: const [
                             Positioned(
-                              child: Text(
-                                "Previously Joined Events",
-                                style: TextStyle(fontSize: 17),
-                              )),],
+                                child: Text(
+                                  "Previously Joined Events",
+                                  style: TextStyle(fontSize: 17),
+                                )),],
                           ),
                           Expanded(
                             child: ListView.builder(
@@ -318,7 +328,7 @@ class ProfileScreen extends StatelessWidget {
                                 key: ValueKey([index][0]),
                                 color: Colors.white,
                                 margin:
-                                    const EdgeInsets.symmetric(vertical: 10),
+                                const EdgeInsets.symmetric(vertical: 10),
                                 child: Padding(
                                   padding: const EdgeInsets.all(13.0),
                                   child: ListTile(
@@ -326,7 +336,7 @@ class ProfileScreen extends StatelessWidget {
                                     leading: Image(
                                       fit: BoxFit.cover,
                                       image: AssetImage(userInfo[0]['events']
-                                          [index]['image']),
+                                      [index]['image']),
                                     ),
                                     title: Text(
                                         userInfo[0]['events'][index]["name"]),
