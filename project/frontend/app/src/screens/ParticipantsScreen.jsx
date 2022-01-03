@@ -111,6 +111,7 @@ export const ParticipantListingRow = props => {
                 </div>
               )}
             </CardContent>
+            {props.eventDate && <Badge userId={participant.user__Id} eventDate={props.eventDate} />}
           </Card>
         ))}
         <div className="participant-listing-arrow-icon">{hasNextItems && <ArrowForwardIosIcon onClick={onNext} />}</div>
@@ -188,6 +189,7 @@ const ParticipantsScreen = () => {
               waiting_players={event.object.waiting_players}
               spectators={event.object.spectators}
               event={event}
+              eventDate={new Date(event.object.date_time)}
             />
           )}
         </div>
@@ -224,6 +226,7 @@ const ParticipantsAdmin = props => {
         title="Accepted Participants"
         actionable={false}
         event={event}
+        eventDate={props.eventDate}
       />
       <ParticipantListingRow
         participants={rejected_players}
