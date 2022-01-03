@@ -8,16 +8,18 @@ import CreateEventScreen from './screens/CreateEventScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import Profile from './screens/Profile';
+import ParticipantsScreen from './screens/ParticipantsScreen';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import SearchScreen from './screens/SearchScreen';
 import AuthenticatedRoute from './auth/AuthenticatedRoute';
-import { Auth, useAuth } from './auth/Auth';
+import { Auth } from './auth/Auth';
 
 function App() {
-  const { me } = useAuth();
   const queryClient = new QueryClient();
+
+  console.log(me);
 
   return (
     <div className="App">
@@ -39,6 +41,7 @@ function App() {
             <AuthenticatedRoute path="/search" exact component={SearchScreen} />
             <AuthenticatedRoute path="/createEvent" component={CreateEventScreen} />
             <AuthenticatedRoute path="/eventDetail/:id" component={EventDetailScreen} />
+            <AuthenticatedRoute path="/eventParticipants/:id" component={ParticipantsScreen} />
             <AuthenticatedRoute path="/" exact component={HomeScreen} />
 
             <Redirect exact from="/" to="/login" />

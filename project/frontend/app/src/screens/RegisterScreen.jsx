@@ -6,7 +6,6 @@ import './LandingPage.css';
 import { register } from '../services/AuthService';
 import { getSports } from '../services/SportsService';
 import { toTitleCase, validateEmail, validatePassword, validateUsername } from '../helpers/functions';
-import { Link } from 'react-router-dom';
 
 function RegisterScreen() {
   const [alert, setAlert] = useState(null);
@@ -281,7 +280,7 @@ function RegisterScreen() {
                 label={
                   <div>
                     <span>I have read and agree to the </span>
-                    <Link to={void 0}>terms and conditions</Link>
+                    <a href={'#'}>terms and conditions</a>
                   </div>
                 }
               />
