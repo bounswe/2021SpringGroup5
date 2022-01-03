@@ -5,6 +5,7 @@ import HomeScreen from './screens/HomeScreen';
 import EventScreen from './screens/EventScreen';
 import EventDetailScreen from './screens/EventDetailScreen';
 import CreateEventScreen from './screens/CreateEventScreen';
+import CreateEquipment from './screens/CreateEquipmentScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import Profile from './screens/Profile';
@@ -40,6 +41,7 @@ function App() {
             <AuthenticatedRoute path="/profile" component={Profile} />
             <AuthenticatedRoute path="/search" exact component={SearchScreen} />
             <AuthenticatedRoute path="/createEvent" component={CreateEventScreen} />
+            <AuthenticatedRoute path="/createEquipment" component={CreateEquipment} />
             <AuthenticatedRoute path="/eventDetail/:id" component={EventDetailScreen} />
             <AuthenticatedRoute path="/eventParticipants/:id" component={ParticipantsScreen} />
             <AuthenticatedRoute path="/" exact component={HomeScreen} />

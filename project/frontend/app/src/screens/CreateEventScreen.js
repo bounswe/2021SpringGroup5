@@ -237,19 +237,7 @@ function CreateEvent() {
               </select>
             </div>
 
-            <div className="col-md-8 form-group has-validation">
-              <label htmlFor="badges">Badges</label>
-              <div>
-                <div className="form-check form-check-inline">
-                  <input className="form-check-input" type="checkbox" id="bades" value="friendly" />
-                  <label className="form-check-label" htmlFor="inlineCheckbox1">friendly</label>
-                </div>
-                <div className="form-check form-check-inline">
-                  <input className="form-check-input" type="checkbox" id="bades" value="polite" />
-                  <label className="form-check-label" htmlFor="inlineCheckbox1">polite</label>
-                </div>
-              </div>
-            </div>
+
             <button onClick={onSubmitClick.bind(this)} className="btn btn-primary">Submit</button>
           </form>
         </div>

@@ -17,6 +17,7 @@ const user_2 = {
     'https://m.media-amazon.com/images/M/MV5BODI0MTYzNTIxNl5BMl5BanBnXkFtZTcwNjg2Nzc0NA@@._V1_UY1200_CR190,0,630,1200_AL_.jpg',
 };
 const event_details_mock = {
+  sport_category: 'umut',
   object: {
     post_name: 'Mock Post',
     participant_limit: 7,
@@ -48,26 +49,18 @@ const event_details_mock = {
     is_event_creator: true,
   },
 };
-export function getEvent(event_id) {
-  return new Promise(resolve => resolve(event_details_mock));
-  /*return httpClient
-    .post(`/post/get_event_post_details`, {
+export function getEvent(event_id, me) {
+  /*return new Promise(resolve => resolve(event_details_mock));*/
+  return httpClient
+    .post(`/post/get_event_post_details/`, {
       '@context': 'https://www.w3.org/ns/activitystreams',
       summary: '',
       type: 'View',
-      actor: {
-        type: 'Person',
-        name: '',
-        surname: '',
-        username: '',
-        id: 1,
-      },
       object: {
         type: 'EventPost',
         post_id: event_id,
       },
-    })
-    .then(res => res.data);*/
+    }).then(res => res.data);
 }
 
 export function postComment(post_id, text) {
