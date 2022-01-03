@@ -155,28 +155,28 @@ Future<String> login(BuildContext context, String username, String password) asy
   Map bodyMap = json.decode(response.body);
   print(bodyMap);
 
-  if (bodyMap.containsKey("sessionId")) {
+  if (bodyMap.containsKey("token")) {
 
-    RegExp exp = RegExp(r'csrftoken=(\w+);');
-    String csrf = exp.firstMatch(response.headers['set-cookie']!)!.group(1)!;
-    exp = RegExp(r'sessionid=(\w+);');
+    //RegExp exp = RegExp(r'csrftoken=(\w+);');
+    //String csrf = exp.firstMatch(response.headers['set-cookie']!)!.group(1)!;
+    RegExp exp = RegExp(r'sessionid=(\w+);');
     String sessionid = exp.firstMatch(response.headers['set-cookie']!)!.group(1)!;
-    globals.csrftoken = csrf;
+    globals.csrftoken = bodyMap['csrf'];
+    globals.refresh = bodyMap['token']['refresh'];
+    globals.access = bodyMap['token']['access'];
     globals.sessionid = sessionid;
-    //globals.access = 'Bearer ' + bodyMap['access'];
-    //globals.refresh = bodyMap['refresh'];
 
     final response2 = await http.get(
       Uri.parse('http://3.122.41.188:8000/me'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        //'Authentication': globals.access,
-        'X-CSRFTOKEN': globals.csrftoken,
-        'Cookie': 'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}'
+        'Authorization': globals.access,
+        //'Cookie': 'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}'
       },
     );
 
     Map userInfo = json.decode(response2.body);
+    print(userInfo);
 
     if(userInfo.containsKey('name')) {
       globals.isLoggedIn = true;
