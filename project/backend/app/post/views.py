@@ -20,9 +20,7 @@ import requests
 from django.conf import settings
 from rest_framework.response import Response
 from rest_framework import status,permissions
-from django.contrib.auth.decorators import login_required
 import json
-import datetime
 from rest_framework.views import APIView
 from unidecode import unidecode
 from django.forms.models import model_to_dict
