@@ -63,7 +63,10 @@ def send_mail(user, request):
 
 @api_view(['GET'])
 def homePageEvents(request):
-    actor_id = request.user.Id
+    token = request.headers['Authorization']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    actor_id = valid_data['Id']
+    
 
     following_user_ids = list(Follow.objects.filter(follower=actor_id).values('following__Id'))
 
