@@ -274,6 +274,18 @@ def follow(request, userId):
 
 
 
+@api_view(['POST'])
+def unfollow(request, userId):
+    token = request.headers['Authorization']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId2 = valid_data['Id']
+
+    followinguser = User.objects.get(Id=userId2)
+    followeduser = User.objects.get(Id=userId)
+
+    Follow.objects.filter(follower=followinguser, following=followeduser).delete()
+
+    return JsonResponse('SUCCESS', status=200, safe=False)
 
 @api_view(['GET'])
 def getProfileOfUser(request, userId):
@@ -287,7 +299,14 @@ def getProfileOfUser(request, userId):
     badges = list(
         BadgeOwnedByUser.objects.filter(owner=user2.Id).values('badge__id', 'badge__name', 'badge__description',
                                                                'badge__wikiId'))
-    events = list(EventPost.objects.filter(owner=user2.Id).values())
+
+    events = list(EventPost.objects.filter(owner=user2.Id).values('pk','post_name', 'sport_category',
+                                                                    'created_date','description','longitude','latitude',
+                                                                  'date_time','participant_limit','spectator_limit','rule',
+                                                                  'equipment_requirement','status', 'capacity', 'location_requirement',
+                                                                  'contact_info','pathToEventImage','skill_requirement',
+                                                                  'current_player', 'current_spectator', 'sport_category__sport_name'))
+
     equipments = list(EquipmentPost.objects.filter(owner=user2).values())
     sports = list(InterestLevel.objects.filter(owner_of_interest=user2).values('sport_name__sport_name', 'skill_level__level_name'))
     user = list(

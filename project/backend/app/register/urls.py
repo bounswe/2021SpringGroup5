@@ -14,4 +14,5 @@ urlpatterns = [
     path('getBadgesOwnedByUser/', views.getBadgesOwnedByUser, name='get badges owned by the user'),
     path('profile/<userId>', views.getProfileOfUser, name='profileofuser'),
     path('follow/<userId>', views.follow, name='follow'),
+    path('unfollow/<userId>', views.unfollow, name='unfollow'),
 ]
