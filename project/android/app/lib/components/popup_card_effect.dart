@@ -17,13 +17,13 @@ class PopupCardEffect<T> extends PageRoute<T> {
   bool get maintainState => true;
 
   @override
-  bool get barrierDismissible => true; // close when click outside
+  bool get barrierDismissible => true; // close when click outside of the card
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 400);
+  Duration get transitionDuration => const Duration(milliseconds: 380);
 
   @override
-  Color get barrierColor => Colors.black.withOpacity(0.6);
+  Color get barrierColor => Colors.black.withOpacity(0.55);
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,

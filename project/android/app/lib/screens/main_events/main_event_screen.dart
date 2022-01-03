@@ -3,7 +3,7 @@ import 'package:ludo_app/components/popup_card_effect.dart';
 import 'package:ludo_app/screens/create_event/create_event_screen.dart';
 import 'package:ludo_app/screens/filter_popup/filter_popup_screen.dart';
 import 'package:ludo_app/screens/google_maps/google_maps_screen.dart';
-import 'package:ludo_app/screens/popup_event_details/popup_event_details.dart';
+import 'package:ludo_app/screens/event_page/popup_event_details.dart';
 import 'package:ludo_app/screens/user_profile/components/body.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -13,6 +13,7 @@ class MainEventScreen extends StatefulWidget {
 
   final bool willFetchAllEvents;
   const MainEventScreen({Key? key, this.willFetchAllEvents = false}) : super(key: key);
+
 
   @override
   _MainEventScreenState createState() => _MainEventScreenState();
@@ -25,80 +26,12 @@ class _MainEventScreenState extends State<MainEventScreen> {
       DateTime.now().year, DateTime.now().month - 1, DateTime.now().day);
 
   final List<Map<String, dynamic>> eventList = [];
-  /*
-  final List<Map<String, dynamic>> eventList = [
-    {
-      "id": 1,
-      "name": "Tek Pota Basket Maçı",
-      "description": 'Güzel bir maç olması dileğiyle!',
-      "image": "assets/images/basketball-sport.jpg",
-      "location": "Uçaksavar Stadyumu",
-      "datetime": "2021-12-19 20:00"
-    },
-    {
-      "id": 2,
-      "name": "Cumartesi Frizbi'si",
-      "description": 'Çimlerde frizbi fırlatacak arkadaşlar buraya!',
-      "image": "assets/images/frisbee-sport.jpg",
-      "location": "Boğaziçi Güney Çimler",
-      "datetime": "2021-12-17 15:00"
-    },
-    {
-      "id": 3,
-      "name": " Tek Kale Futbol Maçı",
-      "description": 'Genç yeetenekleri bekliyorum!',
-      "image": "assets/images/football-sport.jpg",
-      "location": "Etiler Naturel Park",
-      "datetime": "2021-12-25 23:30"
-    },
-    {
-      "id": 4,
-      "name": "Boğaz'a Karşı Yüzelim",
-      "description": 'Haydi, bu sıcak günün tadını çıkaralım!',
-      "image": "assets/images/swimming-sport.jpg",
-      "location": "Bebek Havuzu",
-      "datetime": "2021-12-19 12:00"
-    },
-    {
-      "id": 5,
-      "name": "Namaste!",
-      "description": 'Bugünki Meditasyonunu yaptın mı?',
-      "image": "assets/images/yoga-sport.jpg",
-      "location": "Etiler Sanatçılar Parkı",
-      "datetime": "2021-12-20 14:35"
-    },
-    {
-      "id": 6,
-      "name": "Squash Oynayacak Sporcuları Arıyorum",
-      "description": 'Rekabetli bir oyun olsun!',
-      "image": "assets/images/squash-sport.jpg",
-      "location": "HillSide Spor Kompleksi",
-      "datetime": "2021-12-17 09:30"
-    },
-    {
-      "id": 7,
-      "name": "Sahilde Bisiklet Etkinliği",
-      "description": 'Boğaza karşı bisiklet sürelim!',
-      "image": "assets/images/bicycle-sport.jpg",
-      "location": "Bebek İskele",
-      "datetime": "2021-12-16 09:30"
-    },
-    {
-      "id": 8,
-      "name": "Doğa Yürüyüşüne Var Mısın?",
-      "description": 'Atatürk Arberatumunda Eşşiz Bir Rotada!',
-      "image": "assets/images/walking-sport.jpg",
-      "location": "Atatürk Arberatumunu",
-      "datetime": "2021-12-25 15:00"
-    },
-  ];
-   */
 
   List<Map<String, dynamic>> afterSearchActionEvents = [];
 
   @override
   initState() {
-    if(widget.willFetchAllEvents){
+    if (widget.willFetchAllEvents) {
       fetchEvents();
     }
     afterSearchActionEvents = eventList;
@@ -108,7 +41,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
   void sortByDate() {
     eventList.sort((a, b) => a['datetime'].compareTo(b['datetime']));
     setState(() {
-      //girdiden sonra sonuçları yansıtma ve search olmuşsa yine de searched eventleri sortluyor.
+      //list results after the input
       afterSearchActionEvents = eventList;
     });
     print("$eventList");
@@ -117,7 +50,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
   void sortByName() {
     eventList.sort((a, b) => a['name'].compareTo(b['name']));
     setState(() {
-      //girdiden sonra sonuçları yansıtma ve search olmuşsa yine de searched eventleri sortluyor.
+      ////list results after the input
       afterSearchActionEvents = eventList;
     });
     print("$eventList");
@@ -126,16 +59,16 @@ class _MainEventScreenState extends State<MainEventScreen> {
   void searchAction(String userInputText) {
     List<Map<String, dynamic>> results = [];
     if (userInputText.isEmpty) {
-      //girdi olmazsa tüm eventler gözükecek
+      //if input = null, show all events
       results = eventList;
     } else {
       results = eventList
           .where((event) =>
-              event["name"].toLowerCase().contains(userInputText.toLowerCase()))
+          event["name"].toLowerCase().contains(userInputText.toLowerCase()))
           .toList();
     }
     setState(() {
-      //girdiden sonra sonuçları yansıtma
+      //list results after the input
       afterSearchActionEvents = results;
     });
   }
@@ -223,20 +156,20 @@ class _MainEventScreenState extends State<MainEventScreen> {
           if (snapshot.hasData) {
             List events = jsonDecode(snapshot.data!);
             WidgetsBinding.instance!.addPostFrameCallback((_){
-                setState(() {
-                  eventList.clear();
-                  for(var i = 0; i < events.length; i++){
-                    Map<String, dynamic> oneEvent = {
-                      "id": events[i]['pk'],
-                      "name": events[i]['post_name'],
-                      "description": events[i]['description'],
-                      "image": events[i]['pathToEventImage'],
-                      "location": "",
-                      "datetime": events[i]['created_date'],
-                    };
-                    eventList.add(oneEvent);
-                  }
-                });
+              setState(() {
+                eventList.clear();
+                for(var i = 0; i < events.length; i++){
+                  Map<String, dynamic> oneEvent = {
+                    "id": events[i]['pk'],
+                    "name": events[i]['post_name'],
+                    "description": events[i]['description'],
+                    "image": events[i]['pathToEventImage'],
+                    "location": "",
+                    "datetime": events[i]['created_date'],
+                  };
+                  eventList.add(oneEvent);
+                }
+              });
             });
 
             Navigator.pop(context);
@@ -249,6 +182,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
         },
       );
     }
+
     String capacity = "open to applications";
     //if (fullflag) capacity = "full";
     //else if (cancelledflag) capacity = "cancelled";
@@ -357,69 +291,73 @@ class _MainEventScreenState extends State<MainEventScreen> {
             Expanded(
               child: afterSearchActionEvents.isNotEmpty
                   ? ListView.builder(
-                      itemCount: afterSearchActionEvents.length,
-                      itemBuilder: (context, index) => Card(
-                        elevation: 5,
-                        key: ValueKey(afterSearchActionEvents[index]["id"]),
-                        color: Colors.white,
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        child: Padding(
-                          padding: const EdgeInsets.all(13.0),
-                          child: ListTile(
-                            onTap: () {
-                              Navigator.of(context)
-                                  .push(PopupCardEffect(builder: (context) {
-                                return PopupEventDetails();
-                              }));
+                itemCount: afterSearchActionEvents.length,
+                itemBuilder: (context, index) => Card(
+                  elevation: 5,
+                  key: ValueKey(afterSearchActionEvents[index]["id"]),
+                  color: Colors.white,
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  child: Padding(
+                    padding: const EdgeInsets.all(13.0),
+                    child: ListTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return EventDetailsScreen();
                             },
-                            leading:
-                            (afterSearchActionEvents[index]['image'] != '') ?
-                              Image.network(afterSearchActionEvents[index]['image']) :
-                              Image.asset('assets/images/default_event_image.png'),
-                            title: Text(afterSearchActionEvents[index]['name']),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                    '${afterSearchActionEvents[index]["location"]}'),
-                                Text(
-                                    '${afterSearchActionEvents[index]["datetime"].toString()}'),
-                              ],
-                            ),
-                            trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) {
-                                            return GoogleMapsScreen(
-                                              parentAction: (List) => {},
-                                            );
-                                          },
-                                        ),
+                          ),
+                        );
+                      },
+                      leading:
+                      (afterSearchActionEvents[index]['image'] != '') ?
+                      Image.network(afterSearchActionEvents[index]['image']) :
+                      Image.asset('assets/images/default_event_image.png'),
+                      title: Text(afterSearchActionEvents[index]['name']),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                              '${afterSearchActionEvents[index]["location"]}'),
+                          Text(
+                              '${afterSearchActionEvents[index]["datetime"].toString()}'),
+                        ],
+                      ),
+                      trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return GoogleMapsScreen(
+                                        parentAction: (List) => {},
                                       );
                                     },
-                                    child: Text('JOIN'),
-                                    style: ElevatedButton.styleFrom(
-                                      shape: CircleBorder(),
-                                      padding: EdgeInsets.all(20),
-                                    ),
                                   ),
-                                ]),
-                          ),
-                        ),
-                      ),
-                    )
-                  : const Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: Text(
-                        'Event is not found!',
-                        style: TextStyle(fontSize: 20),
-                      ),
+                                );
+                              },
+                              child: Text('JOIN'),
+                              style: ElevatedButton.styleFrom(
+                                shape: CircleBorder(),
+                                padding: EdgeInsets.all(20),
+                              ),
+                            ),
+                          ]),
                     ),
+                  ),
+                ),
+              )
+                  : const Padding(
+                padding: EdgeInsets.only(top: 20),
+                child: Text(
+                  'Event is not found!',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
             ),
           ],
         ),
