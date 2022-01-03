@@ -186,7 +186,7 @@ function HomeScreen() {
             <img className="logo_home" src="https://cdn.discordapp.com/attachments/825091092374356030/907634507308490772/1.png" />
             <span className="text_home">Our project is creating an amateur sports coordination platform. The main virtue osf the platform i that it brings people that are interested same kind of sports together so that they can meet new people, socialize and engage in sports they like. In addition to that, people can create accounts for commercial purposes for example sport shop owners or sport field owners can create an account in the name of their business, create posts and participate events like every other user can do.</span>
             <h3><b>Favourite Sport Categories</b></h3>
-            <div className="banners row justify-content-end">
+            <div className="banners row justify-content-center" style={{ marginLeft: 80 }}>
                 <div className='col-10'>
                     <a href="/search" className="banner">
                         <img src="https://www.recablog.com/wp-content/uploads/2021/01/soccer-780x470.jpg" />
