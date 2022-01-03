@@ -194,22 +194,29 @@ def login_user(request):
             'password': password
         }
 
-        token = requests.post("http://3.122.41.188:8000/api/token/", json=postjson)
-        sessionId = request.session.session_key
+        token = (requests.post("http://3.122.41.188:8000/api/token/", json=postjson)).json()
+        #sessionId = request.session.session_key
         csrftoken = csrf.get_token(request)
         resp = {
-            'sessionId': sessionId,
-            'csrftoken': csrftoken,
+            #'sessionId': sessionId,
+            #'csrftoken': csrftoken,
+            'token': token,
+            'csrf': csrftoken,
         }
         return Response(resp, status=status.HTTP_200_OK)
     else:
         return Response({"message": "You are not logged in, you can't do this request"}, 401)
 
 
-@login_required()
+
 @api_view(['GET'])
 def profile(request):
-    user = request.user
+    #user = request.user
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user = User.objects.get(Id=userId)
     context = {
         'username': user.username,
         'name': user.name,
@@ -252,10 +259,14 @@ def activate_user(request, uidb64, token):
     return JsonResponse(context)
 
 
-@login_required()
+
 @api_view(['POST'])
 def follow(request, userId):
-    followinguser = request.user
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId2 = valid_data['Id']
+
+    followinguser = User.objects.get(Id=userId2)
     followeduser = User.objects.get(Id=userId)
 
     Follow.objects.create(follower=followinguser, following=followeduser)
@@ -264,10 +275,14 @@ def follow(request, userId):
 
 
 
-@login_required()
+
 @api_view(['GET'])
 def getProfileOfUser(request, userId):
-    user1 = request.user
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId2 = valid_data['Id']
+
+    user1 = User.objects.get(Id=userId2)
     user2 = User.objects.get(Id=userId)
 
     badges = list(
@@ -292,4 +307,3 @@ def getProfileOfUser(request, userId):
         'following': following,
     }
     return JsonResponse(context, status=200)
-  

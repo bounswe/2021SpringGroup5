@@ -42,7 +42,7 @@ def process_string(s):
         return unidecode(s.lower())
     return s
 
-@login_required()
+
 @api_view(['GET','POST'])
 def createEventPost(request):
     if request.method=='POST':
@@ -105,8 +105,11 @@ def createEventPost(request):
             repeating_frequency=data["object"]["repeating_frequency"]+1
         except:
             repeating_frequency=1
+        token = request.headers['Authentication']
+        valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+        userId = valid_data['Id']
 
-        actor_id = request.user.Id
+        actor_id = userId
 
         user =list(User.objects.filter(Id=actor_id).values('Id','name','username','surname'))[0]
 
@@ -212,13 +215,17 @@ def createEventPost(request):
         res={"sports":sports,"skill_levels":skill_levels}
         return Response(res,status=status.HTTP_200_OK)
 
-@login_required()
+
 @api_view(['GET','POST'])
 def createEquipmentPost(request):
     if request.method=='POST':
         #data=request.data
         data=json.loads(request.POST.get('json'))
-        owner_id=request.user.Id
+
+        token = request.headers['Authentication']
+        valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+        userId = valid_data['Id']
+        owner_id=userId
         equipment_post_name=data["object"]["post_name"]
         try:
             sport_category=data["object"]["sport_category"]
@@ -304,12 +311,14 @@ def createEquipmentPost(request):
         res={"sports":sports}
         return Response(res,status=status.HTTP_200_OK)
 
-@login_required()
+
 @api_view(['DELETE'])
 def deleteEquipmentPost(request):
     data=request.data
-
-    actor_id=request.user.Id
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+    actor_id = userId
     equipment_post_id=data["object"]["post_id"]
 
     try:
@@ -330,12 +339,16 @@ def deleteEquipmentPost(request):
     return Response({"message":"Equipment post is deleted"},status=status.HTTP_200_OK)
 
 
-@login_required()
+
 @api_view(['DELETE'])
 def deleteEventPost(request):
     data = request.data
 
-    actor_id = request.user.Id
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    actor_id = userId
     event_post_id = data["object"]["post_id"]
 
     try:
@@ -362,12 +375,16 @@ def deleteEventPost(request):
     return Response({"message": "Event post is deleted"}, status=status.HTTP_200_OK)
 
 
-@login_required()
+
 @api_view(['POST'])
 def applyToEvent(request):
     data = request.data
 
-    actor_id = request.user.Id
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    actor_id = userId
     event_id = data["object"]["Id"]
 
     # Try if the user is valid
@@ -420,12 +437,16 @@ def applyToEvent(request):
     return Response({"message":"Application is successfully created"},status=status.HTTP_201_CREATED)
 
 
-@login_required()
+
 @api_view(['POST'])
 def acceptApplicant(request):
     data = request.data
 
-    actor_id = request.user.Id
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    actor_id = userId
     applicant_id = data["applicant"]["Id"]
     event_id = data["object"]["Id"]
 
@@ -470,12 +491,12 @@ def acceptApplicant(request):
 
     return Response({"message":"Application is accepted"},status=status.HTTP_200_OK)
 
-@login_required()
+
 @api_view(['POST'])
 def rejectApplicant(request):
     data = request.data
 
-    actor_id = request.user.Id
+    #actor_id = request.user.Id
     applicant_id = data["applicant"]["Id"]
     event_id = data["object"]["Id"]
 
@@ -504,11 +525,16 @@ def rejectApplicant(request):
     return Response({"message":"Application is rejected"},status=status.HTTP_200_OK)
 
 
-@login_required()  
+
 @api_view(['PATCH'])
 def changeEquipmentInfo(request):
     data=request.data
-    actor_id=request.user.Id
+
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    actor_id=userId
     post_id=data["object"]["post_id"]
     try:
         actor=list(User.objects.filter(Id=actor_id).values('Id','name','surname','username'))[0]
@@ -560,11 +586,16 @@ def changeEquipmentInfo(request):
     return Response(res,200)
 
 
-@login_required()  
+
 @api_view(['PATCH'])
 def changeEventInfo(request):
     data=request.data
-    actor_id=request.user.Id
+
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    actor_id=userId
     post_id=data["object"]["post_id"]
     try:
         actor=list(User.objects.filter(Id=actor_id).values('Id','name','surname','username'))[0]
@@ -623,12 +654,16 @@ def changeEventInfo(request):
     return Response(res,200)
 
 
-@login_required()
+
 @api_view(['PATCH'])
 def postponeEvent(request):
 
     data = request.data
-    actor_id=request.user.Id
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    actor_id=userId
 
 
     post_id = data["object"]["post_id"]
@@ -680,7 +715,7 @@ def postponeEvent(request):
     return HttpResponse(json.dumps(res), content_type="application/json", status=200)
 
 
-@login_required()
+
 @api_view(['GET'])
 def getWaitingApplications(request):
     eventId = request.query_params["eventId"]
@@ -691,7 +726,7 @@ def getWaitingApplications(request):
         return Response({"message": "Waiting applications are not found"},404)
 
 
-@login_required()
+
 @api_view(['GET'])
 def getRejectedApplications(request):
     eventId = request.query_params["eventId"]
@@ -702,7 +737,7 @@ def getRejectedApplications(request):
         return Response({"message": "Rejected applications are not found"},404)
 
 
-@login_required()
+
 @api_view(['GET'])
 def getAcceptedApplications(request):
     eventId = request.query_params["eventId"]
@@ -713,7 +748,7 @@ def getAcceptedApplications(request):
         return Response({"message": "Accepted applications are not found"},404)
 
 
-@login_required()
+
 @api_view(['GET'])
 def getInadequateApplications(request):
     eventId = request.query_params["eventId"]
@@ -724,11 +759,16 @@ def getInadequateApplications(request):
         return Response({"message": "Inadequate applications are not found"},404)
 
 
-@login_required()
+
 @api_view(['POST'])
 def getEventPostDetails(request):
     data=request.data
-    actor_id=request.user.Id
+
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    actor_id=userId
     post_id=data["object"]["post_id"]
     is_event_creator=False
 
@@ -820,11 +860,16 @@ def getEventPostDetails(request):
 
     return Response(data,201)
 
-@login_required()
+
 @api_view(['POST'])
 def getEventPostAnalytics(request):
     data=request.data
-    actor_id=request.user.Id
+
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    actor_id=userId
     event_post_id = data["object"]["post_id"]
 
     eventPost=EventPost.objects.filter(id=event_post_id)
@@ -856,11 +901,16 @@ def getEventPostAnalytics(request):
 
     return Response(data,201)
 
-@login_required()
+
 @api_view(['POST'])
 def getEquipmentPostDetails(request):
     data=request.data
-    actor_id=request.user.Id
+
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    actor_id=userId
     post_id=data["object"]["post_id"]
     is_event_creator=False
     
@@ -905,12 +955,16 @@ def getEquipmentPostDetails(request):
     return Response(res,201)
 
 
-@login_required()
+
 @api_view(['POST'])
 def spectateToEvent(request):
     data = request.data
 
-    actor_id = request.user.Id
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    actor_id = userId
     event_id = data["object"]["Id"]
 
     # Try if the user is valid
@@ -957,11 +1011,16 @@ def spectateToEvent(request):
     return Response({"message": "Spectate application is successfully created"}, status=status.HTTP_201_CREATED)
 
 
-@login_required()
+
 @api_view(['POST'])
 def createEventComment(request):
     data = request.data
-    user_id = request.user.Id
+
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user_id = userId
 
     try:
         actor=User.objects.filter(Id=user_id)
@@ -988,11 +1047,16 @@ def createEventComment(request):
     return Response({"message": "Comment created successfully"}, status=status.HTTP_201_CREATED)
 
 
-@login_required()
+
 @api_view(['POST'])
 def createEquipmentComment(request):
     data = request.data
-    user_id = request.user.Id
+
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    user_id = userId
 
     try:
         actor=User.objects.filter(Id=user_id)
@@ -1018,7 +1082,7 @@ def createEquipmentComment(request):
 
     return Response({"message": "Comment created successfully"}, status=status.HTTP_201_CREATED)
 
-@login_required()
+
 @api_view(['GET'])
 def getSpectators(request):
     eventId = request.query_params["eventId"]
@@ -1091,30 +1155,39 @@ class SaveSkillLevelsScript(APIView):
                 serializer.save()
         return Response({"message":"Skill levels are saved into the database"},status=status.HTTP_201_CREATED)
 
-@login_required()
+
 @api_view(['GET'])
 def GetEventOfUser(request):
     data = request.data
-    userId = request.user.Id
+
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+
+    userId = userId
 
     eventlist = list(EventPost.objects.filter(owner=userId).values())
     return JsonResponse(eventlist, safe=False)
 
-@login_required()
+
 @api_view(['GET'])
 def GetEquipmentOfUser(request):
     data = request.data
 
-    equipmentlist = list(EquipmentPost.objects.filter(owner=request.user).values())
+    token = request.headers['Authentication']
+    valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
+    userId = valid_data['Id']
+    user = User.objects.get(Id=userId)
+    equipmentlist = list(EquipmentPost.objects.filter(owner=user).values())
     return JsonResponse(equipmentlist, safe=False)
 
 
-@login_required()
+
 @api_view(['POST'])
 def sendBadge(request):
 
     touser = User.objects.get(Id=request.data['to_user']['Id'])
-    fromuser = request.user
+
 
     badge = Badge.objects.get(name=request.data['badge']['name'])
     try:
@@ -1124,7 +1197,7 @@ def sendBadge(request):
         
     return JsonResponse('SUCCESS', safe=False, status=status.HTTP_201_CREATED)
 
-@login_required()
+
 @api_view(['GET'])
 def getAllBadges(request):
 
