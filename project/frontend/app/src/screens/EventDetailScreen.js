@@ -2,10 +2,17 @@ import CommentSection from '../components/Common/CommentSection';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { getEvent } from '../services/EventService';
+import { useAuth } from '../auth/Auth';
 
 function EventDetailScreen() {
+  const { me } = useAuth();
   const { id: event_id } = useParams();
-  const { data: event, isLoading } = useQuery(`events/${event_id}`, () => getEvent(event_id));
+
+  const { data: event, isLoading } = useQuery(`eventDetail/${event_id}`, () => getEvent(event_id, me));
+
+  console.log('umut');
+  console.log(me);
+
 
   if (!isLoading && !event) {
     return <div> Event not found. </div>;
@@ -60,13 +67,13 @@ function EventDetailScreen() {
               </div>
               <div className="event-title">
                 <h6>
-                  Category: <a href="#">{state.json.object.sport_category}</a>
+                  Category: <a href="#">{event && event.object.sport_category}</a>
                 </h6>
-                <h2>{state.json.object.post_name}</h2>
+                <h2>{event && event.object.post_name}</h2>
                 <div className="media">
                   <div className="media-body">
                     <label>
-                      Creator: {state.json.actor.name} {state.json.actor.surname}
+                      Creator:
                     </label>
                     <span></span>
                     <label>Event Time: {state.json.object.date_time}</label>
@@ -94,7 +101,7 @@ function EventDetailScreen() {
                 <p>{state.json.object.location_requirement}</p>
               </div>
             </article>
-            {event && <CommentSection comments={event.object.comments} event_id={event_id} />}
+            {event && <CommentSection comments={event.object.comments} event_id={event.object.id} />}
           </div>
         </div>
       </div>

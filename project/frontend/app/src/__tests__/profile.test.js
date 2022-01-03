@@ -93,7 +93,7 @@ test('should show unfollow button when followed', async () => {
     is_followed: true,
   };
 
-  render(<ProfileInformation user={user_info_mock} />);
+  render(<ProfileInformation user={user_info_mock} is_me={false} user_id={1} following={true} />);
   expect(screen.getByRole('button', { name: 'Unfollow' })).toBeInTheDocument();
 });
 
@@ -110,6 +110,6 @@ test('should show follow button when not followed', async () => {
     is_followed: false,
   };
 
-  render(<ProfileInformation user={user_info_mock} />);
+  render(<ProfileInformation user={user_info_mock} is_me={false} user_id={1} following={false} />);
   expect(screen.getByRole('button', { name: 'Follow' })).toBeInTheDocument();
 });
