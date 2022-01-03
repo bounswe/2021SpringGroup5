@@ -105,7 +105,7 @@ def createEventPost(request):
             repeating_frequency=data["object"]["repeating_frequency"]+1
         except:
             repeating_frequency=1
-        token = request.headers['Authentication']
+        token = request.headers['Authorization']
         valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
         userId = valid_data['Id']
 
@@ -222,7 +222,7 @@ def createEquipmentPost(request):
         #data=request.data
         data=json.loads(request.POST.get('json'))
 
-        token = request.headers['Authentication']
+        token = request.headers['Authorization']
         valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
         userId = valid_data['Id']
         owner_id=userId
@@ -315,7 +315,7 @@ def createEquipmentPost(request):
 @api_view(['DELETE'])
 def deleteEquipmentPost(request):
     data=request.data
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
     actor_id = userId
@@ -344,7 +344,7 @@ def deleteEquipmentPost(request):
 def deleteEventPost(request):
     data = request.data
 
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
 
@@ -380,7 +380,7 @@ def deleteEventPost(request):
 def applyToEvent(request):
     data = request.data
 
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
 
@@ -442,7 +442,7 @@ def applyToEvent(request):
 def acceptApplicant(request):
     data = request.data
 
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
 
@@ -530,7 +530,7 @@ def rejectApplicant(request):
 def changeEquipmentInfo(request):
     data=request.data
 
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
 
@@ -591,7 +591,7 @@ def changeEquipmentInfo(request):
 def changeEventInfo(request):
     data=request.data
 
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
 
@@ -659,7 +659,7 @@ def changeEventInfo(request):
 def postponeEvent(request):
 
     data = request.data
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
 
@@ -764,7 +764,7 @@ def getInadequateApplications(request):
 def getEventPostDetails(request):
     data=request.data
 
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
 
@@ -865,7 +865,7 @@ def getEventPostDetails(request):
 def getEventPostAnalytics(request):
     data=request.data
 
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
 
@@ -906,7 +906,7 @@ def getEventPostAnalytics(request):
 def getEquipmentPostDetails(request):
     data=request.data
 
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
 
@@ -960,7 +960,7 @@ def getEquipmentPostDetails(request):
 def spectateToEvent(request):
     data = request.data
 
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
 
@@ -1016,7 +1016,7 @@ def spectateToEvent(request):
 def createEventComment(request):
     data = request.data
 
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
 
@@ -1052,7 +1052,7 @@ def createEventComment(request):
 def createEquipmentComment(request):
     data = request.data
 
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
 
@@ -1160,7 +1160,7 @@ class SaveSkillLevelsScript(APIView):
 def GetEventOfUser(request):
     data = request.data
 
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
 
@@ -1174,7 +1174,7 @@ def GetEventOfUser(request):
 def GetEquipmentOfUser(request):
     data = request.data
 
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
     user = User.objects.get(Id=userId)

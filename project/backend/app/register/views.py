@@ -212,7 +212,7 @@ def login_user(request):
 @api_view(['GET'])
 def profile(request):
     #user = request.user
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId = valid_data['Id']
 
@@ -262,7 +262,7 @@ def activate_user(request, uidb64, token):
 
 @api_view(['POST'])
 def follow(request, userId):
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId2 = valid_data['Id']
 
@@ -278,7 +278,7 @@ def follow(request, userId):
 
 @api_view(['GET'])
 def getProfileOfUser(request, userId):
-    token = request.headers['Authentication']
+    token = request.headers['Authorization']
     valid_data = TokenBackend(algorithm='HS256').decode(token, verify=False)
     userId2 = valid_data['Id']
 

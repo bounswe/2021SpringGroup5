@@ -1,0 +1,24 @@
+.container_home{
+    margin-top:50px;
+}
+.container_home .logo_home{
+    width: 250px;
+}
+.container_home .text_home{
+    display: block;
+    width: 80%;
+    margin: 0 auto;
+    padding: 40px;
+}
+.banners {
+    width: 90%;
+    margin: 0 auto;
+}
+.banner {
+    width: 32%;
+    float: left;
+    margin-right: 1%;
+    color: #000;
+    text-decoration: none;
+    font-size: 18px;
+}
