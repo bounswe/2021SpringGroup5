@@ -17,6 +17,7 @@ export function login(loginForm) {
     )
     .then(res => {
       accessToken = res.data.token.access;
+      window.localStorage.setItem("token", res.data.token.access);
       httpClient.defaults.headers['Authorization'] = accessToken;
       httpClient.defaults.headers['Content-Type'] = 'application/json; charset=UTF-8';
       const cookies = new Cookies();
@@ -25,7 +26,10 @@ export function login(loginForm) {
 }
 
 export function me() {
-  return httpClient.get('/me/', { withCredentials: true }).then(res => res.data);
+  if (window.localStorage.getItem("token")) {
+    httpClient.defaults.headers['Authorization'] = window.localStorage.getItem("token");
+    return httpClient.get('/me/', { withCredentials: true }).then(res => res.data);
+  }
 }
 
 export function forgotPassword(forgotPasswordForm) {
