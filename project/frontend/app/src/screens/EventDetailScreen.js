@@ -8,9 +8,8 @@ function EventDetailScreen() {
   const { me } = useAuth();
   const { id: event_id } = useParams();
 
-  const { me } = useAuth();
   const { data: event, isLoading } = useQuery(`eventDetail/${event_id}`, () => getEvent(event_id, me));
-  
+
   console.log('umut');
   console.log(me);
 
@@ -74,7 +73,7 @@ function EventDetailScreen() {
                 <div className="media">
                   <div className="media-body">
                     <label>
-                      Creator: 
+                      Creator:
                     </label>
                     <span></span>
                     <label>Event Time: {state.json.object.date_time}</label>

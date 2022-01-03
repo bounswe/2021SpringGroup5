@@ -9,6 +9,7 @@ import { Check, Close } from '@mui/icons-material';
 import './ParticipanstScreen.css';
 import { acceptUser, getEvent, rejectUser } from '../services/EventService';
 import { useAuth } from '../auth/Auth';
+import Badge from '../components/Common/Badge';
 
 export const ParticipantListingRow = props => {
   const { me } = useAuth();
@@ -121,6 +122,7 @@ export const ParticipantListingRow = props => {
 const ParticipantListingPage = props => {
   const history = useHistory();
   const { participants } = props;
+
   return (
     <div>
       <div className="participant-listing-header">Participants</div>
@@ -129,11 +131,13 @@ const ParticipantListingPage = props => {
           <Card
             className="user-card"
             style={{ width: '100%' }}
-            onClick={() => {
-              history.push(`/profile?user_id=${participant.user__Id}`);
-            }}
           >
-            <CardContent className="user-card-content">
+            <CardContent
+              onClick={() => {
+                history.push(`/profile?user_id=${participant.user__Id}`);
+              }}
+              className="user-card-content"
+            >
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Avatar alt={participant.user__username} src={participant.image_url} />
                 <div style={{ marginLeft: '10px' }}>
@@ -144,6 +148,7 @@ const ParticipantListingPage = props => {
                 </div>
               </div>
             </CardContent>
+            <Badge eventDate={props.eventDate} userId={participant.user__Id} />
           </Card>
         ))}
       </div>
@@ -174,7 +179,7 @@ const ParticipantsScreen = () => {
             </Typography>
           </div>
 
-          {!event.object.is_event_creator && <ParticipantsLimited accepted_players={event.object.accepted_players} />}
+          {!event.object.is_event_creator && <ParticipantsLimited eventDate={new Date(event.object.date_time)} accepted_players={event.object.accepted_players} />}
 
           {event.object.is_event_creator && (
             <ParticipantsAdmin
@@ -195,9 +200,10 @@ export default ParticipantsScreen;
 
 const ParticipantsLimited = props => {
   const { accepted_players } = props;
+
   return (
     <div>
-      <ParticipantListingPage participants={accepted_players} />
+      <ParticipantListingPage eventDate={props.eventDate} participants={accepted_players} />
     </div>
   );
 };
