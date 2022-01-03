@@ -1,24 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:ludo_app/screens/main_events/main_event_screen.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:ludo_app/globals.dart' as globals;
 
-class EventDetailsScreen extends StatelessWidget {
-  const EventDetailsScreen({Key? key}) : super(key: key);
+class EventDetailsScreen extends StatefulWidget {
+  int eventId;
+
+  EventDetailsScreen({Key? key, required this.eventId}) : super(key: key);
+
+  @override
+  State<EventDetailsScreen> createState() => _EventDetailsScreenState();
+}
+
+class _EventDetailsScreenState extends State<EventDetailsScreen> {
+
+  Map eventDetails = {};
+
+  Future fetchEventDetails() async {
+    // Return all events
+    var params = {
+      "@context": "https://www.w3.org/ns/activitystreams",
+      "summary": "${globals.name} read an event post",
+      "type": "View",
+      "actor": {
+        "type": "Person",
+        "name": globals.name,
+        "surname": globals.surname,
+        "username": globals.username,
+        "Id": globals.userid,
+      },
+      "object": {
+        "type": "EventPost",
+        "post_id": widget.eventId,
+      }
+    };
+
+    final response = await http.post(
+      Uri.parse('http://3.122.41.188:8000/post/get_event_post_details/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': globals.access,
+        'Cookie': 'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}',
+      },
+      body: jsonEncode(params),
+    );
+    if (response.statusCode == 201){
+      WidgetsBinding.instance!.addPostFrameCallback((_){
+        setState(() {
+          eventDetails = jsonDecode(response.body)['object'];
+          print(jsonDecode(response.body)['object']);
+        });
+      });
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+  String capFirstLetter(String word){
+    return word[0].toUpperCase() + word.substring(1);
+  }
+
+  @override
+  void initState() {
+    fetchEventDetails();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    const List<Map<String, dynamic>> participants = [
-      {
-        "name": "Rekabetli Oyuncu",
-        "image": "assets/images/basketball-sport.jpg",
-      },
-      {
-        "name": "Rekabetli Oyuncu",
-        "image": "assets/images/basketball-sport.jpg",
-      },
-    ];
     return Scaffold(
       appBar: AppBar(
-        title: Text("Event Details:"),
+        title: const Text("Event Details"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
@@ -32,6 +85,32 @@ class EventDetailsScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Row(
+                    children:  [
+                      Padding(
+                        padding: EdgeInsets.only(right: 20),
+                        child: Text(
+                          eventDetails.isEmpty ? "" :
+                          eventDetails['post_name'],
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.025,
+                  ),
+                  Container(
+                      child:
+                        eventDetails.isEmpty ? Text("") :
+                          eventDetails['pathToEventImage'] == "" ?
+                          Image.asset('assets/images/default_event_image.png') :
+                          Image.network(eventDetails['pathToEventImage']),
+                  ),
+                  /*
+                  Row(
                     children: const [
                       Text(
                         // if event creator
@@ -42,7 +121,6 @@ class EventDetailsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  /*
                   Expanded(
                       child: ListView.builder(
                         itemCount: participants.length,
@@ -67,22 +145,23 @@ class EventDetailsScreen extends StatelessWidget {
                     ),
                   ),*/
                   SizedBox(
-                    height: 15,
+                    height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
-                          "Event Name:",
+                          "Event Participants:",
                           style: TextStyle(
                               backgroundColor: Colors.lightGreenAccent,
                               fontSize: 16),
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        eventDetails['accepted_players'].toString(),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -91,8 +170,8 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
                           "Owner of event:",
@@ -102,7 +181,8 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        eventDetails['owner']['name'] + ' ' + eventDetails['owner']['surname'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -111,8 +191,8 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
                           "Sport name:",
@@ -122,7 +202,8 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        capFirstLetter(eventDetails['sport_category']),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -131,18 +212,19 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
-                          "Date and Time of Post",
+                          "Created Date:",
                           style: TextStyle(
                               backgroundColor: Colors.lightGreenAccent,
                               fontSize: 16),
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        eventDetails['created_date'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -151,8 +233,8 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
                           "Description:",
@@ -162,7 +244,8 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        eventDetails['description'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -171,8 +254,8 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
                           "Lat-Long:",
@@ -182,7 +265,8 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        eventDetails['latitude'].toString() + ', ' + eventDetails['longitude'].toString(),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -191,18 +275,19 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
-                          "Date Time of Event:",
+                          "Event Date:",
                           style: TextStyle(
                               backgroundColor: Colors.lightGreenAccent,
                               fontSize: 16),
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        eventDetails['date_time'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -211,8 +296,8 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
+                    children:  [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
                           "Participation Limit:",
@@ -222,7 +307,8 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        eventDetails['participant_limit'].toString(),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -231,8 +317,8 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
                           "Spectator Limit:",
@@ -242,7 +328,8 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        eventDetails['spectator_limit'].toString(),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -251,8 +338,8 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
                           "Event Rules:",
@@ -262,7 +349,8 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        eventDetails['rule'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -271,8 +359,8 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
                           "Equipment Requirements:",
@@ -282,7 +370,8 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        eventDetails['equipment_requirement'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -291,8 +380,8 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
                           "Status of Event:",
@@ -302,7 +391,8 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        eventDetails['status'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -311,8 +401,8 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
                           "Capacity of Event:",
@@ -322,7 +412,8 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        eventDetails['capacity'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -331,8 +422,8 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
                           "Location Requirement:",
@@ -342,7 +433,9 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                            eventDetails['location_requirement'] == "" ? "None" :
+                        eventDetails['location_requirement'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -351,8 +444,8 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
                           "Contact Information:",
@@ -362,7 +455,9 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                          eventDetails['contact_info'] == "" ? "None" :
+                        eventDetails['contact_info'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -371,28 +466,8 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.only(right: 20),
-                        child: Text(
-                          "Image url:",
-                          style: TextStyle(
-                              backgroundColor: Colors.lightGreenAccent,
-                              fontSize: 16),
-                        ),
-                      ),
-                      Text(
-                        "GGGG Game",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.025,
-                  ),
-                  Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
                           "Skill Requirement:",
@@ -402,7 +477,8 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        eventDetails['skill_requirement'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -411,8 +487,8 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
                           "Number of Accepted Players:",
@@ -422,7 +498,8 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        eventDetails['current_player'].toString(),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -431,28 +508,8 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.only(right: 20),
-                        child: Text(
-                          "Badges:",
-                          style: TextStyle(
-                              backgroundColor: Colors.lightGreenAccent,
-                              fontSize: 16),
-                        ),
-                      ),
-                      Text(
-                        "GGGG Game",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.025,
-                  ),
-                  Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
                           "Number of Accepted Spectators:",
@@ -462,7 +519,8 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        eventDetails['current_spectator'].toString(),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -471,8 +529,8 @@ class EventDetailsScreen extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children: const [
-                      Padding(
+                    children: [
+                      const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
                           "Comments:",
@@ -482,87 +540,8 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "GGGG Game",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.025,
-                  ),
-                  Row(
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.only(right: 20),
-                        child: Text(
-                          "Accepted USer Info:",
-                          style: TextStyle(
-                              backgroundColor: Colors.lightGreenAccent,
-                              fontSize: 16),
-                        ),
-                      ),
-                      Text(
-                        "GGGG Game",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.025,
-                  ),
-                  Row(
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.only(right: 20),
-                        child: Text(
-                          "Rejected User Info:",
-                          style: TextStyle(
-                              backgroundColor: Colors.lightGreenAccent,
-                              fontSize: 16),
-                        ),
-                      ),
-                      Text(
-                        "GGGG Game",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.025,
-                  ),
-                  Row(
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.only(right: 20),
-                        child: Text(
-                          "Accepted Spectator Info:",
-                          style: TextStyle(
-                              backgroundColor: Colors.lightGreenAccent,
-                              fontSize: 16),
-                        ),
-                      ),
-                      Text(
-                        "GGGG Game",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.025,
-                  ),
-                  Row(
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.only(right: 20),
-                        child: Text(
-                          "Waiting User Info:",
-                          style: TextStyle(
-                              backgroundColor: Colors.lightGreenAccent,
-                              fontSize: 16),
-                        ),
-                      ),
-                      Text(
-                        "GGGG Game",
+                        eventDetails.isEmpty ? "" :
+                        eventDetails['comments'].toString(),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
