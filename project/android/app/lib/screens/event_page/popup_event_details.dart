@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:ludo_app/globals.dart' as globals;
 
 class EventDetailsScreen extends StatefulWidget {
-  int eventId;
+  int? eventId; // event id cannot be null
 
   EventDetailsScreen({Key? key, required this.eventId}) : super(key: key);
 
