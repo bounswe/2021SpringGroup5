@@ -9,7 +9,7 @@ function CommentSection({ comments, event_id }) {
   const queryClient = useQueryClient();
   const mutation = useMutation('comment', text => postComment(event_id, text), {
     onSuccess: () => {
-      queryClient.invalidateQueries(`events/${event_id}`).then();
+      queryClient.invalidateQueries(`eventDetail/${event_id}`).then();
     },
   });
 
@@ -61,7 +61,7 @@ export function EquipmentCommentSection({ comments, equipment_id }) {
   const queryClient = useQueryClient();
   const mutation = useMutation('comment', text => postComment(equipment_id, text), {
     onSuccess: () => {
-      queryClient.invalidateQueries(`equipments/${equipment_id}`).then();
+      queryClient.invalidateQueries(`equipmentDetail/${equipment_id}`).then();
     },
   });
 
