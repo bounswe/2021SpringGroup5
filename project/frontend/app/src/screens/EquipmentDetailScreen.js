@@ -3,6 +3,7 @@ import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { getEquipment } from '../services/EventService';
 import { useAuth } from '../auth/Auth';
+import { EquipmentCommentSection } from '../components/Common/CommentSection';
 
 function EquipmentDetailScreen() {
   const { me } = useAuth();
@@ -44,7 +45,7 @@ function EquipmentDetailScreen() {
               </div>
 
             </article>
-           
+            {eq && <EquipmentCommentSection comments={eq.object.comments} equipment_id={eq.object.id} />}
           </div>
         </div>
       </div>
