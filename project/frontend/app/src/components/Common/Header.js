@@ -20,6 +20,7 @@ import { Add, Home, Logout, Search } from '@mui/icons-material';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useHistory } from 'react-router';
+import { useAuth } from '../../auth/Auth';
 
 // #f8f8f8 background
 
@@ -94,6 +95,8 @@ export default function MiniDrawer() {
   const theme = useTheme();
   const history = useHistory()
 
+  const { logout } = useAuth()
+
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
@@ -116,8 +119,9 @@ export default function MiniDrawer() {
   };
 
   const handleLogout = () => {
-    window.localStorage.removeItem("token");
-    history.push("/login")
+    logout()
+    // window.localStorage.removeItem("token");
+    // history.push("/login")
   };
 
   return (
