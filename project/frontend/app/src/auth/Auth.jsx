@@ -14,8 +14,8 @@ const AuthContext = createContext({
     return Promise.resolve();
   },
   loading: false,
-  logout: () => {},
-  refresh: () => {},
+  logout: () => { },
+  refresh: () => { },
   me: undefined,
 });
 
@@ -52,9 +52,7 @@ export const Auth = props => {
 
   const logout = () => {
     setIsAuthenticated(false);
-    authLogout().then(() => {
-      history.push('/login');
-    });
+    history.push('/login');
   };
 
   return (

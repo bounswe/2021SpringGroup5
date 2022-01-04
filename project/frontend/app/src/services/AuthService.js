@@ -71,8 +71,7 @@ export function refresh() {
 }
 
 export function logout() {
-  return httpClient.delete('/logout').then(() => {
-    accessToken = undefined;
-    httpClient.defaults.headers['Authorization'] = undefined;
-  });
+  accessToken = undefined;
+  httpClient.defaults.headers['Authorization'] = undefined;
+  window.localStorage.removeItem("token");
 }
