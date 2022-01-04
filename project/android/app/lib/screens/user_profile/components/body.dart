@@ -60,8 +60,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
 
     Map bodyMap = json.decode(response.body);
-    print(bodyMap);
-    print(response.statusCode);
+    //print(bodyMap);
+    //print(response.statusCode);
 
     if (response.statusCode == 200 && bodyMap['has_error'] == false){
       globals.isLoggedIn = false;
@@ -373,7 +373,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) {
-                                            return EventDetailsScreen(eventId: userEvents[index]['id']);
+                                            return EventDetailsScreen(eventId: userEvents[index]['pk']);
                                           },
                                         ),
                                       );

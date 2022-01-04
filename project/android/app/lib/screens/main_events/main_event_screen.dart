@@ -43,7 +43,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
       //list results after the input
       afterSearchActionEvents = eventList;
     });
-    print("$eventList");
+    //print("$eventList");
   }
 
   void sortByName() {
@@ -52,7 +52,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
       ////list results after the input
       afterSearchActionEvents = eventList;
     });
-    print("$eventList");
+    //print("$eventList");
   }
 
   void searchAction(String userInputText) {
@@ -102,7 +102,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
         setState(() {
           eventList.clear();
           List events = jsonDecode(response.body);
-          print(events);
+          //print(events);
           for(var i = 0; i < events.length; i++){
             Map<String, dynamic> oneEvent = {
               "id": events[i]['id'],
@@ -115,7 +115,7 @@ class _MainEventScreenState extends State<MainEventScreen> {
             eventList.add(oneEvent);
           }
           afterSearchActionEvents = eventList;
-          print(afterSearchActionEvents);
+          //print(afterSearchActionEvents);
         });
       });
       return response.body;

@@ -153,7 +153,7 @@ Future<String> login(BuildContext context, String username, String password) asy
   );
 
   Map bodyMap = json.decode(response.body);
-  print(bodyMap);
+  //print(bodyMap);
 
   if (bodyMap.containsKey("token")) {
 
@@ -176,7 +176,7 @@ Future<String> login(BuildContext context, String username, String password) asy
     );
 
     Map userInfo = json.decode(response2.body);
-    print(userInfo);
+    //print(userInfo);
 
     if(userInfo.containsKey('name')) {
       globals.isLoggedIn = true;

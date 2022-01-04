@@ -141,8 +141,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     request.fields['json'] = jsonEncode(params);
     var response = await request.send();
 
-    print(response.statusCode);
-    print(response.stream.toString());
+    //print(response.statusCode);
+    //print(response.stream.toString());
     if (response.statusCode == 201) {
       Navigator.push(
         context,
