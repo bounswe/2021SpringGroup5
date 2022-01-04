@@ -373,7 +373,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) {
-                                            return EventDetailsScreen(eventId: userEvents[index]['id']);
+                                            return EventDetailsScreen(eventId: userEvents[index]['pk']);
                                           },
                                         ),
                                       );
