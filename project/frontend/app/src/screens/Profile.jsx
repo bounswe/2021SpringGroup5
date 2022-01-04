@@ -55,6 +55,7 @@ function CustomEventCard({ data }) {
 }
 
 function CustomEquipmentCard({ data }) {
+  const history = useHistory();
   return (
     <Card sx={{ width: 300 }} className="text-start">
       <CardActionArea>
@@ -69,7 +70,11 @@ function CustomEquipmentCard({ data }) {
             'https://cdn.discordapp.com/attachments/825091092374356030/907634507308490772/1.png'
           }
         />
-        <CardContent>
+        <CardContent
+          onClick={() => {
+            history.push(`/equipmentDetail/${data.id}`);
+          }}
+        >
           <div className="row mb-2">
             <div className="col-8 fw-bold fs-6">{data.post_name}</div>
             <div
@@ -91,7 +96,7 @@ const Profile = () => {
   const searchParams = new URLSearchParams(location.search);
 
   const user_id = searchParams.get('user_id') || (me && me.Id);
-  const is_me = searchParams.get('user_id') == undefined;
+  const is_me = !searchParams.get('user_id') || searchParams.get('user_id') === (me && me.Id.toString());
   const { data: user } = useQuery(`users/${user_id}`, () => getUserInfo(user_id));
 
   return (
