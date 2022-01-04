@@ -42,7 +42,7 @@ function CustomCard({ data }) {
     const history = useHistory()
 
     return (
-        <Card onClick={() => history.push(`/eventDetail/${data.id}`)} sx={{ maxWidth: 345 }} className="text-start">
+        <Card onClick={() => history.push(`/equipmentDetail/${data.id}`)} sx={{ maxWidth: 345 }} className="text-start">
             <CardActionArea>
                 <CardMedia component="img" height="140" image={data.pathToEquipmentPostImage} />
                 <CardContent>

@@ -20,7 +20,7 @@ const styleModal = {
 function CreateEvent() {
   const [position, setPosition] = useState();
 
-  console.log(position);
+  //console.log(position);
 
   const [openMapModal, setOpenMapModal] = useState(false);
   const handleOpenMapModal = () => {
@@ -32,47 +32,46 @@ function CreateEvent() {
 
   function onSubmitClick(e) {
     // var splitLocation = (document.getElementById("LongitudeLatitude").value).split(",");
-    var imageURL = "";
+    //var imageURL = "";
+
 
     var data = {
-      "@context": "https://www.w3.org/ns/activitystreams",
-      "summary": "creating an event post",
-      "type": "Create",
-      "actor": {
-        "type": "Person",
-        "name": "Umut",
-        "surname": "Gün",
-        "username": "umutgun17",
-        "Id": 1
-      },
-      "object": {
-        "type": "Event_Post",
-        "owner_id": 1,
-        "post_name": document.getElementById("eventTitle").value,
-        "sport_category": document.getElementById("sportCategory").value,
-        // "longtitude": parseFloat(splitLocation[0]),
-        // "latitude": parseFloat(splitLocation[1]),
-        "longtitude": position.lng,
-        "latitude": position.lat,
-        "description": document.getElementById("eventDescription").value,
-        "pathToEventImage": "aaaaaa",
-        "date_time": document.getElementById("eventDate").value,
-        "participant_limit": parseInt(document.getElementById("participationLimit").value),
-        "spectator_limit": parseInt(document.getElementById("spectatorLimit").value),
-        "rule": document.getElementById("generalRules").value,
-        "equipment_requirement": document.getElementById("equipmentRequirements").value,
-        "location_requirement": document.getElementById("locationRequirements").value,
-        "contact_info": document.getElementById("contactInfo").value,
-        "skill_requirement": document.getElementById("skillRequirement").value,
-        "repeating_frequency": parseInt(document.getElementById("repeatingFrequency").value),
-        "badges": [
-          { "id": 1 },
-          { "id": 2 }
-        ]
+      "image": "",
+      "json": {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "summary": "creating an event post",
+        "type": "Create",
+        "actor": {
+          "type": "Person",
+          "name": "Umut",
+          "surname": "Gün",
+          "username": "umutgun17",
+          "Id": 1
+        },
+        "object": {
+          "type": "Event_Post",
+          "owner_id": 1,
+          "post_name": document.getElementById("eventTitle").value,
+          "sport_category": document.getElementById("sportCategory").value,
+          // "longtitude": parseFloat(splitLocation[0]),
+          // "latitude": parseFloat(splitLocation[1]),
+          //"longtitude": position.lng,
+          //"latitude": position.lat,
+          "description": document.getElementById("eventDescription").value,
+          "pathToEventImage": "aaaaaa",
+          "date_time": document.getElementById("eventDate").value,
+          "participant_limit": parseInt(document.getElementById("participationLimit").value),
+          "spectator_limit": parseInt(document.getElementById("spectatorLimit").value),
+          "rule": document.getElementById("generalRules").value,
+          "equipment_requirement": document.getElementById("equipmentRequirements").value,
+          "location_requirement": document.getElementById("locationRequirements").value,
+          "contact_info": document.getElementById("contactInfo").value,
+          "skill_requirement": document.getElementById("skillRequirement").value,
+          "repeating_frequency": parseInt(document.getElementById("repeatingFrequency").value)
+        }
       }
     }
-
-    console.log(data);
+    //console.log(data);
 
 
     var forms = document.querySelectorAll('.needs-validation')
@@ -263,19 +262,6 @@ function CreateEvent() {
             </select>
           </div>
 
-          <div className="col-md-8 form-group has-validation">
-            <label htmlFor="badges">Badges</label>
-            <div>
-              <div className="form-check form-check-inline">
-                <input className="form-check-input" type="checkbox" id="bades" value="friendly" />
-                <label className="form-check-label" htmlFor="inlineCheckbox1">friendly</label>
-              </div>
-              <div className="form-check form-check-inline">
-                <input className="form-check-input" type="checkbox" id="bades" value="polite" />
-                <label className="form-check-label" htmlFor="inlineCheckbox1">polite</label>
-              </div>
-            </div>
-          </div>
           <button onClick={onSubmitClick.bind(this)} className="btn btn-primary">Submit</button>
         </form>
       </div>

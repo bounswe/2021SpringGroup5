@@ -1,10 +1,38 @@
+import Map from '../components/Common/Map';
 import './General.css';
+import { Box } from '@mui/material';
+import { useState } from 'react';
+import Modal from '@mui/material/Modal';
+import Button from '@mui/material/Button';
+
+const styleModal = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 600,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 4,
+  borderRadius: 2,
+};
 
 function CreateEquipment() {
+  const [position, setPosition] = useState();
+
+  console.log(position);
+
+  const [openMapModal, setOpenMapModal] = useState(false);
+  const handleOpenMapModal = () => {
+    setOpenMapModal(true);
+  };
+  const handleCloseMapModal = () => {
+    setOpenMapModal(false);
+  };
 
   function onSubmitClick(e) {
 
-    var splitLocation = (document.getElementById("LongitudeLatitude").value).split(",");
+    //var splitLocation = (document.getElementById("LongitudeLatitude").value).split(",");
 
     var data = {
       "@context":"https://www.w3.org/ns/activitystreams",
@@ -22,8 +50,6 @@ function CreateEquipment() {
          "owner_id": 1,
          "post_name": document.getElementById("postName").value,
          "sport_category": document.getElementById("sportCategory").value,
-         "longtitude": parseFloat(splitLocation[0]),
-         "latitude": parseFloat(splitLocation[1]),
          "description": document.getElementById("postDescription").value,
          "link": document.getElementById("equipmentLink").value     
       }
@@ -129,20 +155,38 @@ function CreateEquipment() {
               </div>
             </div>
 
-            <div className="col-md-8 row">
-              <div className="col-md-6 form-group has-validation">
-                <label htmlFor="LongitudeLatitude">Longitude, Latitude</label>
-                <input type="text" className="form-control" id="LongitudeLatitude" name="LongitudeLatitude" placeholder="Enter longtitude and latitude" required />
-                <div className="invalid-feedback">
-                  Please enter longitude and latitude.
-                </div>
+          <div className="col-md-8 row">
+            <div className="col-md-6 form-group has-validation">
+              <label htmlFor="LongitudeLatitude">Longitude, Latitude</label>
+              <div className="invalid-feedback">
+                Please enter longitude and latitude.
               </div>
-
+              <Button onClick={handleOpenMapModal} variant="outlined">Choose from the map</Button>
             </div>
+          </div>
 
             <button onClick={onSubmitClick.bind(this)} className="btn btn-primary">Submit</button>
           </form>
         </div>
+
+        <Modal
+        open={openMapModal}
+        onClose={handleCloseMapModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={styleModal}>
+          <Map height="500px" position={position} setPosition={setPosition} />
+          <div className="row justify-content-between mt-3">
+            <div className="col-12 d-flex justify-content-center">
+              <Button onClick={handleCloseMapModal} variant="contained">
+                Choose Location
+              </Button>
+            </div>
+          </div>
+        </Box>
+      </Modal>
+
     </div>
   );
 }

@@ -4,12 +4,14 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import HomeScreen from './screens/HomeScreen';
 import EventScreen from './screens/EventScreen';
 import EventDetailScreen from './screens/EventDetailScreen';
+import EquipmentDetailScreen from './screens/EquipmentDetailScreen';
 import CreateEventScreen from './screens/CreateEventScreen';
 import CreateEquipment from './screens/CreateEquipmentScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import Profile from './screens/Profile';
 import ParticipantsScreen from './screens/ParticipantsScreen';
+import ApplyScreen from './screens/ApplyScreen';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
@@ -41,7 +43,10 @@ function App() {
             <AuthenticatedRoute path="/createEvent" component={CreateEventScreen} />
             <AuthenticatedRoute path="/createEquipment" component={CreateEquipment} />
             <AuthenticatedRoute path="/eventDetail/:id" component={EventDetailScreen} />
+            <AuthenticatedRoute path="/equipmentDetail/:id" component={EquipmentDetailScreen} />
             <AuthenticatedRoute path="/eventParticipants/:id" component={ParticipantsScreen} />
+            <AuthenticatedRoute path="/eventApply/:id" component={ApplyScreen} />
+            
             <AuthenticatedRoute path="/" exact component={HomeScreen} />
 
             <Redirect exact from="/" to="/login" />
