@@ -37,7 +37,7 @@ class _GoogleMapsNoRadiusScreenState extends State<GoogleMapsNoRadiusScreen> {
 
 
   handleTap(LatLng tappedPoint) {
-    print(tappedPoint); // the lat / long values of tapped point.
+    //print(tappedPoint); // the lat / long values of tapped point.
     setState(() {
       collectionMarkers = [];
       collectionMarkers.add(Marker(

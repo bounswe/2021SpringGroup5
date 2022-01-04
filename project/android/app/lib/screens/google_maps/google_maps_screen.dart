@@ -13,12 +13,9 @@ class GoogleMapsScreen extends StatefulWidget {
 }
 
 class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
-  double _value = 5;
   List<Marker> collectionMarkers = [];
   List<Circle> collectionCircles = [];
-
   List<double> mapCallback = [0.0, 0.0, 0.0];
-
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +42,7 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
 
 
   handleTap(LatLng tappedPoint) {
-    print(tappedPoint); // the lat / long values of tapped point.
+    //print(tappedPoint); // the lat / long values of tapped point.
     setState(() {
       collectionCircles.clear();
       collectionMarkers = [];
