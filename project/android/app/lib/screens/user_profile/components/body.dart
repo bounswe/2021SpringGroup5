@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:ludo_app/screens/welcome/welcome_screen.dart';
-import 'package:ludo_app/screens/event_page/popup_event_details.dart';
-import 'package:ludo_app/globals.dart' as globals;
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:ludo_app/globals.dart' as globals;
+import 'package:ludo_app/screens/event_page/popup_event_details.dart';
+import 'package:ludo_app/screens/welcome/welcome_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
-
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -48,7 +48,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return alert;
       },
     );
-
   }
 
   Future<String> logout(BuildContext context) async {
@@ -57,7 +56,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': globals.access,
-        'Cookie': 'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}'
+        'Cookie':
+            'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}'
       },
     );
 
@@ -65,7 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     print(bodyMap);
     print(response.statusCode);
 
-    if (response.statusCode == 200 && bodyMap['has_error'] == false){
+    if (response.statusCode == 200 && bodyMap['has_error'] == false) {
       globals.isLoggedIn = false;
       globals.name = "";
       globals.surname = "";
@@ -98,7 +98,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': globals.access,
-        'Cookie': 'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}'
+        'Cookie':
+            'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}'
       },
     );
 
@@ -119,11 +120,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void initState() {
-
     getUserInfo(context);
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -155,119 +154,126 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Stack(children: [
-                    Positioned(
-                      child: Center(
-                        child: Image.asset(
-                          'assets/images/example-user.jpg',
-                          width: width * 0.45,
-                          fit: BoxFit.cover,
+                  Stack(
+                    children: [
+                      Positioned(
+                        child: Center(
+                          child: Image.asset(
+                            'assets/images/example-user.jpg',
+                            width: width * 0.45,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                    ),
-                  ],),
+                    ],
+                  ),
                   SizedBox(
                     height: height * 0.23,
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         return Stack(
                           children: [
-                            Stack(children: [
-                              Positioned(
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                top: 20,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(25),
-                                    color: Colors.white,
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 18,
-                                      ),
-                                      Text(
-                                        globals.name + ' ' + globals.surname,
-                                        style: const TextStyle(
-                                          fontSize: 20,
+                            Stack(
+                              children: [
+                                Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  top: 20,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(25),
+                                      color: Colors.white,
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        const SizedBox(
+                                          height: 18,
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        height: 5,
-                                      ),
-                                      Stack(children: [
-                                        Positioned(
-                                          child: Text(
-                                            globals.email,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                            ),
+                                        Text(
+                                          globals.name + ' ' + globals.surname,
+                                          style: const TextStyle(
+                                            fontSize: 20,
                                           ),
                                         ),
-                                      ],),
-                                      const SizedBox(
-                                        height: 0.5,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        children: [
-                                          Column(
-                                            children: const [
-                                              Text(
-                                                'Followers',
-                                                style: TextStyle(
-                                                  color: Colors.indigo,
-                                                  fontSize: 20,
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Stack(
+                                          children: [
+                                            Positioned(
+                                              child: Text(
+                                                globals.email,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
                                                 ),
-                                              ),
-                                              Text(
-                                                '120',
-                                                style: TextStyle(
-                                                  fontSize: 25,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 24,
-                                              vertical: 10,
-                                            ),
-                                            child: Container(
-                                              height: height * 0.065,
-                                              width: width * 0.0085,
-                                              decoration: const BoxDecoration(
-                                                color: Colors.indigo,
                                               ),
                                             ),
-                                          ),
-                                          Column(
-                                            children: const [
-                                              Text(
-                                                'Following',
-                                                style: TextStyle(
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 0.5,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Column(
+                                              children: const [
+                                                Text(
+                                                  'Followers',
+                                                  style: TextStyle(
+                                                    color: Colors.indigo,
+                                                    fontSize: 20,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '120',
+                                                  style: TextStyle(
+                                                    fontSize: 25,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 24,
+                                                vertical: 10,
+                                              ),
+                                              child: Container(
+                                                height: height * 0.065,
+                                                width: width * 0.0085,
+                                                decoration: const BoxDecoration(
                                                   color: Colors.indigo,
-                                                  fontSize: 20,
                                                 ),
                                               ),
-                                              Text(
-                                                '100',
-                                                style: TextStyle(
-                                                  fontSize: 25,
+                                            ),
+                                            Column(
+                                              children: const [
+                                                Text(
+                                                  'Following',
+                                                  style: TextStyle(
+                                                    color: Colors.indigo,
+                                                    fontSize: 20,
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      )
-                                    ],
+                                                Text(
+                                                  '100',
+                                                  style: TextStyle(
+                                                    fontSize: 25,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],),
+                              ],
+                            ),
                           ],
                         );
                       },
@@ -291,41 +297,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Stack(children: const [
-                            Positioned(
-                                child: Text(
-                                  "My Badges",
-                                  style: TextStyle(fontSize: 17),
-                                )),
-                          ],),
+                          Stack(
+                            children: const [
+                              Positioned(
+                                  child: Text(
+                                "My Badges",
+                                style: TextStyle(fontSize: 17),
+                              )),
+                            ],
+                          ),
                           Expanded(
-                            child:
-                            userBadges.isEmpty ?
-                            const Text("No badges") :
-                            ListView.builder(
-                              itemCount: userBadges.length,
-                              itemBuilder: (context, index) => Card(
-                                elevation: 5,
-                                key: ValueKey([index][0]),
-                                color: Colors.white,
-                                margin:
-                                const EdgeInsets.symmetric(vertical: 10),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(13.0),
-                                  child: ListTile(
-                                    onTap: () {},
-                                    leading: Image.asset('assets/images/badge_icon.png'),
-                                    title: Text(userBadges[index]['badge__name'][0].toString().toUpperCase() + userBadges[index]['badge__name'].toString().substring(1)),
-                                    subtitle: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(userBadges[index]['badge__description'][0].toString().toUpperCase() + userBadges[index]['badge__description'].toString().substring(1)),
-                                      ],
+                            child: userBadges.isEmpty
+                                ? const Text("No badges")
+                                : ListView.builder(
+                                    itemCount: userBadges.length,
+                                    itemBuilder: (context, index) => Card(
+                                      elevation: 5,
+                                      key: ValueKey([index][0]),
+                                      color: Colors.white,
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(13.0),
+                                        child: ListTile(
+                                          onTap: () {},
+                                          leading: Image.asset(
+                                              'assets/images/badge_icon.png'),
+                                          title: Text(userBadges[index]
+                                                      ['badge__name'][0]
+                                                  .toString()
+                                                  .toUpperCase() +
+                                              userBadges[index]['badge__name']
+                                                  .toString()
+                                                  .substring(1)),
+                                          subtitle: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(userBadges[index][
+                                                              'badge__description']
+                                                          [0]
+                                                      .toString()
+                                                      .toUpperCase() +
+                                                  userBadges[index]
+                                                          ['badge__description']
+                                                      .toString()
+                                                      .substring(1)),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            ),
                           ),
                         ],
                       ),
@@ -349,55 +372,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Stack(children: const [
-                            Positioned(
-                                child: Text(
-                                  "Previously Created Events",
-                                  style: TextStyle(fontSize: 17),
-                                )),],
+                          Stack(
+                            children: const [
+                              Positioned(
+                                  child: Text(
+                                "Previously Created Events",
+                                style: TextStyle(fontSize: 17),
+                              )),
+                            ],
                           ),
                           Expanded(
-                            child: userEvents.isEmpty ?
-                            const Text("User created no events") :
-                            ListView.builder(
-                              itemCount: userEvents.length,
-                              itemBuilder: (context, index) => Card(
-                                elevation: 5,
-                                key: ValueKey([index][0]),
-                                color: Colors.white,
-                                margin:
-                                const EdgeInsets.symmetric(vertical: 10),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(13.0),
-                                  child: ListTile(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) {
-                                            return EventDetailsScreen(eventId: userEvents[index]['id']);
+                            child: userEvents.isEmpty
+                                ? const Text("User created no events")
+                                : ListView.builder(
+                                    itemCount: userEvents.length,
+                                    itemBuilder: (context, index) => Card(
+                                      elevation: 5,
+                                      key: ValueKey([index][0]),
+                                      color: Colors.white,
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(13.0),
+                                        child: ListTile(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) {
+                                                  return EventDetailsScreen(
+                                                      eventId: userEvents[index]
+                                                          ['pk']);
+                                                },
+                                              ),
+                                            );
                                           },
+                                          leading: Image.network(
+                                            userEvents[index]
+                                                ['pathToEventImage'],
+                                            fit: BoxFit.cover,
+                                          ),
+                                          title: Text(
+                                            userEvents[index]['post_name'],
+                                          ),
+                                          subtitle: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(userEvents[index][
+                                                  'sport_category__sport_name']),
+                                              Text(userEvents[index]
+                                                  ['date_time'])
+                                            ],
+                                          ),
                                         ),
-                                      );
-                                    },
-                                    leading: Image.network(
-                                      userEvents[index]['pathToEventImage'],
-                                      fit: BoxFit.cover,
-                                    ),
-                                    title: Text(
-                                      userEvents[index]['post_name'],
-                                    ),
-                                    subtitle: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(userEvents[index]['sport_category__sport_name']),
-                                        Text(userEvents[index]['date_time'])
-                                      ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            ),
                           ),
                         ],
                       ),
