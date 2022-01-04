@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:ludo_app/screens/main_events/main_event_screen.dart';
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:ludo_app/globals.dart' as globals;
 
@@ -14,7 +14,6 @@ class EventDetailsScreen extends StatefulWidget {
 }
 
 class _EventDetailsScreenState extends State<EventDetailsScreen> {
-
   Map eventDetails = {};
 
   Future fetchEventDetails() async {
@@ -41,12 +40,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': globals.access,
-        'Cookie': 'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}',
+        'Cookie':
+            'csrftoken=${globals.csrftoken}; sessionid=${globals.sessionid}',
       },
       body: jsonEncode(params),
     );
-    if (response.statusCode == 201){
-      WidgetsBinding.instance!.addPostFrameCallback((_){
+    if (response.statusCode == 201) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
         setState(() {
           eventDetails = jsonDecode(response.body)['object'];
           print(jsonDecode(response.body)['object']);
@@ -57,7 +57,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     }
   }
 
-  String capFirstLetter(String word){
+  String capFirstLetter(String word) {
     return word[0].toUpperCase() + word.substring(1);
   }
 
@@ -85,12 +85,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               child: Column(
                 children: [
                   Row(
-                    children:  [
+                    children: [
                       Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
-                          eventDetails.isEmpty ? "" :
-                          eventDetails['post_name'],
+                          eventDetails.isEmpty ? "" : eventDetails['post_name'],
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -103,11 +102,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Container(
-                      child:
-                        eventDetails.isEmpty ? Text("") :
-                          eventDetails['pathToEventImage'] == "" ?
-                          Image.asset('assets/images/default_event_image.png') :
-                          Image.network(eventDetails['pathToEventImage']),
+                    child: eventDetails.isEmpty
+                        ? Text("")
+                        : eventDetails['pathToEventImage'] == ""
+                            ? Image.asset(
+                                'assets/images/default_event_image.png')
+                            : Image.network(eventDetails['pathToEventImage']),
                   ),
                   /*
                   Row(
@@ -160,8 +160,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                       Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['accepted_players'].toString(),
+                        eventDetails.isEmpty
+                            ? ""
+                            : eventDetails['accepted_players'].toString(),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -181,8 +182,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                       Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['owner']['name'] + ' ' + eventDetails['owner']['surname'],
+                        eventDetails.isEmpty
+                            ? ""
+                            : eventDetails['owner']['name'] +
+                                ' ' +
+                                eventDetails['owner']['surname'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -202,8 +206,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                       Text(
-                        eventDetails.isEmpty ? "" :
-                        capFirstLetter(eventDetails['sport_category']),
+                        eventDetails.isEmpty
+                            ? ""
+                            : capFirstLetter(eventDetails['sport_category']),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -223,8 +228,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                       Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['created_date'],
+                        eventDetails.isEmpty
+                            ? ""
+                            : eventDetails['created_date'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -243,10 +249,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['description'],
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        flex: 1,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Text(
+                            eventDetails.isEmpty
+                                ? ""
+                                : eventDetails['description'],
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -264,10 +277,19 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['latitude'].toString() + ', ' + eventDetails['longitude'].toString(),
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        flex: 1,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Text(
+                            eventDetails.isEmpty
+                                ? ""
+                                : eventDetails['latitude'].toString() +
+                                    ', ' +
+                                    eventDetails['longitude'].toString(),
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -286,8 +308,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                       Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['date_time'],
+                        eventDetails.isEmpty ? "" : eventDetails['date_time'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -296,7 +317,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     height: MediaQuery.of(context).size.height * 0.025,
                   ),
                   Row(
-                    children:  [
+                    children: [
                       const Padding(
                         padding: EdgeInsets.only(right: 20),
                         child: Text(
@@ -307,8 +328,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                       Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['participant_limit'].toString(),
+                        eventDetails.isEmpty
+                            ? ""
+                            : eventDetails['participant_limit'].toString(),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -328,8 +350,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                       Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['spectator_limit'].toString(),
+                        eventDetails.isEmpty
+                            ? ""
+                            : eventDetails['spectator_limit'].toString(),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -349,8 +372,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                       Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['rule'],
+                        eventDetails.isEmpty ? "" : eventDetails['rule'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -369,10 +391,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['equipment_requirement'],
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        flex: 1,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Text(
+                            eventDetails.isEmpty
+                                ? ""
+                                : eventDetails['equipment_requirement'],
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -391,8 +420,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                       Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['status'],
+                        eventDetails.isEmpty ? "" : eventDetails['status'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -412,8 +440,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                       Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['capacity'],
+                        eventDetails.isEmpty ? "" : eventDetails['capacity'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -433,9 +460,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                       Text(
-                        eventDetails.isEmpty ? "" :
-                            eventDetails['location_requirement'] == "" ? "None" :
-                        eventDetails['location_requirement'],
+                        eventDetails.isEmpty
+                            ? ""
+                            : eventDetails['location_requirement'] == ""
+                                ? "None"
+                                : eventDetails['location_requirement'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -455,9 +484,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                       Text(
-                        eventDetails.isEmpty ? "" :
-                          eventDetails['contact_info'] == "" ? "None" :
-                        eventDetails['contact_info'],
+                        eventDetails.isEmpty
+                            ? ""
+                            : eventDetails['contact_info'] == ""
+                                ? "None"
+                                : eventDetails['contact_info'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -477,8 +508,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                       Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['skill_requirement'],
+                        eventDetails.isEmpty
+                            ? ""
+                            : eventDetails['skill_requirement'],
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -498,8 +530,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                       Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['current_player'].toString(),
+                        eventDetails.isEmpty
+                            ? ""
+                            : eventDetails['current_player'].toString(),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -519,8 +552,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ),
                       ),
                       Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['current_spectator'].toString(),
+                        eventDetails.isEmpty
+                            ? ""
+                            : eventDetails['current_spectator'].toString(),
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
@@ -539,10 +573,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               fontSize: 16),
                         ),
                       ),
-                      Text(
-                        eventDetails.isEmpty ? "" :
-                        eventDetails['comments'].toString(),
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        flex: 1,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Text(
+                            eventDetails.isEmpty
+                                ? ""
+                                : eventDetails['comments'].toString(),
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -555,7 +596,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return MainEventScreen();
+                            return Scaffold(
+                              appBar: AppBar(title: const Text('Congrats!')),
+                              body: const Padding(
+                                padding: EdgeInsets.all(20.0),
+                                child: Text(
+                                  "You've succesfully applied to an event. "
+                                  "Now, you can check the event in your profil page",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            );
                           },
                         ),
                       );
