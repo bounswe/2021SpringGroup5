@@ -968,11 +968,10 @@ def getEquipmentPostDetails(request):
 
     try:
         comments = list(
-            EventComment.objects.filter(post=post_id).order_by('id').values('id', 'content', 'owner', 'created_date',
-                                                                            'owner__Id', 'owner__name', \
-                                                                            'owner__surname', 'owner__username'))
+            EquipmentComment.objects.filter(equipment_post_id=post_id).order_by('id').values('id', 'content', 'created_date', 'owner_id__username'))
         for i in range(len(comments)):
-            comments[i]["created_date"] = str(comments[i]["created_date"])
+            comments[i]["created_date"] = comments[i]["created_date"].strftime('%d/%m/%Y %H:%M')
+            comments[i]["username"] = comments[i].pop("owner_id__username")
     except:
         comments = []
 
