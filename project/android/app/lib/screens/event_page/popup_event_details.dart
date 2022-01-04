@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:ludo_app/globals.dart' as globals;
-import 'package:ludo_app/screens/main_events/main_event_screen.dart';
 
 class EventDetailsScreen extends StatefulWidget {
   int eventId;
@@ -91,7 +90,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         padding: EdgeInsets.only(right: 20),
                         child: Expanded(
                           child: Text(
-                            eventDetails.isEmpty ? "" : eventDetails['post_name'],
+                            eventDetails.isEmpty
+                                ? ""
+                                : eventDetails['post_name'],
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -613,7 +614,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return MainEventScreen();
+                            return Scaffold(
+                              appBar: AppBar(title: const Text('Congrats!')),
+                              body: const Padding(
+                                padding: EdgeInsets.all(20.0),
+                                child: Text(
+                                  "You've succesfully applied to an event. "
+                                  "Now, you can check the event in your profil page",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            );
                           },
                         ),
                       );
