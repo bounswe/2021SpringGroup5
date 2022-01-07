@@ -12,8 +12,7 @@ The deployment part is easy for a React app. It is as follow:
 ### Installation
 You can use your Android device or an emulator in order to use Ludo Mobile Application.
 
-- With .apk file 
-Latest version of .apk file can be found here:[latest .apk version](https://github.com/bounswe/2021SpringGroup5/blob/master/project/android/app/build/app/outputs/flutter-apk/app-release.apk)
+Latest version of .apk file can be found here:[latest apk version](https://github.com/bounswe/2021SpringGroup5/blob/master/project/android/app/build/app/outputs/flutter-apk/app-release.apk)
 
 ### Features
 * Sign-up
