@@ -1,16 +1,34 @@
-# ludo_app
+### Installation
+You can use your Android device or an emulator in order to use Ludo Mobile Application.
 
-A new Flutter project.
+Latest version of .apk file can be found here:[latest apk version](https://github.com/bounswe/2021SpringGroup5/blob/master/project/android/app/build/app/outputs/flutter-apk/app-release.apk)
 
-## Getting Started
+### Debug
+1. Go to android app path: `cd project/android/app`
+2. Get dependencies: `flutter pub get`
+3. Open Android Studio (skip this steps if you use a linked Android device)
+4. Click AVD Manager and create a virtual device
+5. Select the device previously created in your IDE
+6. Edit configurations and select main.dart
+7. Build the app: `flutter run`
 
-This project is a starting point for a Flutter application.
+### Test
+1. Go to android app path: `cd project/android/app`
+2. Get dependencies: `flutter pub get`
+3. Test: `flutter test`
 
-A few resources to get you started if this is your first Flutter project:
+### Features
+* Sign-up
+* Sign-in
+* Forgot Password
+* Create Event
+* Search Event
+* Filter Event
+* Sort Events by Date
+* Sort Events by Name
+* Home Page
+* Profile Page
+* See Received Badges
+* See Participated Events
+* Log-out
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
