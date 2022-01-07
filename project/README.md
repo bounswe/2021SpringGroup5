@@ -45,4 +45,5 @@ Latest version of .apk file can be found here:[latest apk version](https://githu
 ## Backend
 
 1. Go to path 2021SpringGroup5/project/backend/app/
-2. build docker 'docker-compose up'
+2. Build docker `docker-compose up`
+
